@@ -4,3 +4,27 @@
 - Please leave the lib/ dir empty
 - Please put all your code in /src/module x/
 - **Please do not commit to main**!
+
+## Coding guidelines
+
+- Use camelcase for classes, functions and variables (e.g. camelCaseVar)
+- Generate docstrings for every function in the following format:
+```
+def example(number, kwarg=3):
+    """_summary_
+
+    Args:
+        number (_type_): _description_
+        kwarg (int, optional): _description_. Defaults to 3.
+
+    Raises:
+        TypeError: _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    if number < 2:
+        raise TypeError
+
+    return kwarg
+```
