@@ -1,0 +1,11 @@
+Measurement set-up for reference measurements Phantom model IP-3 "Heart"
+
+Measurement: 13
+
+Fs = 48kHz
+Position = 1
+Signal left_channel (hole 1) = White noise (differs from measurement 8, in this measurement the mics were recalibrated on their volumes)
+Signal right_channel (hole 2) = None
+Channel 1..6 = Mic 1...6
+Channel 7 = Reference of hole 1
+Channel 8 = None

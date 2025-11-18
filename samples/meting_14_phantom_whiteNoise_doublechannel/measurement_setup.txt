@@ -1,0 +1,11 @@
+Measurement set-up for reference measurements Phantom model IP-3 "Heart"
+
+Measurement: 14
+
+Fs = 48kHz
+Position = 2
+Signal left_channel (hole 1) = White noise_1
+Signal right_channel (hole 2) = White noise_2
+Channel 1..6 = Mic 1...6
+Channel 7 = Reference of hole 1
+Channel 8 = Reference of hole 2
