@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.pyenv/
+pipenv/
+
+# Pyre type checker
+.pyre/
+
+# Pydantic cache
+.pydantic/
+
+# Pyright type checker
+.pyright/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyInstaller
+*.manifest
+*.spec
+
+# IDEs / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# MacOS and Windows clutter
+.DS_Store
+Thumbs.db
+
+# Local environment variables
+.env
+.env.*
