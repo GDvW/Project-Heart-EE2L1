@@ -4,7 +4,8 @@ from scipy.fft import fft
 import numpy as np
 import matplotlib.pyplot as plt
 from lib.plot.timeFrequencyPlot import *
-from math import floor
+from lib.plot.frequencyUtils import getDamping
+from lib.general.generalUtils import todB
 
 def construct_filter(low: float, high: float, Fs: int, order: int = 2):
     b, a = signal.butter(order, [2*low/Fs, 2*high/Fs], btype="band")
@@ -18,6 +19,9 @@ def main():
     Fs = 48e3
     g = construct_filter(10, 800, Fs)
 
+    freq, damping = np.abs(getDamping(g, 2000, Fs, 1000000))
+    print(f"Damping at {freq:.1f} Hz is {todB(damping):.2f} dB")
+    
     fig, ax = plt.subplots(1, 2, figsize=(8,4), constrained_layout=True)
     timeFrequencyPlot(g, Fs, ax[0], ax[1], samples_offset = -len(g)/2, apply_fftshift=True, resolution=None)
     fig.suptitle("Non-causal butterworth bandpass filter $g(t)$")
