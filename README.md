@@ -7,7 +7,7 @@
 
 ## Coding guidelines
 
-- Use camelcase for classes, functions and variables (e.g. camelCaseVar)
+- Use snakecase for variables (e.g. snake_case_var) and camelcase for classes and functions (e.g. camelCaseVar)
 - Generate docstrings for every function in the following format:
 ```
 def example(number, kwarg=3):
