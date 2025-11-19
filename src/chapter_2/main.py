@@ -7,14 +7,14 @@ from scipy.io import wavfile
 from scipy.fft import fft
 import numpy as np
 
-def plot_pcg(file: str, time_ax: axes.Axes = None, freq_ax: axes.Axes =None, title=None):
+def plot_pcg(file: str, time_ax: axes.Axes, freq_ax: axes.Axes, title:str=None):
     """_summary_
 
     Args:
-        file (str): _description_
-        time_ax (axes.Axes, optional): _description_. Defaults to None.
-        freq_ax (axes.Axes, optional): _description_. Defaults to None.
-        title (_type_, optional): _description_. Defaults to None.
+        file (str): The file to render
+        time_ax (axes.Axes): The matplotlib ax to plot the time domain of the signal on.
+        freq_ax (axes.Axes): The matplotlib ax to plot the time domain of the signal on.
+        title (str, optional): The title of the plot. Defaults to None.
     """
     if title is None:
         title = basename(file).split("_")[0]
@@ -36,18 +36,19 @@ def plot_pcg(file: str, time_ax: axes.Axes = None, freq_ax: axes.Axes =None, tit
     freq_ax.set_title(title)
     
 
-def main(pcg_dir = "./samples/chapter_2/", csv_data_file = None):
-    """_summary_
+def main(pcg_dir: str = "./samples/chapter_2/", csv_data_file: str = None):
+    """Creates plots of the signal and its frequency spectrum based on the files in pcg_dir
 
     Args:
-        pcg_dir (str, optional): _description_. Defaults to "./samples/chapter_2/".
-        csv_data_file (_type_, optional): _description_. Defaults to None.
+        pcg_dir (str, optional): The path to the wav files. Defaults to "./samples/chapter_2/".
+        csv_data_file (str, optional): The path to the metadata file. Defaults to None.
 
     Returns:
-        _type_: _description_
+        int: 0 on success, -1 on failure
     """
     # Get all wav files from the samples directory
     pcgs = getFilesExt(".wav", pcg_dir)
+    # Get csv data
     if csv_data_file is None:
         csv_files = getFilesExt(".csv", pcg_dir)
         if len(csv_files) > 1:
@@ -71,15 +72,18 @@ def main(pcg_dir = "./samples/chapter_2/", csv_data_file = None):
         print(f"ERROR: no wav files found at {pcg_dir}. Exiting.")
         return -1
              
+    # Create matplotlib figure
     fig, axes = plt.subplots(len(pcgs), 2, figsize=(8,len(pcgs)*2.5), constrained_layout=True)
     
+    # Generate plots
     for i, pcg in enumerate(pcgs):
         title = basename(pcg).split("_")[0]
         if csv_data_file is not None:
             condition = data.loc[data["Patient ID"] == int(title), "Outcome"].iloc[0]
             title = f"{title} - {condition}"
         plot_pcg(join(pcg_dir, pcg), axes[i][0], axes[i][1], title)
-        
+
+    # Show it
     plt.show()
     return 0
 
