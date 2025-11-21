@@ -21,7 +21,7 @@ def a_lin(theta, M, d, v, f0):
 
 def test_a_lin():
     theta = 30
-    M = 3
+    M = 10
     d = 1
     v = 343
     f0 = 250
