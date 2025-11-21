@@ -9,3 +9,22 @@
 ## Assignments 4.3
 
 1. In the end, we used a 3rd order Butterworth filter of length 5001.
+2. TODO
+
+## Assignments 4.4
+
+1. TODO
+
+## Assignments 4.5
+
+### Question 3
+
+- TODO
+
+## Assignments 4.6
+
+1. 
+
+## Assignments 4.7
+
+1. 
