@@ -30,15 +30,15 @@ def test_a_lin():
     
     print (abs(array_response_vector))
 
-def spatial_spectrum():
+def spatial_spectrum(theta0):
     
     M = 7
-    d = 5
+    d = 2
     v = 343
-    f0 = 250
+    f0 = 500
     
-    power_out = np.array([ np.square (  np.dot(a_lin(theta, M, d, v, f0).conj().T,
-                          a_lin(theta, M, d, v, f0))   ) for theta in range (-90,90,1)  ]   )
+    power_out = np.array([ np.square( np.abs ((  np.dot(a_lin(theta, M, d, v, f0).conj().T,
+                          a_lin(theta0, M, d, v, f0))   ))) for theta in range (-90,90,1)  ]   )
     
     x = np.arange(len(power_out))
     y = power_out
@@ -46,4 +46,4 @@ def spatial_spectrum():
     plt.show()
 
 if __name__ == "__main__":
-    pass
+    spatial_spectrum(30)
