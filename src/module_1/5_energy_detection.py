@@ -4,8 +4,8 @@ from lib.plot.timeFrequencyPlot import *
 from lib.plot.frequencyUtils import getDamping
 from lib.general.generalUtils import todB
 from lib.config.ConfigParser import ConfigParser
-from lib.preprocessing.functions import construct_filter
-from lib.preprocessing.PreProcessor import PreProcessor
+from lib.processing.functions import construct_filter
+from lib.processing.Processor import Processor
 
 def assignment451(config):
     pass

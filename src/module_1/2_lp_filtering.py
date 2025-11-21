@@ -4,8 +4,8 @@ from lib.plot.timeFrequencyPlot import *
 from lib.plot.frequencyUtils import getDamping
 from lib.general.generalUtils import todB
 from lib.config.ConfigParser import ConfigParser
-from lib.preprocessing.functions import construct_filter
-from lib.preprocessing.PreProcessor import PreProcessor
+from lib.processing.functions import construct_filter
+from lib.processing.Processor import Processor
 
 def assignment422(config: ConfigParser, Fs: int=48e3):
     """Executes assignment 4.2.2.
@@ -45,7 +45,7 @@ def assignment423(config: ConfigParser):
     """
     file_path = ".\\samples\\stethoscope_5_realHeart_\\recording_2025-07-10_14-40-12_channel_1.wav"
     
-    processor = PreProcessor(file_path, config, save_results=True)
+    processor = Processor(file_path, config, save_results=True)
     processor.process()
     print(f"Fs is {processor.Fs_original} Hz")
     

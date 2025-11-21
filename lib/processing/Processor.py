@@ -1,19 +1,19 @@
-from lib.preprocessing.functions import *
+from lib.processing.functions import *
 from lib.config.ConfigParser import ConfigParser
 from scipy.io import wavfile
 
-class PreProcessor:
-    """Wrapper for the preprocessing stage.
+class Processor:
+    """Wrapper for the processing stage.
     
     This class allows to easily reuse code across the whole codebase and optionally save results for plotting them.
     """
     def __init__(self, file_path: str, config: ConfigParser, save_results: bool = False):
-        """Initializes the preprocessor.
+        """Initializes the processor.
 
         Args:
             file_path (str): The path to the wav file.
             config (ConfigParser): The config object.
-            save_results (bool, optional): Whether to save the results. Defaults to False.
+            save_results (bool, optional): Whether to save the substeps. Defaults to False.
         """
         # Save path to wav file
         self.file_path = file_path
@@ -33,7 +33,7 @@ class PreProcessor:
         self.y = None
         self.y_downsampled = None
     def process(self):
-        """Initialize the preprocessing and optionally save the results.
+        """Initialize the processing and optionally save the steps in between.
         """
         Fs_original, x = wavfile.read(self.file_path)
     

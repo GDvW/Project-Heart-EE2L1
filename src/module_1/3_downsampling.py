@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from lib.plot.timeFrequencyPlot import *
 from lib.config.ConfigParser import ConfigParser
-from lib.preprocessing.PreProcessor import PreProcessor
+from lib.processing.Processor import Processor
 
 def assignment431():
     """The function that houses assignment 4.3.1.
@@ -18,7 +18,7 @@ def assignment432(config: ConfigParser):
     """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     
-    processor = PreProcessor(path, config, save_results=True)
+    processor = Processor(path, config, save_results=True)
     
     processor.process()
     
