@@ -45,10 +45,21 @@ def segmentation(config):
     ax[0][1].sharex(ax[1][1])
     ax[2][0].sharex(ax[1][0])
     
-    ax[1][0].scatter(processor.s1_peaks / processor.Fs_target, processor.see_normalized[processor.s1_peaks], c="red", marker="^")
-    ax[1][0].scatter(processor.s2_peaks / processor.Fs_target, processor.see_normalized[processor.s2_peaks], c="green", marker="^")
+    """
+    ax[1][0].scatter(processor.s1_peaks / processor.Fs_target, processor.see_normalized[processor.s1_peaks], c="red", marker="^", label="S1")
+    ax[1][0].scatter(processor.s2_peaks / processor.Fs_target, processor.see_normalized[processor.s2_peaks], c="green", marker="^", label="S2")
+    if processor.s1_outliers.size > 0:
+        ax[1][0].scatter(processor.s1_outliers / processor.Fs_target, processor.see_normalized[processor.s1_outliers], c="purple", marker="^", label="uncertain")
+    if processor.s2_outliers.size > 0:
+        ax[1][0].scatter(processor.s2_outliers / processor.Fs_target, processor.see_normalized[processor.s2_outliers], c="purple", marker="^", label="uncertain")
+    ax[1][0].legend()"""
     
-    ax[2][0].plot(np.array(list(processor.peaks_dist.keys())) / processor.Fs_target, processor.peaks_dist.values())
+    ax[2][0].plot(np.array(list(processor.peaks_dist.keys())) / processor.Fs_target, processor.peaks_dist.values(), label="all")
+    ax[2][0].plot(processor.s1_peaks[:,0] / processor.Fs_target, processor.s1_peaks[:,1], label="s1_peaks")
+    ax[2][0].plot(processor.s2_peaks[:,0] / processor.Fs_target, processor.s2_peaks[:,1], label="s2_peaks")
+    ax[2][0].scatter(processor.s1_outliers[:,0] / processor.Fs_target, processor.s1_outliers[:,1], label="s1_outliers")
+    ax[2][0].scatter(processor.s2_outliers[:,0] / processor.Fs_target, processor.s2_outliers[:,1], label="s2_outliers")
+    ax[2][0].legend()
     
     
     plt.show()
