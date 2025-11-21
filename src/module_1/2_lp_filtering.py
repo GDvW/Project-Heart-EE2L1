@@ -4,7 +4,7 @@ from lib.plot.timeFrequencyPlot import *
 from lib.plot.frequencyUtils import getDamping
 from lib.general.generalUtils import todB
 from lib.config.ConfigParser import ConfigParser
-from lib.processing.functions import construct_filter
+from lib.processing.functions import construct_bandpass_filter
 from lib.processing.Processor import Processor
 
 def assignment422(config: ConfigParser, Fs: int=48e3):
@@ -14,7 +14,7 @@ def assignment422(config: ConfigParser, Fs: int=48e3):
         config (ConfigParser): The config object.
         Fs (int, optional): The desired sampling frequency of the filter in Hz. Defaults to 48e3.
     """
-    g = construct_filter(
+    g = construct_bandpass_filter(
         config.LowpassFilter.LowFrequency, 
         config.LowpassFilter.HighFrequency, 
         Fs, 

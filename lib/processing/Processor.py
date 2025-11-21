@@ -24,6 +24,9 @@ class Processor:
         self.lp_filter_order = config.LowpassFilter.FilterOrder
         self.lp_filter_size = config.LowpassFilter.Size
         self.Fs_target = config.Downsampling.FsTarget
+        self.energy_filter_order = config.Energy.FilterOrder
+        self.energy_cutoff_freq = config.Energy.CutoffFrequency
+        self.energy_filter_size = config.Energy.Size
         
         self.save_results = save_results
         # Initialize fields that values can be saved to
@@ -32,16 +35,28 @@ class Processor:
         self.g = None
         self.y = None
         self.y_downsampled = None
+        self.y_normalized = None
+        self.y_energy = None
+        self.see_filter = None
+        self.see = None
     def process(self):
         """Initialize the processing and optionally save the steps in between.
         """
         Fs_original, x = wavfile.read(self.file_path)
     
-        g = construct_filter(self.lp_low_freq, self.lp_high_freq, Fs_original, order=self.lp_filter_order, size=self.lp_filter_size)
+        g = construct_bandpass_filter(self.lp_low_freq, self.lp_high_freq, Fs_original, order=self.lp_filter_order, size=self.lp_filter_size)
         
         y = filter(x, g)
         
-        y_downsampled = downsample(x, Fs_original, self.Fs_target)
+        y_downsampled = downsample(y, Fs_original, self.Fs_target)
+        
+        y_normalized = normalize(y_downsampled)
+        
+        y_energy = shannon_energy(y_normalized)
+        
+        see_filter =  construct_lowpass_filter(self.energy_cutoff_freq, self.Fs_target, self.energy_filter_order, self.energy_filter_size)
+        
+        see = filter(y_energy, see_filter)
         
         if self.save_results:
             self.Fs_original = Fs_original
@@ -49,3 +64,7 @@ class Processor:
             self.g = g
             self.y = y
             self.y_downsampled = y_downsampled
+            self.y_normalized = y_normalized
+            self.y_energy = y_energy
+            self.see_filter = see_filter
+            self.see = see

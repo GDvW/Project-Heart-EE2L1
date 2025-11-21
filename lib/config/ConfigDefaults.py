@@ -11,10 +11,16 @@ DEFAULT_CONFIG = {
     },
     "Downsampling":{
         "FsTarget": 4000
+    },
+    "Energy":{
+        "FilterOrder": 2,
+        "CutoffFrequency": 20,
+        "Size": 1000
     }
 }
 
 DEFAULT_COMMENTS = {
     "LowpassFilter": ["# Properties of the lowpass filter"],
     "Downsampling": ["# Parameters for downsampling"],
+    "Energy": ["# Properties of the lowpass filter for building the Shannon energy envelope"]
 }

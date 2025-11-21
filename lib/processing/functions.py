@@ -2,7 +2,7 @@ from scipy import signal
 import numpy as np
 from math import floor
 
-def construct_filter(low: float, high: float, Fs: int, order: int = 2, size: int = 2000):
+def construct_bandpass_filter(low: float, high: float, Fs: int, order: int = 2, size: int = 2000):
     """Construct a bandpass non-causal Butterworth filter with a phase of 0.
 
     Args:
@@ -18,6 +18,24 @@ def construct_filter(low: float, high: float, Fs: int, order: int = 2, size: int
     resolution = floor(size/2)
     
     b, a = signal.butter(order, [2*low/Fs, 2*high/Fs], btype="band")
+    g = signal.filtfilt(b, a, [*np.zeros(resolution), 1, *np.zeros(resolution)])
+    return g
+
+def construct_lowpass_filter(fc: float, Fs: int, order: int = 2, size: int = 2000):
+    """Construct a lowpass non-causal Butterworth filter with a phase of 0.
+
+    Args:
+        fc (float): The cutoff frequency in Hz.
+        Fs (int): The sampling frequency in Hz.
+        order (int, optional): Half the order of the filter. Defaults to 2.
+        size (int, optional): The length of the filter minus 1. Defaults to 2000.
+
+    Returns:
+        g (np.ndarray): returns the filter with length of size+1.
+    """
+    resolution = floor(size/2)
+    
+    b, a = signal.butter(order, fc, btype="lowpass", fs=Fs)
     g = signal.filtfilt(b, a, [*np.zeros(resolution), 1, *np.zeros(resolution)])
     return g
 
@@ -57,3 +75,25 @@ def downsample(x: list|np.ndarray, Fs_original:int, Fs_target: int):
     x_downsampled = x[::M]
     
     return x_downsampled
+
+def normalize(x: np.ndarray):
+    """Returns the normalized input signal.
+
+    Args:
+        x (np.ndarray): The input signal.
+
+    Returns:
+        np.ndarray: The normalized input signal.
+    """
+    return x / np.max(np.abs(x))
+
+def shannon_energy(x: np.ndarray):
+    """Returns the Shannon energy of a normalized signal
+
+    Args:
+        x (np.ndarray): The normalized input signal.
+
+    Returns:
+        np.ndarray: The Shannon energy of the input signal.
+    """
+    return - x**2 * np.log10(np.fmax(x, 1e-4)**2)
