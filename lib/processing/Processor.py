@@ -46,6 +46,8 @@ class Processor:
         self.peaks = None
         self.peak_properties = None
         self.peaks_dist = None
+        self.s1_peaks = None
+        self.s2_peaks = None
     def process(self):
         """Initialize the processing and optionally save the steps in between.
         """
@@ -71,6 +73,9 @@ class Processor:
         
         peaks_dist = get_dist_peaks_to_next(peaks)
         
+        s1_peaks, s2_peaks = classify_peaks(peaks)
+        
+        
         
         if self.save_results:
             self.Fs_original = Fs_original
@@ -86,3 +91,5 @@ class Processor:
             self.peaks = peaks
             self.peak_properties = peak_properties
             self.peaks_dist = peaks_dist
+            self.s1_peaks = s1_peaks
+            self.s2_peaks = s2_peaks

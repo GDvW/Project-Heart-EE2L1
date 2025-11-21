@@ -6,6 +6,7 @@ from lib.general.generalUtils import todB
 from lib.config.ConfigParser import ConfigParser
 from lib.processing.functions import construct_bandpass_filter
 from lib.processing.Processor import Processor
+from lib.processing.dataprocessing import HeartSound
 
 def segmentation(config):
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
@@ -43,7 +44,9 @@ def segmentation(config):
     ax[0][0].sharex(ax[1][0])
     ax[0][1].sharex(ax[1][1])
     ax[2][0].sharex(ax[1][0])
-    ax[1][0].scatter(processor.peaks / processor.Fs_target, processor.peak_properties['peak_heights'], c="red", marker="^")
+    
+    ax[1][0].scatter(processor.s1_peaks / processor.Fs_target, processor.see_normalized[processor.s1_peaks], c="red", marker="^")
+    ax[1][0].scatter(processor.s2_peaks / processor.Fs_target, processor.see_normalized[processor.s2_peaks], c="green", marker="^")
     
     ax[2][0].plot(np.array(list(processor.peaks_dist.keys())) / processor.Fs_target, processor.peaks_dist.values())
     

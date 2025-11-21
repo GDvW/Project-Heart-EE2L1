@@ -25,6 +25,8 @@
 
 1. 
 
+**Disclaimer**: We suppose the systole is always longer than the diastole. Next to that, we also rely on the correct detection of all peaks, although the algorithm does not go fully into the error if it skips one. Could be detected by abnormal large/small distances.
+
 ## Assignments 4.7
 
-1. 
+
