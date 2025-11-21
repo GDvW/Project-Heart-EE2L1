@@ -33,17 +33,19 @@ def test_a_lin():
 def spatial_spectrum(theta0):
     
     M = 7
-    d = 1/2
-    v = 343
+    d = 1
+    v = 340
     f0 = 500
     
-    power_out = np.array([ np.square( np.abs ((  np.dot(a_lin(theta, M, d, v, f0).conj().T,
-                          a_lin(theta0, M, d, v, f0))   ))) for theta in range (-90,90,1)  ]   )
+    power_out = np.array([ ( np.abs ((  np.dot(a_lin(theta, M, d, v, f0).conj().T,
+                          a_lin(theta0, M, d, v, f0))   )))**2 for theta in range (-90,90,1)  ]   )
     
-    x = np.arange(len(power_out))
+    x = np.arange(-90,90)
     y = power_out
     plt.plot(x,y)
+    plt.xlabel("angle in degress")
+    plt.ylabel("power out")
     plt.show()
 
 if __name__ == "__main__":
-    spatial_spectrum(15)
+    spatial_spectrum(0)
