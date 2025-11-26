@@ -20,8 +20,8 @@ def a_lin(theta, M, d, v, f0):
     return result
 
 def test_a_lin():
-    theta = 30
-    M = 10
+    theta = 0
+    M = 7
     d = 1
     v = 343
     f0 = 500
