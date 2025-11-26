@@ -1,8 +1,10 @@
 from scipy.signal import TransferFunction, impulse, zpk2tf
+from scipy.io.wavfile import write
 import numpy as np
 import matplotlib.pyplot as plt
 from lib.config.ConfigParser import ConfigParser
 import sounddevice as sd
+from os.path import join
 from lib.processing.functions import construct_bandpass_filter, apply_filter
 
 class ValveParams:
@@ -32,7 +34,7 @@ def model_valve(duration: float, freq:float, ampl:float, delay:float, Fs:int):
     t_out = np.linspace(0, delay+duration, len(h_out_delayed))
     return t_out, h_out_delayed
 
-def main():
+def simple_model():
     config = ConfigParser()
     valves = [
         ValveParams(20,  50,   1,  10, "M"),
@@ -75,13 +77,17 @@ def main():
     t_sth = np.linspace(0, len(h_sth)/Fs, len(h_sth))
     h_tot_filt = apply_filter(h_sth, g)
     t_tot_filt = np.linspace(-len(g)/(2*Fs), len(h_sth)/Fs+len(g)/(2*Fs), len(h_tot_filt))
-    sd.play(h_sth, Fs)
+    
+    write(join(config.Generation.SoundsPath, f"Simple-{Fs}Hz-{BPM}BPM-{n} beats.wav"), Fs, h_tot_filt)
+    
+    sd.play(h_tot_filt, Fs)
     
     plt.plot(t_sth, h_sth, label="original")
     plt.plot(t_tot_filt, h_tot_filt, label="filtered")
+    plt.title("Simple")
     plt.legend()
     plt.grid()
     plt.show()
 
 if __name__ == "__main__":
-    main()
+    simple_model()

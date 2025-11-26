@@ -67,7 +67,7 @@ class ConfigParser:
                 
                 comment = re.match(r"\A[;#]", line)
                 section = re.match(r"\A\[([^]]+)\]\Z", line)
-                attribute = re.match(r"\A([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*([a-zA-Z0-9.]+)\Z", line)
+                attribute = re.match(r"\A([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*([\"/\\a-zA-Z0-9. ]+)\Z", line)
                 
                 if line == "":
                     continue
