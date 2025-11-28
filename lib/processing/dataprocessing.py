@@ -1,6 +1,7 @@
 from scipy import signal
 import numpy as np
 from enum import Enum
+from typing import Callable
 
 class HeartSound (Enum):
     S1 = 0
@@ -78,9 +79,15 @@ def detect_peak_domains(peaks: np.ndarray, see: np.ndarray, threshold: float):
             peak_start = None
     return np.array(peaks_ind)
 
-def segment(signal: np.ndarray, domains: np.ndarray, len_filter: int):
+def segment_only_with_len_filter_and_thus_deprecated_should_not_be_used(signal: np.ndarray, domains: np.ndarray, len_filter: int):
     mask = np.zeros(len(signal), dtype=bool)
     comp = int(len_filter / 2)
     for start, end in domains:
         mask[start - comp:end - comp] = True
+    return np.where(mask, signal, 0)
+
+def segment(signal: np.ndarray, domains: np.ndarray, comp: Callable[[int], int]):
+    mask = np.zeros(len(signal), dtype=bool)
+    for start, end in domains:
+        mask[comp(start):comp(end)] = True
     return np.where(mask, signal, 0)

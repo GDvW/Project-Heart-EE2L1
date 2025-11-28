@@ -8,6 +8,8 @@ from lib.processing.functions import construct_bandpass_filter
 from lib.processing.Processor import Processor
 from lib.processing.dataprocessing import HeartSound
 
+PLOT_RAW = True
+
 def segmentation(config):
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     processor = Processor(path, config, save_results=True)
@@ -74,11 +76,16 @@ def segmentation(config):
     ax[2][0].grid()
     ax[2][0].legend()
     
-    t = np.linspace(0, len(processor.segmented_s1)/processor.Fs_target, len(processor.segmented_s1))
-    
-    ax[2][1].plot(t, processor.y_normalized, label="Start signal")
-    ax[2][1].plot(t, processor.segmented_s1, label="segmented_s1")
-    ax[2][1].plot(t, processor.segmented_s2, label="segmented_s2")
+    if PLOT_RAW:
+        t = np.linspace(0, len(processor.x)/processor.Fs_target, len(processor.x))
+        ax[2][1].plot(t, processor.x, label="Start signal")
+        ax[2][1].plot(t, processor.segmented_s1_raw, label="segmented_s1")
+        ax[2][1].plot(t, processor.segmented_s2_raw, label="segmented_s2")
+    else:
+        t = np.linspace(0, len(processor.segmented_s1)/processor.Fs_target, len(processor.segmented_s1))
+        ax[2][1].plot(t, processor.y_normalized, label="Start signal")
+        ax[2][1].plot(t, processor.segmented_s1, label="segmented_s1")
+        ax[2][1].plot(t, processor.segmented_s2, label="segmented_s2")
     ax[2][1].grid()
     ax[2][1].legend()
     

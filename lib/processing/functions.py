@@ -74,7 +74,7 @@ def downsample(x: list|np.ndarray, Fs_original:int, Fs_target: int):
     M = int(M)
     x_downsampled = x[::M]
     
-    return x_downsampled
+    return x_downsampled, M
 
 def normalize(x: np.ndarray, mode: str="max"):
     """Returns the normalized input signal.

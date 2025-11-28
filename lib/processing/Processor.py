@@ -11,7 +11,7 @@ class Processor:
     
     This class allows to easily reuse code across the whole codebase and optionally save results for plotting them.
     """
-    def __init__(self, file_path: str, config: ConfigParser, save_results: bool = False, log: bool=True, write_result: bool = True):
+    def __init__(self, file_path: str, config: ConfigParser, save_results: bool = False, log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True):
         """Initializes the processor.
 
         Args:
@@ -41,13 +41,15 @@ class Processor:
         self.generation_path = config.Segmentation.OutputPath
         
         self.save_results = save_results
-        self.write_result = write_result
+        self.write_result_processed = write_result_processed
+        self.write_result_raw = write_result_raw
         self.log_enabled = log
         # Initialize fields that values can be saved to
         self.Fs_original = None
         self.x = None
         self.g = None
         self.y = None
+        self.M = None
         self.y_downsampled = None
         self.y_normalized = None
         self.y_energy = None
@@ -67,6 +69,8 @@ class Processor:
         self.ind_s2 = None
         self.segmented_s1 = None
         self.segmented_s2 = None
+        self.segmented_s1_raw = None
+        self.segmented_s2_raw = None
     def process(self):
         """Initialize the processing and optionally save the steps in between.
         """
@@ -80,7 +84,7 @@ class Processor:
         y = apply_filter(x, g)
         
         self.log("Downsampling signal...")
-        y_downsampled = downsample(y, Fs_original, self.Fs_target)
+        y_downsampled, M = downsample(y, Fs_original, self.Fs_target)
         
         self.log("Normalizing signal...")
         y_normalized = normalize(y_downsampled)
@@ -111,14 +115,27 @@ class Processor:
         ind_s1 = detect_peak_domains(s1_peaks, see_normalized, self.segmentation_threshold)
         ind_s2 = detect_peak_domains(s2_peaks, see_normalized, self.segmentation_threshold)
         
-        segmented_s1 = segment(y_normalized, ind_s1, len(see_filter))
-        segmented_s2 = segment(y_normalized, ind_s2, len(see_filter))
+        # segmented_s1 = segment(y_normalized, ind_s1, len(see_filter))
+        # segmented_s2 = segment(y_normalized, ind_s2, len(see_filter))
+        # segmented_s1_raw = segment(x, ind_s1, len(see_filter)+len(g))
+        # segmented_s2_raw = segment(x, ind_s2, len(see_filter)+len(g))
+        see_filter_comp = int(len(see_filter)/2)
+        g_filter_comp = int(len(g)/2)
+        segmented_s1 = segment(y_normalized, ind_s1, lambda index: (index - see_filter_comp))
+        segmented_s2 = segment(y_normalized, ind_s2, lambda index: (index - see_filter_comp))
+        segmented_s1_raw = segment(x, ind_s1, lambda index: (index - see_filter_comp) * M - g_filter_comp)
+        segmented_s2_raw = segment(x, ind_s2, lambda index: (index - see_filter_comp) * M - g_filter_comp)
         
-        if self.write_result:
-            self.log("Writing files...")
+        if self.write_result_processed:
+            self.log("Writing processed files...")
             file_name = splitext(basename(self.file_path))[0]
-            write(join(self.generation_path, f"segmented-s1-{file_name}.wav"), self.Fs_target, segmented_s1)
-            write(join(self.generation_path, f"segmented-s2-{file_name}.wav"), self.Fs_target, segmented_s2)
+            write(join(self.generation_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, segmented_s1)
+            write(join(self.generation_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, segmented_s2)
+        if self.write_result_raw:
+            self.log("Writing raw files...")
+            file_name = splitext(basename(self.file_path))[0]
+            write(join(self.generation_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_target, segmented_s1)
+            write(join(self.generation_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_target, segmented_s2)
 
         
         self.log("Finished! :-)")
@@ -130,6 +147,7 @@ class Processor:
             self.x = x
             self.g = g
             self.y = y
+            self.M = M
             self.y_downsampled = y_downsampled
             self.y_normalized = y_normalized
             self.y_energy = y_energy
@@ -148,6 +166,8 @@ class Processor:
             self.ind_s2 = ind_s2
             self.segmented_s1 = segmented_s1
             self.segmented_s2 = segmented_s2
+            self.segmented_s1_raw = segmented_s1_raw
+            self.segmented_s2_raw = segmented_s2_raw
             
     def classify_peaks(self, x_peaks: np.ndarray):
         diff = np.diff(x_peaks)
