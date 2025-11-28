@@ -109,12 +109,9 @@ class Processor:
         s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks)
         print(uncertain)
         self.log("Troubleshooting")
-        s1_u, s2_u, uncertain_new = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
+        s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
         
-        # Get final values
-        s1_peaks = np.concatenate([s1_peaks, s1_u])
-        s2_peaks = np.concatenate([s2_peaks, s2_u])
-        uncertain = uncertain[~(np.isin(uncertain[:,0], s1_peaks[:,0]) | np.isin(uncertain[:,0], s2_peaks[:,0]))]
+
         
         # Sort arrays for further processing
         s1_peaks = s1_peaks[s1_peaks[:,0].argsort()]
@@ -298,7 +295,14 @@ class Processor:
                     new_s2 = get_difference(s2_peaks_new, s2_peaks)
                     s1_u.extend(new_s1)
                     s2_u.extend(new_s2)
-        return s1_u, s2_u, np.array([], dtype=float)
+                    
+                    
+        # Get final values
+        s1_peaks = np.concatenate([s1_peaks, s1_u])
+        s2_peaks = np.concatenate([s2_peaks, s2_u])
+        uncertain = uncertain[~(np.isin(uncertain[:,0], s1_peaks[:,0]) | np.isin(uncertain[:,0], s2_peaks[:,0]))]
+        
+        return s1_peaks, s2_peaks, uncertain
                 
             # self.log(f"Getting peaks of Shannon Energy Envelope for {len(group)} uncertains...")
             # peaks_adj, _ = signal.find_peaks(see, height=min_height, distance=min_dist)

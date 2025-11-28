@@ -58,14 +58,14 @@ def segmentation(config):
     ax[1][0].axhline(y=processor.segmentation_min_height, label="Cutoff")
     ax[1][0].axhline(y=processor.segmentation_threshold, label="Threshold", color="green")
     if processor.uncertain.size > 0:
-        ax[1][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.see_normalized[processor.uncertain[:,0]], c="purple", marker="^", label="uncertain")
+        ax[1][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.see_normalized[processor.uncertain[:,0]], c="purple", marker="^", label="discarded")
     ax[1][0].legend()
     ax[2][0].plot(processor.detected_peaks[:,0] / processor.Fs_target, processor.detected_peaks[:,1], label="all", marker=".")
     ax[2][0].plot(processor.s1_peaks[:,0] / processor.Fs_target, processor.s1_peaks[:,1], label="s1_peaks")
     ax[2][0].axhline(y=processor.y_line, label="Threshold", color="black")
     ax[2][0].plot(processor.s2_peaks[:,0] / processor.Fs_target, processor.s2_peaks[:,1], label="s2_peaks")
     if processor.uncertain.size > 0:
-        ax[2][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.uncertain[:,1], label="uncertain", color="red")
+        ax[2][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.uncertain[:,1], label="discarded", color="red")
     ax[2][0].grid()
     ax[2][0].legend()
     
