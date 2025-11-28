@@ -109,7 +109,8 @@ class Processor:
         s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks)
         print(uncertain)
         self.log("Troubleshooting")
-        s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
+        if len(uncertain) > 0:
+            s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
         
 
         
@@ -265,9 +266,6 @@ class Processor:
 
         debug_samples = int(debug_length * Fs)
         for group in groups:
-            begin_segment = group[0][0] - debug_samples
-            end_segment = group[-1][0] + debug_samples
-            segment = see[begin_segment:end_segment]
             if (np.any(group[:,1] < self.y_line) != np.all(group[:,1] < self.y_line) or
                     np.any(group[:,1] > self.y_line) != np.all(group[:,1] > self.y_line)):
                 print(f"WARNING: any and all do not match {group}")
@@ -275,7 +273,47 @@ class Processor:
 
             # Missed a peak, adjust threshold down
             if group[0,1] > self.y_line:
-                pass
+                begin_segment = group[0][0] - debug_samples
+                end_segment = group[-1][0] + debug_samples
+                peaks_in_segment = peaks[(peaks >= begin_segment) & (peaks <= end_segment)]
+                segment = see[begin_segment:end_segment]
+                success = False
+                
+                all_peaks, _ = signal.find_peaks(segment, distance=min_dist)
+                new_peaks = np.setdiff1d(all_peaks+begin_segment, peaks_in_segment)
+                if len(new_peaks) == 0:
+                    self.log("Debugging uncertains failed (going down), no new peaks found.")
+                    continue
+                    
+                new_peaks_height = see[new_peaks]
+                
+                while True:
+                    biggest_peak_ind = np.argmax(new_peaks_height)
+                    biggest_peak = new_peaks[biggest_peak_ind]
+                    new_peaks_height = np.delete(new_peaks_height, biggest_peak_ind)
+                    new_peaks = np.delete(new_peaks, biggest_peak_ind)
+                    peaks_in_segment = np.concatenate([peaks_in_segment, [biggest_peak]])
+                    # Sort peaks
+                    peaks_in_segment = peaks_in_segment[peaks_in_segment.argsort()]
+                    s1_peaks_new, s2_peaks_new, uncertain_new = self.classify_peaks(peaks_in_segment, save_y_line = False)
+                    
+                    if len(uncertain_new) == 0:
+                        success = True
+                        break
+                    elif len(new_peaks) == 0:
+                        self.log("Debugging uncertains failed (going down)")
+                        break
+                if success:
+                    new_s1 = get_difference(s1_peaks_new, s1_peaks)
+                    new_s2 = get_difference(s2_peaks_new, s2_peaks)
+                    s1_u.extend(new_s1)
+                    s2_u.extend(new_s2)
+            # self.log(f"Getting peaks of Shannon Energy Envelope for {len(group)} uncertains...")
+            # peaks_adj, _ = signal.find_peaks(see, height=min_height, distance=min_dist)
+            
+            # self.log(f"Classifying peaks for {len(group)} uncertains...")
+            # # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
+            # s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks, save_y_line = False)
             # One peak too much, adjust threshold up
             else:   
                 success = False
@@ -288,7 +326,7 @@ class Processor:
                         success = True
                         break
                     elif len(peaks) == 0:
-                        self.log("Debugging uncertains failed")
+                        self.log("Debugging uncertains failed (going up)")
                         break
                 if success:
                     new_s1 = get_difference(s1_peaks_new, s1_peaks)
@@ -298,18 +336,14 @@ class Processor:
                     
                     
         # Get final values
-        s1_peaks = np.concatenate([s1_peaks, s1_u])
-        s2_peaks = np.concatenate([s2_peaks, s2_u])
+        if s1_u:
+            s1_peaks = np.concatenate([s1_peaks, s1_u])
+        if s2_u:
+            s2_peaks = np.concatenate([s2_peaks, s2_u])
         uncertain = uncertain[~(np.isin(uncertain[:,0], s1_peaks[:,0]) | np.isin(uncertain[:,0], s2_peaks[:,0]))]
         
         return s1_peaks, s2_peaks, uncertain
                 
-            # self.log(f"Getting peaks of Shannon Energy Envelope for {len(group)} uncertains...")
-            # peaks_adj, _ = signal.find_peaks(see, height=min_height, distance=min_dist)
-            
-            # self.log(f"Classifying peaks for {len(group)} uncertains...")
-            # # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
-            # s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks, save_y_line = False)
             
         
         
