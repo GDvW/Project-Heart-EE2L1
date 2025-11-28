@@ -11,7 +11,7 @@ class Processor:
     
     This class allows to easily reuse code across the whole codebase and optionally save results for plotting them.
     """
-    def __init__(self, file_path: str, config: ConfigParser, save_results: bool = False, log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True):
+    def __init__(self, file_path: str, config: ConfigParser, save_steps: bool = False, log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True):
         """Initializes the processor.
 
         Args:
@@ -41,7 +41,7 @@ class Processor:
         self.segmentation_threshold = config.Segmentation.EnvelopeThreshold
         self.generation_path = config.Segmentation.OutputPath
         
-        self.save_results = save_results
+        self.save_steps = save_steps
         self.write_result_processed = write_result_processed
         self.write_result_raw = write_result_raw
         self.log_enabled = log
@@ -149,7 +149,7 @@ class Processor:
         # self.log(f"Results:\n  - S1 count: {len(s1_peaks)}\n  - S2 count: {len(s2_peaks)}\n  - S1 outliers count: {len(s1_outliers)}\n  - S2 outliers count: {len(s2_outliers)}")
         self.log(f"Results:\n  - S1 count: {len(s1_peaks)}\n  - S2 count: {len(s2_peaks)}\n  - Uncertain: {len(uncertain)}")
         
-        if self.save_results:
+        if self.save_steps:
             self.Fs_original = Fs_original
             self.x = x
             self.g = g
@@ -175,13 +175,14 @@ class Processor:
             self.segmented_s1_raw = segmented_s1_raw
             self.segmented_s2_raw = segmented_s2_raw
             
-    def classify_peaks(self, x_peaks: np.ndarray, save_y_line: bool = True):
+    def classify_peaks(self, x_peaks: np.ndarray, save_y_line: bool = True, save_peaks: bool = True):
         diff = np.diff(x_peaks)
         diff2 = np.diff(diff)
         
         peaks = np.array(list(zip(x_peaks[:-2], diff[:-1], diff2)))
         
-        self.detected_peaks = peaks
+        if save_peaks:
+            self.detected_peaks = peaks
         
         # s2_peaks, s2_outliers, s1_peaks, s1_outliers = analyze_diff2(x_peaks, diff, diff2)
         s1_peaks, s2_peaks, uncertain = self.analyze_diff2(peaks, save_y_line)
@@ -295,7 +296,7 @@ class Processor:
                     peaks_in_segment = np.concatenate([peaks_in_segment, [biggest_peak]])
                     # Sort peaks
                     peaks_in_segment = peaks_in_segment[peaks_in_segment.argsort()]
-                    s1_peaks_new, s2_peaks_new, uncertain_new = self.classify_peaks(peaks_in_segment, save_y_line = False)
+                    s1_peaks_new, s2_peaks_new, uncertain_new = self.classify_peaks(peaks_in_segment, save_y_line = False, save_peaks=False)
                     
                     if len(uncertain_new) == 0:
                         success = True
@@ -308,13 +309,6 @@ class Processor:
                     new_s2 = get_difference(s2_peaks_new, s2_peaks)
                     s1_u.extend(new_s1)
                     s2_u.extend(new_s2)
-            # self.log(f"Getting peaks of Shannon Energy Envelope for {len(group)} uncertains...")
-            # peaks_adj, _ = signal.find_peaks(see, height=min_height, distance=min_dist)
-            
-            # self.log(f"Classifying peaks for {len(group)} uncertains...")
-            # # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
-            # s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks, save_y_line = False)
-            # One peak too much, adjust threshold up
             else:   
                 success = False
                 while True:

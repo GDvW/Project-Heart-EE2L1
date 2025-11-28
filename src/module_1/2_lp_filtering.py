@@ -45,7 +45,7 @@ def assignment423(config: ConfigParser):
     """
     file_path = ".\\samples\\stethoscope_5_realHeart_\\recording_2025-07-10_14-40-12_channel_1.wav"
     
-    processor = Processor(file_path, config, save_results=True)
+    processor = Processor(file_path, config, save_steps=True)
     processor.process()
     print(f"Fs is {processor.Fs_original} Hz")
     
