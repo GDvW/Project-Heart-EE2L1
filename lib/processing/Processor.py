@@ -35,6 +35,7 @@ class Processor:
         self.energy_filter_order = config.Energy.FilterOrder
         self.energy_cutoff_freq = config.Energy.CutoffFrequency
         self.energy_filter_size = config.Energy.Size
+        self.segmentation_solve_uncertain_length = config.Segmentation.SolveUncertainLength
         self.segmentation_min_height = config.Segmentation.MinHeight
         self.segmentation_min_dist = config.Segmentation.MinDist * self.Fs_target
         self.segmentation_threshold = config.Segmentation.EnvelopeThreshold
@@ -58,7 +59,6 @@ class Processor:
         self.see_normalized = None
         self.peaks = None
         self.peak_properties = None
-        self.peaks_dist = None
         self.s1_peaks = None
         self.s2_peaks = None
         self.s1_outliers = None
@@ -104,12 +104,21 @@ class Processor:
         self.log("Getting peaks of Shannon Energy Envelope...")
         peaks, peak_properties = get_peaks(see_normalized, self.segmentation_min_height, self.segmentation_min_dist)
         
-        self.log("Calculating distance between peaks...")
-        peaks_dist = get_dist_peaks_to_next(peaks)
-        
         self.log("Classifying peaks...")
         # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
         s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks)
+        print(uncertain)
+        self.log("Troubleshooting")
+        s1_u, s2_u, uncertain_new = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
+        
+        # Get final values
+        s1_peaks = np.concatenate([s1_peaks, s1_u])
+        s2_peaks = np.concatenate([s2_peaks, s2_u])
+        uncertain = uncertain[~(np.isin(uncertain[:,0], s1_peaks[:,0]) | np.isin(uncertain[:,0], s2_peaks[:,0]))]
+        
+        # Sort arrays for further processing
+        s1_peaks = s1_peaks[s1_peaks[:,0].argsort()]
+        s2_peaks = s2_peaks[s2_peaks[:,0].argsort()]
         
         self.log("Segmenting them...")
         ind_s1 = detect_peak_domains(s1_peaks, see_normalized, self.segmentation_threshold)
@@ -134,8 +143,8 @@ class Processor:
         if self.write_result_raw:
             self.log("Writing raw files...")
             file_name = splitext(basename(self.file_path))[0]
-            write(join(self.generation_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_target, segmented_s1)
-            write(join(self.generation_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_target, segmented_s2)
+            write(join(self.generation_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_target, segmented_s1_raw)
+            write(join(self.generation_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_target, segmented_s2_raw)
 
         
         self.log("Finished! :-)")
@@ -156,7 +165,6 @@ class Processor:
             self.see_normalized = see_normalized
             self.peaks = peaks
             self.peak_properties = peak_properties
-            self.peaks_dist = peaks_dist
             self.s1_peaks = s1_peaks
             self.s2_peaks = s2_peaks
             self.uncertain = uncertain
@@ -169,7 +177,7 @@ class Processor:
             self.segmented_s1_raw = segmented_s1_raw
             self.segmented_s2_raw = segmented_s2_raw
             
-    def classify_peaks(self, x_peaks: np.ndarray):
+    def classify_peaks(self, x_peaks: np.ndarray, save_y_line: bool = True):
         diff = np.diff(x_peaks)
         diff2 = np.diff(diff)
         
@@ -178,11 +186,11 @@ class Processor:
         self.detected_peaks = peaks
         
         # s2_peaks, s2_outliers, s1_peaks, s1_outliers = analyze_diff2(x_peaks, diff, diff2)
-        s1_peaks, s2_peaks, uncertain = self.analyze_diff2(peaks)
+        s1_peaks, s2_peaks, uncertain = self.analyze_diff2(peaks, save_y_line)
         
         return s1_peaks, s2_peaks, uncertain
     
-    def analyze_diff2(self, peaks):
+    def analyze_diff2(self, peaks: np.ndarray, save_y_line: bool = True):
         minima = []
         maxima = []
         uncertain = []
@@ -237,12 +245,69 @@ class Processor:
             else:
                 uncertain.append(to_add)
             
-        if self.save_results:
+        if save_y_line:
             self.y_line = y_line
 
         return np.array(s1), np.array(s2), np.array(uncertain)
     
+    def solve_uncertains(self, see: np.ndarray, peaks: np.ndarray, s1_peaks: np.ndarray, s2_peaks: np.ndarray, uncertain: np.ndarray, debug_length: float, Fs: int, min_height: float, min_dist: float):
+        s1_u = []
+        s2_u = []
+        # Solve the uncertain thingys
+        # Sort the uncertains in groups that follow each other (no peak in between)
+        mask = np.isin(peaks, uncertain[:,0])
+        idx = np.where(mask)[0]   # [1, 3, 4]
+        breaks = np.where(np.diff(idx) > 1)[0] + 1
+        groups = np.array(np.split(peaks[idx], breaks))
+        
+        peak_to_index = {p: i for i, p in enumerate(peaks)}
+        idx = np.array([peak_to_index[val] for val in uncertain[:,0]])
+        breaks = np.where(np.diff(idx) > 1)[0] + 1
+        # Step 3: split uncertains accordingly
+        groups = np.split(uncertain, breaks)
 
+        debug_samples = int(debug_length * Fs)
+        for group in groups:
+            begin_segment = group[0][0] - debug_samples
+            end_segment = group[-1][0] + debug_samples
+            segment = see[begin_segment:end_segment]
+            if (np.any(group[:,1] < self.y_line) != np.all(group[:,1] < self.y_line) or
+                    np.any(group[:,1] > self.y_line) != np.all(group[:,1] > self.y_line)):
+                print(f"WARNING: any and all do not match {group}")
+                continue
+
+            # Missed a peak, adjust threshold down
+            if group[0,1] > self.y_line:
+                pass
+            # One peak too much, adjust threshold up
+            else:   
+                success = False
+                while True:
+                    smallest_peak = group[np.argmin(group[:,1])]
+                    peaks = np.setdiff1d(peaks, [smallest_peak])
+                    s1_peaks_new, s2_peaks_new, uncertain_new = self.classify_peaks(peaks, save_y_line = False)
+                    
+                    if not np.any(np.isin(uncertain_new, group)) and len(peaks) > 0:
+                        success = True
+                        break
+                    elif len(peaks) == 0:
+                        self.log("Debugging uncertains failed")
+                        break
+                if success:
+                    new_s1 = get_difference(s1_peaks_new, s1_peaks)
+                    new_s2 = get_difference(s2_peaks_new, s2_peaks)
+                    s1_u.extend(new_s1)
+                    s2_u.extend(new_s2)
+        return s1_u, s2_u, np.array([], dtype=float)
+                
+            # self.log(f"Getting peaks of Shannon Energy Envelope for {len(group)} uncertains...")
+            # peaks_adj, _ = signal.find_peaks(see, height=min_height, distance=min_dist)
+            
+            # self.log(f"Classifying peaks for {len(group)} uncertains...")
+            # # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
+            # s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks, save_y_line = False)
+            
+        
         
     
     def log(self, msg):

@@ -8,10 +8,11 @@ from lib.processing.functions import construct_bandpass_filter
 from lib.processing.Processor import Processor
 from lib.processing.dataprocessing import HeartSound
 
-PLOT_RAW = True
+PLOT_RAW = False
 
 def segmentation(config):
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
+    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav"
     processor = Processor(path, config, save_results=True)
     
     processor.process()
@@ -58,19 +59,11 @@ def segmentation(config):
     ax[1][0].axhline(y=processor.segmentation_threshold, label="Threshold", color="green")
     if processor.uncertain.size > 0:
         ax[1][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.see_normalized[processor.uncertain[:,0]], c="purple", marker="^", label="uncertain")
-    # if processor.s1_outliers.size > 0:
-    #     ax[1][0].scatter(processor.s1_outliers[:,0] / processor.Fs_target, processor.see_normalized[processor.s1_outliers[:,0]], c="purple", marker="^", label="uncertain")
-    # if processor.s2_outliers.size > 0:
-    #     ax[1][0].scatter(processor.s2_outliers[:,0] / processor.Fs_target, processor.see_normalized[processor.s2_outliers[:,0]], c="purple", marker="^", label="uncertain")
     ax[1][0].legend()
-    print(len(processor.peaks_dist))
-    # ax[2][0].plot(np.array(list(processor.peaks_dist.keys())) / processor.Fs_target, processor.peaks_dist.values(), label="all", marker=".")
     ax[2][0].plot(processor.detected_peaks[:,0] / processor.Fs_target, processor.detected_peaks[:,1], label="all", marker=".")
     ax[2][0].plot(processor.s1_peaks[:,0] / processor.Fs_target, processor.s1_peaks[:,1], label="s1_peaks")
     ax[2][0].axhline(y=processor.y_line, label="Threshold", color="black")
     ax[2][0].plot(processor.s2_peaks[:,0] / processor.Fs_target, processor.s2_peaks[:,1], label="s2_peaks")
-    # ax[2][0].scatter(processor.s1_outliers[:,0] / processor.Fs_target, processor.s1_outliers[:,1], label="s1_outliers", color="red")
-    # ax[2][0].scatter(processor.s2_outliers[:,0] / processor.Fs_target, processor.s2_outliers[:,1], label="s2_outliers", color="orange")
     if processor.uncertain.size > 0:
         ax[2][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.uncertain[:,1], label="uncertain", color="red")
     ax[2][0].grid()

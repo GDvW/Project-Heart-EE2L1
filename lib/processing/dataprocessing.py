@@ -67,6 +67,12 @@ def classify_peaks(x_peaks: np.ndarray):
 def pop_np(x):
     return x[-1], x[:-1]
 
+def get_difference(a,b):
+    a_rows = {tuple(row) for row in a}
+    b_rows = {tuple(row) for row in b}
+    
+    return list(a_rows - b_rows)
+
 def detect_peak_domains(peaks: np.ndarray, see: np.ndarray, threshold: float):
     peak_start = None
     peaks_ind = []
