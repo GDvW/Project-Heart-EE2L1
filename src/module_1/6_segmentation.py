@@ -11,9 +11,9 @@ from lib.processing.dataprocessing import HeartSound
 PLOT_RAW = False
 
 def segmentation(config):
-    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
+    path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav"
-    path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav"
+    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav"
     processor = Processor(path, config, save_steps=True, postprocessing=True)
     
     processor.process()
@@ -56,7 +56,7 @@ def segmentation(config):
     ax[1][0].scatter(processor.ind_s1[:,1] / processor.Fs_target, processor.see_normalized[processor.ind_s1[:,1]], c="orange", marker="v")
     ax[1][0].scatter(processor.ind_s2[:,0] / processor.Fs_target, processor.see_normalized[processor.ind_s2[:,0]], c="darkgrey", marker="v", label="S2 ind")
     ax[1][0].scatter(processor.ind_s2[:,1] / processor.Fs_target, processor.see_normalized[processor.ind_s2[:,1]], c="darkgrey", marker="v")
-    ax[1][0].axhline(y=processor.segmentation_min_height, label="Cutoff")
+    ax[1][0].axhline(y=processor.actual_segmentation_min_height, label="Cutoff")
     ax[1][0].axhline(y=processor.segmentation_threshold, label="Threshold", color="green")
     if processor.uncertain.size > 0:
         ax[1][0].scatter(processor.uncertain[:,0] / processor.Fs_target, processor.see_normalized[processor.uncertain[:,0]], c="purple", marker="^", label="discarded")
