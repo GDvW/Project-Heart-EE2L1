@@ -8,7 +8,7 @@ import matplotlib as mpl
 import re
 from copy import deepcopy
 
-# mpl.use('qtagg')
+mpl.use('qtagg')
 mpl.rcParams["path.simplify"] = True
 mpl.rcParams["path.simplify_threshold"] = 1
 plt.ion()
@@ -196,7 +196,7 @@ Commands:
                     n = n_init
                     shift = shift_init
                     valves = deepcopy(valves_init)
-                    updateModel(BPM, valves)
+                    updateModel(BPM, n, valves)
                     updateOriginal(shift)
                 case "print":
                     print_vals(BPM, shift, valves)
@@ -220,3 +220,34 @@ Commands:
 
 if __name__ == "__main__":
     matchParams()
+    
+# sample values:
+# Original:
+#   - shift: -2.2s
+# Model:
+#   - BPM: 65
+#   - Valves:
+#   - Name: M
+#       Duration: 75.0ms
+#       Frequency: 26.0Hz
+#       Amplitude: 0.7
+#       Delay: 5.0ms
+#       Onset: 12.0ms
+#   - Name: T
+#       Duration: 50.0ms
+#       Frequency: 10.0Hz
+#       Amplitude: 0.5
+#       Delay: 55.0ms
+#       Onset: 50.0ms
+#   - Name: A
+#       Duration: 55.0ms
+#       Frequency: 35.0Hz
+#       Amplitude: 0.7
+#       Delay: 325.0ms
+#       Onset: 20.0ms
+#   - Name: P
+#       Duration: 30.0ms
+#       Frequency: 16.0Hz
+#       Amplitude: 0.4
+#       Delay: 400.0ms
+#       Onset: 0.0ms
