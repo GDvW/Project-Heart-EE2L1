@@ -57,7 +57,7 @@ def advanced_model_valve(duration: float, freq:float, ampl:float, delay:float, o
     
     return t_out, h_out
 
-def advanced_model(Fs, BPM, lf, hf, order, size, valves):
+def advanced_model(Fs, BPM, lf, hf, order, size, valves, n):
     # Generate sounds of single valves
 
     t_out = []
@@ -68,7 +68,7 @@ def advanced_model(Fs, BPM, lf, hf, order, size, valves):
         h_out.append(h)
     
     # Add single valves
-    h_len = int(60/BPM*Fs)
+    h_len = int(60/BPM*Fs) - size
     t_total = np.linspace(0, 60/BPM, h_len)
     h_total = np.zeros(h_len)
     for h in h_out:
@@ -87,6 +87,12 @@ def advanced_model(Fs, BPM, lf, hf, order, size, valves):
         size
     )
     h_filtered = apply_filter(h_total, g)
-    t_filtered = np.linspace(-len(g)/Fs, (len(h_filtered) + len(g))/Fs, len(h_filtered))
+    t_filtered = np.linspace(-len(g)/Fs/2, (len(h_filtered) + len(g))/Fs/2, len(h_filtered))
     
-    return t_filtered, h_filtered
+    return repeat(n, h_filtered, t_filtered, Fs)
+
+def repeat(n, h_filtered, t_filtered, Fs):
+    h_full = np.tile(h_filtered, n)
+    t_full = np.linspace(0, len(h_full)/Fs, len(h_full))
+    
+    return t_full, h_full

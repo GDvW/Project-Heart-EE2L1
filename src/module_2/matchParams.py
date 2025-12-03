@@ -1,16 +1,10 @@
-from scipy.signal import TransferFunction, impulse, zpk2tf
 import numpy as np
 import matplotlib.pyplot as plt
 from lib.config.ConfigParser import ConfigParser
 import sounddevice as sd
 from lib.processing.Processor import Processor
-from lib.processing.functions import construct_bandpass_filter, apply_filter
-from os.path import join
-from scipy.io.wavfile import write
 from src.module_2.generate import *
 import matplotlib as mpl
-from matplotlib.widgets import Button, Slider, TextBox
-from math import ceil, floor
 import re
 from copy import deepcopy
 
@@ -43,7 +37,6 @@ def getCommand(cmd: str, general_specifiers: list, general_props: list, peak_spe
 def matchParams():
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
-    n = config.HeartSoundModel.NBeats
     len_g = config.LowpassFilter.Size
     lf = config.LowpassFilter.LowFrequency
     hf = config.LowpassFilter.HighFrequency
@@ -51,6 +44,7 @@ def matchParams():
     size=config.LowpassFilter.Size
     
     # Define params
+    n = n_init = config.HeartSoundModel.NBeats
     BPM = BPM_init = config.HeartSoundModel.BPM
     shift = shift_init = -2.28
     valves_init = [
@@ -73,7 +67,8 @@ def matchParams():
         hf,
         order,
         size,
-        valves_init
+        valves,
+        n
     ) 
     
     fig, ax = plt.subplots()    
@@ -81,10 +76,7 @@ def matchParams():
     max_t = max(t_model)+0.1
     modelplot, = ax.plot(t_model, h_model, label="Model")
     
-    t = timeOriginal(shift_init, len(processor.y_normalized), processor.Fs_target)
-    mask = (t >= min_t) & (t <= max_t)
-    
-    original, = ax.plot(t[mask], processor.y_normalized[mask], label="Real data")
+    original, = ax.plot(timeOriginal(shift_init, len(processor.y_normalized), processor.Fs_target), processor.y_normalized, label="Real data")
     ax.set_xlim(min_t, max_t)
     ax.set_title("Advanced")
     ax.legend()
@@ -92,21 +84,21 @@ def matchParams():
     
     def updateOriginal(shift):
         t = timeOriginal(shift, len(processor.y_normalized), processor.Fs_target)
-        mask = (t >= min_t) & (t <= max_t)
-        original.set_xdata(t[mask])
-        original.set_ydata(processor.y_normalized[mask])
+        original.set_xdata(t)
         fig.canvas.draw_idle()
         
-    def updateModel(BPM, valves):
-        _, h_model = advanced_model(
+    def updateModel(BPM, n, valves):
+        t_model, h_model = advanced_model(
             Fs,
             BPM,
             lf,
             hf,
             order,
             size,
-            valves
+            valves,
+            n
         ) 
+        modelplot.set_xdata(t_model)
         modelplot.set_ydata(h_model)
         fig.canvas.draw_idle()
 
@@ -118,7 +110,7 @@ def matchParams():
         if not prop.startswith("_") and prop not in ["name", "toStr"]
     ]
     names = [valve.name for valve in valves]
-    general_props = ["BPM", "shift"]
+    general_props = ["BPM", "shift", "n"]
     general_specs = ["G"]
     
     def print_specs():
@@ -142,7 +134,8 @@ Commands:
 - opt: print all options
 - specs: print all specifiers
 - props: print the props that can be changed
-- print: print set values""")
+- print: print set values
+- play: play the generated sound""")
         
     
     while True:
@@ -157,19 +150,26 @@ Commands:
                             BPM = int(val)
                         except:
                             success = False
-                            print("BPM must be a int")
+                            print("BPM must be an int")
                     elif prop == "shift":
                         try:
                             shift = float(val)
                         except:
                             success = False
-                            print("BPM must be a int")
+                            print("shift must be a float")
+                    elif prop == "n":
+                        try:
+                            n = int(val)
+                        except:
+                            success = False
+                            print("n must be an int")
                     else:
                         raise NotImplementedError
                 else:
                     raise NotImplementedError
                 if success:
                     updateOriginal(shift)
+                    updateModel(BPM, n, valves)
             else:
                 try:
                     setattr(valves[names.index(spec)], prop, float(val) / (1000 if prop in ["delay", "duration", "onset"] else 1))
@@ -177,7 +177,7 @@ Commands:
                     success = False
                     print("Value not castable to float")
                 if success:
-                    updateModel(BPM, valves)
+                    updateModel(BPM, n, valves)
         else:
             match cmd:
                 case "exit":
@@ -193,12 +193,25 @@ Commands:
                     print_help()
                 case "reset":
                     BPM = BPM_init
+                    n = n_init
                     shift = shift_init
                     valves = deepcopy(valves_init)
                     updateModel(BPM, valves)
                     updateOriginal(shift)
                 case "print":
                     print_vals(BPM, shift, valves)
+                case "play":
+                    t_model, h_model = advanced_model(
+                        Fs,
+                        BPM,
+                        lf,
+                        hf,
+                        order,
+                        size,
+                        valves,
+                        n
+                    ) 
+                    sd.play(h_model, Fs)
                 case _:
                     print(f"{cmd} is an unknown command. Use `help` to view the help menu")
         
