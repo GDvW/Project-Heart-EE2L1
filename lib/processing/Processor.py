@@ -118,7 +118,9 @@ class Processor:
         print(uncertain)
         self.log("Troubleshooting")
         if len(uncertain) > 0 and self.postprocessing:
-            s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, self.segmentation_solve_uncertain_length, self.Fs_target, self.segmentation_min_height, self.segmentation_min_dist)
+            s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, 
+                                                                  self.segmentation_solve_uncertain_length, self.Fs_target, 
+                                                                  self.segmentation_min_height, self.segmentation_min_dist)
         
 
         
@@ -235,12 +237,10 @@ class Processor:
         minima = np.array(minima)
         maxima = np.array(maxima)
         
-        # Sort minima descending
-        minima = minima[minima[:,1].argsort()[::-1]]
-        # Sort maxima ascending
-        maxima = maxima[maxima[:,1].argsort()]
-        print(minima[:10])
-        print(maxima[:10])
+        # Sort minima ascending
+        minima = minima[minima[:,1].argsort()]
+        # Sort maxima descending
+        maxima = maxima[maxima[:,1].argsort()[::-1]]
         
         y_line = None
         # Get line that goes through most lines in the difference plot
@@ -251,17 +251,18 @@ class Processor:
                 y_line = 0.5 * (max(minima[:,1]) + min(maxima[:,1]))
             
             if y_line != None:
-                print(y_line)
+                #print(y_line)
                 break
             elif len(minima) == 0 or len(maxima) == 0:
                 raise RuntimeError("No line found")
-            else:
-                print("Skipped some peaks, invalid line through middle")
+            # else:
+                #print("Skipped some peaks, invalid line through middle")
             
         # New function: classify based on y_line
         s1 = []
         s2 = []
         uncertain = []
+        
         prev_s1 = None
         for x, d, d2 in peaks:
             to_add = (x,d,d2)
@@ -284,10 +285,6 @@ class Processor:
         s2_u = []
         # Solve the uncertain thingys
         # Sort the uncertains in groups that follow each other (no peak in between)
-        mask = np.isin(peaks, uncertain[:,0])
-        idx = np.where(mask)[0]   # [1, 3, 4]
-        breaks = np.where(np.diff(idx) > 1)[0] + 1
-        groups = np.array(np.split(peaks[idx], breaks))
         
         peak_to_index = {p: i for i, p in enumerate(peaks)}
         idx = np.array([peak_to_index[val] for val in uncertain[:,0]])
@@ -341,16 +338,21 @@ class Processor:
                     s2_u.extend(new_s2)
             else:   
                 success = False
+                group = group[group[:,1].argsort()[::-1]]
+                # Sort group height on descending distance
+                group_height = np.array(list(zip(group[:,0], see[group[:,0]])))
+                group_height = group_height[group_height[:,1].argsort()[::-1]]
+                
                 while True:
-                    smallest_peak = group[np.argmin(group[:,1])]
-                    peaks = np.setdiff1d(peaks, [smallest_peak])
+                    smallest_peak, group_height = pop_np(group_height)
+                    peaks = np.setdiff1d(peaks, [smallest_peak[0]])
                     s1_peaks_new, s2_peaks_new, uncertain_new = self.classify_peaks(peaks, save_y_line = False)
                     
-                    if not np.any(np.isin(uncertain_new, group)) and len(peaks) > 0:
+                    if not np.any(np.isin(uncertain_new[:,0], group_height[:,0])) and len(peaks) > 0:
                         success = True
                         break
-                    elif len(peaks) == 0:
-                        self.log("Debugging uncertains failed (going up)")
+                    elif len(group_height) == 0:
+                        self.log(f"Debugging uncertains failed (going up) {group_height[:,0]}")
                         break
                 if success:
                     new_s1 = get_difference(s1_peaks_new, s1_peaks)
