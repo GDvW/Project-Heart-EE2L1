@@ -35,13 +35,13 @@ def a_lin(theta, M, d, v, f0):
 
 
 def matchedbeamforming( th_range, M, delta, v, f0):
+    
     Lambda=v/f0
     d=delta*Lambda
-    
+
     Rx = autocorr(np.array([0,15]), M, d, v, f0)
     A = a_lin(th_range, M, d, v, f0)
-    P=np.array([np.matmul(A[:,i].conj().T,np.matmul(Rx,A[:,i])) for i in range(len(th_range))])
-    #P =np.array( [  1/(np.matmul(np.matmul(A[:,i].conj().T,np.linalg.inv(Rx)),A[:,i]))   for i in range (len(th_range)) ] )
+    P =np.array( [  1/(np.matmul(np.matmul(A[:,i].conj().T,np.linalg.inv(Rx)),A[:,i]))   for i in range (len(th_range)) ] )
     print(f"A shape {A.shape}")
     print(f"Complex conjugate shape {A.conj().T.shape}")
     print(f"Rx shape {Rx.shape}")
@@ -52,26 +52,8 @@ def matchedbeamforming( th_range, M, delta, v, f0):
 
 P = matchedbeamforming(np.array([i for i in range (-90,90)]), 7, 0.5, 343, 250)
 Fs = 44000
-#signal1 = np.array([np.random.randint(30) for i in range (100)])
-#signal2 = np.array([np.random.randint(30) for i in range (100)])
-#signal3 = np.array([np.random.randint(30) for i in range (100)])
-#write("file1.wav", Fs, signal1)
-#write("file2.wav", Fs, signal3)
-#write("file3.wav", Fs, signal2)
-
-file_path = os.path.abspath("file1.wav")
-print(f"Trying to play: {file_path}")
-winsound.PlaySound(file_path, winsound.SND_FILENAME)
-#winsound.PlaySound("file2.wav", winsound.SND_FILENAME)
-#winsound.PlaySound("file3.wav", winsound.SND_FILENAME)
-
 
 theta = np.linspace(-90,90,len(P))
-
 plt.figure()
 plt.plot(theta,P)
 plt.show()
-
-
-
-
