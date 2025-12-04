@@ -18,17 +18,25 @@ class Executor:
         self.files = files
         self.config = config
         self.log_enabled = log
+        self.results = {}
         
     def execute(self):
-        processor = Processor(None, self.config, log=self.log_enabled)
+        processor = Processor(None, self.config, log=self.log_enabled, save_steps=True)
         for file in self.files:
             self.log(f"Processing {file.stem}")
             processor.open_file(file)
             try:
                 processor.process()
+                
+                self.results[file] = [len(processor.s1_peaks), len(processor.s2_peaks), len(processor.uncertain)]
             except Exception as e:
-                self.log(f"{file.stem} failed, Error: {e.with_traceback()}")
+                self.log(f"{file} failed, Error: {e}")
         self.log("Finished!")
+        
+    def summarize(self):
+        print(f"Finished with the following results:")
+        for file, r in self.results.items():
+            print(f"{file.stem}: s1: {r[0]};  s2: {r[1]}; u: {r[2]}; tot: {sum(r)}")
     def log(self, msg):
         if self.log_enabled:
             print(msg)

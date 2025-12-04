@@ -302,7 +302,7 @@ class Processor:
         mask_prev = np.concatenate(([False], mask_uncertain[:-1]))
         mask_next = np.concatenate((mask_uncertain[1:], [False]))
         
-        uncertain_total_mask = mask_uncertain | mask_prev | mask_next
+        uncertain_total_mask = mask_uncertain | mask_next # | mask_prev
         
         s1_mask = classification[:,3] == Classification.S1
         s2_mask = classification[:,3] == Classification.S2
@@ -338,7 +338,7 @@ class Processor:
             # Shortest systole is around 0.2 s ~ 800 samples
             # so if any distance between peaks is lower than 700 samples, we know for sure we have detected a peak too much
             # Or if the middle (because we padded the uncertains) is smaller than the y_lien
-            if np.any(group[:,1] < 700) or group[len(group)//2,1] < self.y_line:   
+            if np.any(group[:,1] < 700) or group[0,1] < self.y_line:   
                 success = False
                 group = group[group[:,1].argsort()[::-1]]
                 # Sort group height on descending distance

@@ -11,9 +11,17 @@ from lib.processing.dataprocessing import HeartSound
 PLOT_RAW = False
 
 def segmentation(config):
-    path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
+    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav"
-    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav"
+    paths = [
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav",
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav",
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_3.wav",
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav",
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_5.wav",
+        ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_6.wav",
+    ]
+    path = paths[1]
     processor = Processor(path, config, save_steps=True, postprocessing=True)
     
     processor.process()
