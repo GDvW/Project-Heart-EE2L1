@@ -26,19 +26,19 @@ def generateStandardCommands(plot: Plot) -> CommandProcessor:
     for valve in plot.valves:
         cp.register_symbolic_spec(valve.name, valve_group, lambda: valve, helpmsg=f"The {valve.name} peak")
         
-        cp.register_symbolic_prop("delay", valve_group, lambda obj: obj.delay * 1000, lambda obj, val: setattr(obj, "delay", val/1000), dtype=float, helpmsg="The delay before the valve sound starts in ms")
+    cp.register_symbolic_prop("delay", valve_group, lambda obj: obj.delay * 1000, lambda obj, val: setattr(obj, "delay", val/1000), dtype=float, helpmsg="The delay before the valve sound starts in ms")
+    
+    cp.register_symbolic_prop("durtot", valve_group, lambda obj: obj.duration_total * 1000, lambda obj, val: setattr(obj, "duration_total", val/1000), dtype=float, helpmsg="The duration of the total valve sound in ms")
+    cp.register_symbolic_prop("duron", valve_group, lambda obj: obj.duration_onset * 1000, lambda obj, val: setattr(obj, "duration_onset", val/1000), dtype=float, helpmsg="The duration of the onset of the valve sound in ms. Should be greater than 'totdur'")
+    
+    cp.register_symbolic_prop("gainon", valve_group, lambda obj: obj.a_onset, lambda obj, val: setattr(obj, "a_onset", val), dtype=float, helpmsg="The a (gain) of the onset")
+    cp.register_symbolic_prop("gain", valve_group, lambda obj: obj.a_main, lambda obj, val: setattr(obj, "a_main", val), dtype=float, helpmsg="The a (gain) of the main signal")
+    
+    cp.register_symbolic_prop("amplon", valve_group, lambda obj: obj.ampl_onset, lambda obj, val: setattr(obj, "ampl_onset", val), dtype=float, helpmsg="The amplitude of the onset")
+    cp.register_symbolic_prop("ampl", valve_group, lambda obj: obj.ampl_main, lambda obj, val: setattr(obj, "ampl_main", val), dtype=float, helpmsg="The amplitude of the main signal")
         
-        cp.register_symbolic_prop("durtot", valve_group, lambda obj: obj.duration_total * 1000, lambda obj, val: setattr(obj, "duration_total", val/1000), dtype=float, helpmsg="The duration of the total valve sound in ms")
-        cp.register_symbolic_prop("duron", valve_group, lambda obj: obj.duration_onset * 1000, lambda obj, val: setattr(obj, "duration_onset", val/1000), dtype=float, helpmsg="The duration of the onset of the valve sound in ms. Should be greater than 'totdur'")
-        
-        cp.register_symbolic_prop("gainon", valve_group, lambda obj: obj.a_onset, lambda obj, val: setattr(obj, "a_onset", val), dtype=float, helpmsg="The a (gain) of the onset")
-        cp.register_symbolic_prop("gain", valve_group, lambda obj: obj.a_main, lambda obj, val: setattr(obj, "a_main", val), dtype=float, helpmsg="The a (gain) of the main signal")
-        
-        cp.register_symbolic_prop("amplon", valve_group, lambda obj: obj.ampl_onset, lambda obj, val: setattr(obj, "ampl_onset", val), dtype=float, helpmsg="The amplitude of the onset")
-        cp.register_symbolic_prop("ampl", valve_group, lambda obj: obj.ampl_main, lambda obj, val: setattr(obj, "ampl_main", val), dtype=float, helpmsg="The amplitude of the main signal")
-        
-        
-        cp.register_symbolic_prop("freqon", valve_group, lambda obj: obj.freq_onset, lambda obj, val: setattr(obj, "freq_onset", val), dtype=float, helpmsg="The frequency of the onset of the valve sound in Hz")
-        cp.register_symbolic_prop("freq", valve_group, lambda obj: obj.freq, lambda obj, val: setattr(obj, "freq_main", val), dtype=float, helpmsg="The frequency of the main valve sound in Hz")
+    
+    cp.register_symbolic_prop("freqon", valve_group, lambda obj: obj.freq_onset, lambda obj, val: setattr(obj, "freq_onset", val), dtype=float, helpmsg="The frequency of the onset of the valve sound in Hz")
+    cp.register_symbolic_prop("freq", valve_group, lambda obj: obj.freq, lambda obj, val: setattr(obj, "freq_main", val), dtype=float, helpmsg="The frequency of the main valve sound in Hz")
 
     return cp
