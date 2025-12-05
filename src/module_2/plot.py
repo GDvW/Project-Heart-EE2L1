@@ -153,6 +153,9 @@ class Plot:
     def add_valve(self, name):
         self.valves.append(ValveParams( 10, 0, 0, 1, 1, 1, 1, 50, 50, name))
     
+    def print_order(self):
+        print("Order: M, T, A, P")
+    
     def log(self, msg):
         if self.log_enabled:
             print(msg)
