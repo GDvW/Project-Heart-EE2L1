@@ -31,9 +31,8 @@ def a_lin(theta, M, d, v, f0):
     return result
 
 
-def MVDR( th_range, M, d, v, f0):
+def MVDR( th_range, M, d, v, f0, Rx):
     
-    Rx = autocorr(np.array([0,15]), M, d, v, f0)
     A = a_lin(th_range, M, d, v, f0)
     P =np.array( [  1/(np.matmul(np.matmul(A[:,i].conj().T,np.linalg.inv(Rx)),A[:,i]))   for i in range (len(th_range)) ] )
     print(f"A shape {A.shape}")
@@ -43,18 +42,30 @@ def MVDR( th_range, M, d, v, f0):
     print(f"multiplication shape {np.matmul(A.conj().T,Rx).shape}")
     return P
 
+
+def find_MVDR_beamformer (th_range, M, d, v, fo, Rx):
+    
+    A = a_lin(th_range, M, d, v, f0)
+    P =np.array( [  (np.matmul(np.linalg.inv(Rx), A[:,i]) ) /
+                  (np.matmul(np.matmul(A[:,i].conj().T,np.linalg.inv(Rx)),A[:,i]))   
+                  for i in range (len(th_range)) ] )
+    return P              
+
 M = 7
 v = 343
 f0 = 250
 D = 0.5
 lamda = v/f0
 d = D*lamda
-P = MVDR(np.array([i for i in range (-90,90)]), M, d, v, f0)
+Rx = autocorr(np.array([0,15]), M, d, v, f0)
+theta_range = np.array([i for i in range (-90,90)])
+P = MVDR(theta_range, M, d, v, f0, Rx)
+w = find_MVDR_beamformer(theta_range, M, d, v, f0, Rx)
 
 
 plt.figure()
 x = np.arange(-90,90);
-plt.plot(x,P)
+plt.plot(x,w)
 plt.show()
 
 
