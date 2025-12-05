@@ -21,6 +21,7 @@ class ValveParams:
     def toStr(self):
         return [
             f"Name: {self.name}",
+            f"  Delay: {self.delay*1000}ms",
             f"  Total duration: {self.duration_total*1000}ms",
             f"  Duration onset: {self.duration_onset*1000}ms",
             f"  A onset: {self.a_onset}",
