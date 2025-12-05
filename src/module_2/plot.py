@@ -10,6 +10,7 @@ from lib.config.ConfigParser import ConfigParser
 from lib.processing.Processor import Processor
 from src.module_2.generate import *
 from scipy.fft import fft, fftshift
+import csv
 
 mpl.use('qtagg')
 mpl.rcParams["path.simplify"] = True
@@ -18,9 +19,9 @@ mpl.rcParams['figure.raise_window'] = False
 plt.ion()
 
 class Plot:
-    def __init__(self, soundfile: str, config: ConfigParser, log_enabled: bool = True):
+    def __init__(self, soundfile: str, config: ConfigParser, log_enabled: bool = True, disable_orignal: bool = False):
         sound_path = Path(soundfile)
-        if not sound_path.exists():
+        if not sound_path.exists() and not disable_orignal:
             raise IOError(f"{sound_path.resolve()} does not exist")
         
         self.sound_path = sound_path
@@ -34,7 +35,7 @@ class Plot:
         self.order=config.LowpassFilter.FilterOrder
         self.size=config.LowpassFilter.Size
         
-        self.n = self.n_init = config.HeartSoundModel.NBeats
+        self.n = self.n_init = 10
         self.BPM = self.BPM_init = config.HeartSoundModel.BPM
         self.shift = self.shift_init = -2.28
         self.valves_init = [
@@ -118,7 +119,7 @@ class Plot:
     def get_original_time(self):
         return np.linspace(self.shift, self.shift+self.original_length/self.original_Fs, self.original_length)
         
-    def get_model(self):
+    def get_model(self, n: int|None = None):
         t_model, h_model = advanced_model(
             self.Fs,
             self.BPM,
@@ -127,7 +128,7 @@ class Plot:
             self.order,
             self.size,
             self.valves,
-            self.n
+            self.n if n is None else n
         ) 
         
         H = fftshift(fft(h_model))
@@ -158,7 +159,7 @@ class Plot:
         with open(file, "w") as fp:
             fp.write(self.generate_summary())
             
-    def export_csv(self, file):
+    def export_csv(self, file: str):
         file = Path(file)
         file.parent.mkdir(parents=True, exist_ok=True)
         
@@ -170,6 +171,59 @@ class Plot:
         
         with open(file, "w") as fp:
             fp.write(s)
+            
+    def import_csv(self, file: str, run_plot: bool = True):
+        file = Path(file)
+        if not file.exists():
+            print(f"{file} can not be found")
+            return
+        
+        with open(file, newline='') as f:
+            reader = csv.reader(f)
+            
+            # Load first part
+            header = next(reader)
+            values = next(reader)
+            try:
+                if len(values) != 3 and header != ["shift","BPM","n"]:
+                    print(f"Values is not as long as expected (expected: 3, actual: {len(values)}) or the header is wrong. Maybe the csv is from an older version")
+                
+                self.shift = float(values[0])
+                self.BPM = int(values[1])
+                self.n = int(values[2])
+            except:
+                print("An exception occured while loading the first part of the file")
+                return
+            
+            # Second part
+            lower_header = next(reader)
+            if lower_header != ["name","delay","duration_total","duration_onset","a_onset","a_main","ampl_onset","ampl_main","freq_onset","freq_main"]:
+                print(f'The header is not as expected (expected: "name","delay","duration_total","duration_onset","a_onset","a_main","ampl_onset","ampl_main","freq_onset","freq_main", actual: {lower_header}). Maybe the csv is from an older version')
+            try:
+                self.valves = []
+                for row in reader:
+                    if not row:
+                        continue
+                    self.valves.append(
+                        ValveParams(
+                            name=row[0],
+                            delay_ms=float(row[1])*1000,
+                            duration_total_ms=float(row[2])*1000,
+                            duration_onset_ms=float(row[3])*1000,
+                            a_onset=float(row[4]),
+                            a_main=float(row[5]),
+                            ampl_onset=float(row[6]),
+                            ampl_main=float(row[7]),
+                            freq_onset=float(row[8]),
+                            freq_main=float(row[9])
+                        )
+                    )
+            except:
+                print("An exception occured while loading the second part of the file")
+                return
+        if run_plot:
+            self.update_model(refresh_view=False)
+            self.update_original()
         
     def print(self):
         print(self.generate_summary().strip())
