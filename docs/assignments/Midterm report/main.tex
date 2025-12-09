@@ -3,7 +3,10 @@
 \usepackage{xcolor}
 \usepackage{soul}
 \usepackage{circuitikz}
-\usepackage{biblatex}
+\usepackage[
+backend=biber,
+style=ieee,
+]{biblatex}
 \addbibresource{report.bib}
 \usepackage{changes}
 \usepackage[normalem]{ulem}
@@ -38,6 +41,27 @@
 \usepackage{float}
 % Custom list spacing
 \usepackage{enumitem}
+% Python code display
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Define a Python style
+\lstdefinestyle{formattedPython}{
+    language=Python,
+    numbers=left,                % line numbers
+    numberstyle=\small\color{gray},
+    stepnumber=1,
+    showstringspaces=false,      % do not mark spaces in strings
+    showspaces=false,            % do not display whitespace markers
+    showtabs=false,              % do not display tab markers
+    frame=single,                % put a frame around code
+    breaklines=true,             % wrap long lines
+    basicstyle=\ttfamily\small,  % font style
+    keywordstyle=\color{blue},   % keywords in blue
+    stringstyle=\color{green!50!black}, % strings in green
+    commentstyle=\color{gray},   % comments in gray
+}
+\lstset{style=formattedPython}
 
 %% Setup
 % Base path for all figures
@@ -66,17 +90,17 @@
 % Your product name
 \newcommand{\productName}{Final report}
 
-% Your group number
+% Your group number 
 \newcommand{\groupNumber}{X}
 
 % Your names
 \newcommand{\studentNames}{%
-Gerald van Weelden (), Ruben Jochemsen (6232531), Konstantinos Koukakis (), Arinze Ugwoke ()\\
+Gerrald van Weelden (6320775), Ruben Jochemsen (6232531), Konstantinos Koukakis (), Arinze Ugwoke ()\\
 \vspace{1cm}
 TA: Jelena Pešić\\
 \vspace{1cm}
 Bachelor Electrical Engineering,\\
-12 Decemeber 2025\\
+\today\\
 }
 
 \begin{document}
