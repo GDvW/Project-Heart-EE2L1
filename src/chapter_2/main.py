@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib import axes
-from lib.os.pathutils import getFilesExt
+from lib.os.pathUtils import get_files_ext
 from os.path import exists, join, basename
 import pandas as pd
 from scipy.io import wavfile
@@ -47,10 +47,10 @@ def main(pcg_dir: str = "./samples/chapter_2/", csv_data_file: str = None):
         int: 0 on success, -1 on failure
     """
     # Get all wav files from the samples directory
-    pcgs = getFilesExt(".wav", pcg_dir)
+    pcgs = get_files_ext(".wav", pcg_dir)
     # Get csv data
     if csv_data_file is None:
-        csv_files = getFilesExt(".csv", pcg_dir)
+        csv_files = get_files_ext(".csv", pcg_dir)
         if len(csv_files) > 1:
             print("ERROR: multiple csv datafiles. Please specify the correct one using the csv_data_file parameter.")
             return -1

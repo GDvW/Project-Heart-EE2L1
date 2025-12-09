@@ -1,6 +1,6 @@
 from lib.processing.functions import *
 from lib.processing.dataprocessing import *
-from lib.os.pathutils import ensurePathExists
+from lib.os.pathUtils import ensure_path_exists
 from lib.config.ConfigParser import ConfigParser
 from scipy.io import wavfile
 from pathlib import Path
@@ -175,12 +175,12 @@ class Processor:
             file_name = splitext(basename(self.file_path))[0]
             
             concat_file_path = join(basefolder, self.concat_path, "processed")
-            ensurePathExists(concat_file_path)
+            ensure_path_exists(concat_file_path, is_parent=True)
             write(join(concat_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, segmented_s1_concat)
             write(join(concat_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, segmented_s2_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "processed")
-            ensurePathExists(segment_file_path)
+            ensure_path_exists(segment_file_path, is_parent=True)
             write(join(segment_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, segmented_s1)
             write(join(segment_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, segmented_s2)
         if self.write_result_raw:
@@ -188,12 +188,12 @@ class Processor:
             file_name = splitext(basename(self.file_path))[0]
 
             concat_file_path = join(basefolder, self.concat_path, "raw")
-            ensurePathExists(concat_file_path)
+            ensure_path_exists(concat_file_path, is_parent=True)
             write(join(concat_file_path, f"segmented-s1-raw-{file_name}.wav"), Fs_original, segmented_s1_raw_concat)
             write(join(concat_file_path, f"segmented-s2-raw-{file_name}.wav"), Fs_original, segmented_s2_raw_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "raw")
-            ensurePathExists(segment_file_path)
+            ensure_path_exists(segment_file_path, is_parent=True)
             write(join(segment_file_path, f"segmented-s1-raw-{file_name}.wav"), Fs_original, segmented_s1_raw)
             write(join(segment_file_path, f"segmented-s2-raw-{file_name}.wav"), Fs_original, segmented_s2_raw)
 
