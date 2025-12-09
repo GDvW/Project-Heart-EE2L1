@@ -22,9 +22,9 @@ root = Path(".")
 previous_parent_path = None
 with open("NoCommit_Latex_include_code.tex", "w") as fp:
     fp.write("\\chapter{Code}\n\n")
-    fp.write("""\section{Project root}
-\subsection*{config.ini}
-\inifile{../../../config.ini}""")
+    fp.write("""\\section{Project root}
+\\subsection*{config.ini}
+\\inifile{../../../config.ini}""")
     for file in files:
         path = file.relative_to(root)
         parent_path = path.parent
