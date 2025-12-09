@@ -14,7 +14,7 @@ from lib.processing.Processor import Processor
 from lib.model.Model import Model
 from lib.model.OriginalSound import OriginalSound
 from lib.general.pathUtils import *
-from src.module_2.generate import *
+from lib.model.generate import *
 
 
 

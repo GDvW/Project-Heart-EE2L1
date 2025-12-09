@@ -9,5 +9,5 @@ def ensure_path_exists(file_path: Path|str, is_parent: bool = False):
     """
     file_path = Path(file_path)
     if not is_parent:
-        file_path = file_path.parent()
+        file_path = file_path.resolve().parent
     file_path.mkdir(parents=True, exist_ok=True)

@@ -3,7 +3,7 @@ from lib.config.ConfigParser import ConfigParser
 from copy import deepcopy
 from lib.model.Model import Model
 import matplotlib.pyplot as plt
-from src.module_2.generate import *
+from lib.model.generate import *
 
 
 # valve_locs = {"M":np.array((6.37,10.65,6.00)),

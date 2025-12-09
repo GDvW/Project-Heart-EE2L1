@@ -7,7 +7,7 @@ from lib.processing.Processor import Processor
 from lib.processing.functions import construct_bandpass_filter, apply_filter
 from os.path import join
 from scipy.io.wavfile import write
-from src.module_2.generate import *
+from lib.model.generate import *
 
 
 def main():

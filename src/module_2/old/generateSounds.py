@@ -1,5 +1,5 @@
 from lib.config.ConfigParser import ConfigParser
-from src.module_2.generate import *
+from lib.model.generate import *
 from os.path import join
 from scipy.io.wavfile import write
 import matplotlib.pyplot as plt

@@ -1,4 +1,4 @@
-from src.module_2.generate import *
+from lib.model.generate import *
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.completion import NestedCompleter

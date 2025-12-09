@@ -1,6 +1,6 @@
 from scipy.signal import TransferFunction, impulse, zpk2tf
 import numpy as np
-from src.module_2.generate import *
+from lib.model.generate import *
 from lib.config.ConfigParser import ConfigParser
 from lib.processing.functions import construct_bandpass_filter, apply_filter
 from random import random
@@ -103,17 +103,16 @@ def advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves):
     
     # Add single valves
     h_len = int(60/BPM*Fs) - size
+    h_len_real = max([len(h) for h in h_out])
     t_total = np.linspace(0, 60/BPM, h_len)
-    h_total = np.zeros(h_len)
+    h_total = np.zeros(h_len_real)
     for h in h_out:
-        if len(h) <= h_len:
-            h = np.pad(h, (0, h_len - len(h)))
-            h_total += h
-        else:
-            import matplotlib.pyplot as plt
-            plt.plot(h)
-            plt.show()
-            raise RuntimeError("One beat longer than reserved space")
+        if len(h) <= h_len_real:
+            h = np.pad(h, (0, h_len_real - len(h)))
+        h_total += h
+        
+        if len(h) > h_len:
+            print("WARNING: one beat is longer than expected, check for overlap")
     
     # Filter signal for nice thigns
     g = construct_bandpass_filter(
@@ -128,31 +127,40 @@ def advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves):
     
     return t_filtered, h_filtered
 
-def advanced_model(Fs, BPM, lf, hf, order, size, valves, n, randomize_enabled: bool = False, r_ratio: float = 0, bpm_ratio: float = 0):
+def advanced_model(Fs, BPM, lf, hf, order, size, valves, n, randomize_enabled: bool = False, r_ratio: float = 0, bpm_ratio: float = 0, noise: float = 0):
     if not randomize_enabled:
         t_filtered, h_filtered = advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves)
-        return repeat(n, h_filtered, t_filtered, Fs)
+        return repeat(n, h_filtered, t_filtered, Fs, int(60/BPM*Fs))
     else:
-        h_full = np.array([], dtype=np.int64)
+        max_h_len = int(60/(BPM*(1-bpm_ratio))*Fs) * n
+        h_full = np.random.rand(max_h_len) * noise
+        current_h_index = 0
         for i in range(n):
+            BPM_randomized = randomize(BPM, bpm_ratio)
             [valve.randomize(r_ratio) for valve in valves]
+            
+            this_h_len = int(60/BPM_randomized*Fs)
+            
             t_filtered, h_filtered = advanced_model_single_beat(
                 Fs, 
-                randomize(BPM, bpm_ratio), 
+                BPM_randomized, 
                 lf, 
                 hf, 
                 order, 
                 size, 
                 valves)
-            h_full = np.r_[h_full, h_filtered]
+            h_full[current_h_index:current_h_index+len(h_filtered)] += h_filtered
+            current_h_index += this_h_len
         t_full = np.linspace(0, len(h_full)/Fs, len(h_full))
         return t_full, h_full
         
 def randomize(val, ratio):
     return val * (1 + ratio * random())
 
-def repeat(n, h_filtered, t_filtered, Fs):
-    h_full = np.tile(h_filtered, n)
+def repeat(n, h_filtered, t_filtered, Fs, length):
+    h_full = np.zeros(length * n + max(0, len(h_filtered) - length))
+    for i in range(0, n * length, length):
+        h_full[i:i+len(h_filtered)] += h_filtered
     t_full = np.linspace(0, len(h_full)/Fs, len(h_full))
     
     return t_full, h_full

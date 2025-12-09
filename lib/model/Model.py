@@ -12,11 +12,12 @@ from lib.model.generate import *
 from lib.general.pathUtils import *
 
 class Model:
-    def __init__(self, config: ConfigParser):
+    def __init__(self, config: ConfigParser, randomize_enabled: bool = False):
         """Initialize a wrapper for the model.
 
         Args:
             config (ConfigParser): The config object.
+            randomize_enabled (bool): Whether to randomize the parameters a bit to check robustness of the algorithm.
         """
         self.Fs = config.HeartSoundModel.Fs
         self.len_g = config.LowpassFilter.Size
@@ -26,6 +27,8 @@ class Model:
         self.size = config.LowpassFilter.Size
         
         self.sounds_path = config.Generation.SoundsPath
+        
+        self.randomize_enabled = randomize_enabled
         
         self.n = self.n_init = 10
         self.BPM = self.BPM_init = config.HeartSoundModel.BPM
@@ -57,20 +60,22 @@ class Model:
             s += ("      - " + "\n        ".join(valve.toStr())+"\n")
         return s
     
-    def save(self) -> None:
+    def save(self, file_path: str|None = None) -> None:
         """Writes the model as a sound file in the path given in the config.
+        
+        Args:
+            file_path (str | None): If specified, write to that file, otherwise write to standard file.
         """
-        ensure_path_exists(self.sounds_path, is_parent=True)
+        wav_path = file_path if file_path is not None else join(self.sounds_path, f"Advanced-{self.Fs}Hz-{self.BPM}BPM-{self.n} beats.wav")
+        
+        ensure_path_exists(wav_path)
         
         t_model, h_model = self.generate_model()
         
-        write(join(self.sounds_path, f"Advanced-{self.Fs}Hz-{self.BPM}BPM-{self.n} beats.wav"), self.Fs, h_model)
+        write(wav_path, self.Fs, h_model)
     
-    def generate_model(self, randomize_enabled: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+    def generate_model(self) -> Tuple[np.ndarray, np.ndarray]:
         """Generates the model time and amplitude axis.
-
-        Args:
-            randomize_enabled (bool): Whether to add random noise in the generated model
 
         Returns:
             Tuple[np.ndarray, np.ndarray]: t_model (the time axis), h_model (the amplitude axis).
@@ -84,18 +89,19 @@ class Model:
             self.size,
             self.valves,
             self.n, 
-            randomize_enabled=randomize_enabled
+            randomize_enabled=self.randomize_enabled,
+            noise=0.1
         ) 
         
         return t_model, h_model
     
-    def generate_model_and_freq(self, randomize_enabled: bool = False) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def generate_model_and_freq(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Generates the model time, amplitude and frequency axis.
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: t_model (the time axis), h_model (the amplitude axis), freq (the frequency axis), H (the frequency amplitude spectrum)
         """
-        t_model, h_model = self.generate_model(randomize_enabled=randomize_enabled)
+        t_model, h_model = self.generate_model()
         
         H = fftshift(fft(h_model))
         H = H/np.max(np.abs(H))
