@@ -13,7 +13,7 @@ from lib.config.ConfigParser import ConfigParser
 from lib.processing.Processor import Processor
 from lib.model.Model import Model
 from lib.model.OriginalSound import OriginalSound
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 from lib.model.generate import *
 
 

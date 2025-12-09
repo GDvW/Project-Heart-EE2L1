@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 
 from lib.processing.Processor import Processor
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 from lib.config.ConfigParser import ConfigParser
 
 class OriginalSound:

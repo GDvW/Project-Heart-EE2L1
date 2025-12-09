@@ -9,7 +9,7 @@ from os.path import join
 
 from lib.config.ConfigParser import ConfigParser
 from lib.model.generate import *
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 
 class Model:
     def __init__(self, config: ConfigParser, randomize_enabled: bool = False):
