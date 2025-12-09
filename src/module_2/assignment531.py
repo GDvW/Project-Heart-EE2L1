@@ -44,7 +44,8 @@ def threeD_model():
     
     model = Model(config)
     model.import_csv(".\\src\\module_2\\quite_good_params.csv")
-    model.set_n(config.HeartSoundModel.NBeats)
+    # model.set_n(config.HeartSoundModel.NBeats)
+    model.set_n(10)
     
     valves = model.valves
     
@@ -69,7 +70,7 @@ def threeD_model():
     
         log(f"{delays},{gains_normalized}")
         # Add delays
-        # valves[:,0] += delays
+        valves[:,0] += delays
         # Adjust for gains
         valves[:,3] *= gains_normalized
         valves[:,4] *= gains_normalized
@@ -93,7 +94,7 @@ def threeD_model():
         
         model.valves = valvesParams
         
-        _, signal = model.generate_model(randomize_enabled=True)
+        _, signal = model.generate_model()
         
         signals.append(signal)
         
