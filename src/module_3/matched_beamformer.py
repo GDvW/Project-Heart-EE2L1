@@ -34,28 +34,19 @@ def a_lin(theta, M, d, v, f0):
     return result
 
 
-def matchedbeamforming( th_range, M, delta, v, f0):
-    Lambda=v/f0
-    d=delta*Lambda
+def matchedbeamforming( th_range, M, d, v, f0, Rx):
     
-    Rx = autocorr(np.array([0,15]), M, d, v, f0)
-    A = a_lin(th_range, M, d, v, f0)
-    P=np.array([np.matmul(A[:,i].conj().T,np.matmul(Rx,A[:,i])) for i in range(len(th_range))])
+    #Rx = autocorr(th_range, M, d, v, f0)
+    P = np.array([np.matmul(np.matmul(a_lin(angle, M, d, v, f0).conj().T , Rx), a_lin(angle, M, d, v, f0) ) for angle in th_range])
     #P =np.array( [  1/(np.matmul(np.matmul(A[:,i].conj().T,np.linalg.inv(Rx)),A[:,i]))   for i in range (len(th_range)) ] )
-    print(f"A shape {A.shape}")
-    print(f"Complex conjugate shape {A.conj().T.shape}")
-    print(f"Rx shape {Rx.shape}")
-    print(f"P shape {P.shape}")
-    print(f"multiplication shape {np.matmul(A.conj().T,Rx).shape}")
+    #print(f"A shape {A.shape}")
+    #print(f"Complex conjugate shape {A.conj().T.shape}")
+    #print(f"Rx shape {Rx.shape}")
+    #print(f"P shape {P.shape}")
+    #print(f"multiplication shape {np.matmul(A.conj().T,Rx).shape}")
     return P
 
 
-P = matchedbeamforming(np.array([i for i in range (-90,90)]), 7, 0.5, 343, 250)
-Fs = 44000
 
 
 
-theta = np.linspace(-90,90,len(P))
-plt.figure()
-plt.plot(theta,P)
-plt.show()

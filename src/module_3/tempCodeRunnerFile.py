@@ -1,0 +1,1 @@
+MVDR (1 source at 60°) / Bin Frequency = 1687 Hz
