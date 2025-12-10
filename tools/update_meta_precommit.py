@@ -115,14 +115,6 @@ def update_file(file, is_staged: bool = False):
     meta_changed = get_changed(meta_lines, indents, diffs)
     date_changed = get_changed(date_lines, indents, diffs)
     author_changed = get_changed(author_lines, indents, diffs)
-    print(meta_lines)
-    print(date_lines)
-    print(author_lines)
-    print(diffs)
-    print(indents)
-    print(meta_changed)
-    print(date_changed)
-    print(author_changed)
     
     for ac in author_changed:
         content_list[ac-1] = f"{' '*author_lines[ac]}@author: {get_git_name()}"
@@ -145,11 +137,15 @@ def update_file(file, is_staged: bool = False):
 
 def main():
     file = Path("src\\module_2\\old\\matchParamsV2.py")
+    files = [
+        file
+        for file in Path(".").rglob("*.py")
+    ]
     any_staged = check_staged()
-    
-    diff = get_diff(file, any_staged)
-    
-    fs = update_file(file, any_staged)
+    for file in files:
+        if "tools" in str(file):
+            continue
+        update_file(file, any_staged)
     
 if __name__ == "__main__":
     main()

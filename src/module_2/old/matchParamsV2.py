@@ -19,4 +19,3 @@ mpl.use('qtagg')
 mpl.rcParams["path.simplify"] = True
 mpl.rcParams["path.simplify_threshold"] = 1
 plt.ion()
-
