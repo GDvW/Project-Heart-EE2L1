@@ -2,7 +2,7 @@ from os import listdir
 from pathlib import Path
 
 def get_files_ext(ext:str, dir:str="."):
-    """Gets files in a certain directory with a certain extension
+    """Gets files in a certain directory with a certain extension.
 
     Args:
         ext (str): The extension of the file you are searching for.
@@ -14,10 +14,10 @@ def get_files_ext(ext:str, dir:str="."):
     return [file for file in listdir(dir) if file.endswith(ext)] 
     
 def ensure_path_exists(file_path: Path|str, is_parent: bool = False):
-    """Make sure the path to a file/folder exists
+    """Make sure the path to a file/folder exists.
 
     Args:
-        file_path (Path | str): The path to the file/folder
+        file_path (Path | str): The path to the file/folder.
         is_parent (bool, optional): Whether the given path should be verified itself (is a parent). If False, only verify till the parent path. Defaults to False.
     """
     file_path = Path(file_path)
