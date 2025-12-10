@@ -11,6 +11,9 @@ from scipy.io import wavfile
 from pathlib import Path
 
 def assignment441(config):
+    """
+    @meta
+    """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_5.wav"
     Fs, x = wavfile.read(path)
     
@@ -28,7 +31,11 @@ def assignment441(config):
 
 
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.4.2 or 4.4.3.
+    """
+    @meta
+
+    The main loop. Can be changed to choose whether to run assignment 4.4.2 or 4.4.3.
+    
     """
     config = ConfigParser()
     assignment441(config)

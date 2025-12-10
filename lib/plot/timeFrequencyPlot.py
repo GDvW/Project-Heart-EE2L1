@@ -5,7 +5,10 @@ import numpy as np
 from lib.general.generalUtils import todB
 
 def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: axes.Axes, time_title:str=None, freq_title:str=None, grid: bool = True, samples_offset: float = 0, apply_fftshift:bool=False, resolution: int|None = None, freq_label: str="", time_label: str=""):
-    """Plots the time and frequency spectrum of an input signal x.
+    """
+    @meta
+
+    Plots the time and frequency spectrum of an input signal x.
 
     Args:
         x (list | np.ndarray): The input signal.
@@ -20,6 +23,7 @@ def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: 
         resolution (int | None, optional): The resolution of the fft. If None, the result will be as long as the input signal. Defaults to None.
         freq_label (str, optional): The label of the frequency spectrum plot. Defaults to None.
         time_label (str, optional): The label of the time spectrum plot. Defaults to None.
+    
     """
     if resolution is not None:
         X = fft(x, resolution)

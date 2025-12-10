@@ -14,6 +14,9 @@ mpl.rcParams["path.simplify_threshold"] = 1
 plt.ion()
 
 def getData():
+    """
+    @meta
+    """
     config = ConfigParser()
 
     t_model, h_model = advanced_model(config) 
@@ -21,9 +24,15 @@ def getData():
     return t_model, h_model
 
 def timeOriginal(shift, length, Fs):
+    """
+    @meta
+    """
     return np.linspace(shift, shift+length/Fs, length)
     
 def getCommand(cmd: str, general_specifiers: list, general_props: list, peak_specifiers: list, peak_props: list):
+    """
+    @meta
+    """
     pattern = fr"^((?P<specg>[{''.join(general_specifiers)}])\s+(?P<propg>{'|'.join(general_props)})\s+(?P<valg>[\-0-9.,_]+)|"+\
         fr"(?P<specp>[{''.join(peak_specifiers)}])\s+(?P<propp>{'|'.join(peak_props)})\s+(?P<valp>[\-0-9.,_]+))$"
     m = re.match(pattern, cmd)
@@ -35,6 +44,9 @@ def getCommand(cmd: str, general_specifiers: list, general_props: list, peak_spe
     return False
 
 def matchParams():
+    """
+    @meta
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     len_g = config.LowpassFilter.Size
@@ -83,11 +95,17 @@ def matchParams():
     ax.grid(True)
     
     def updateOriginal(shift):
+        """
+        @meta
+        """
         t = timeOriginal(shift, len(processor.y_normalized), processor.Fs_target)
         original.set_xdata(t)
         fig.canvas.draw_idle()
         
     def updateModel(BPM, n, valves):
+        """
+        @meta
+        """
         t_model, h_model = advanced_model(
             Fs,
             BPM,
@@ -114,14 +132,26 @@ def matchParams():
     general_specs = ["G"]
     
     def print_specs():
+        """
+        @meta
+        """
         print(f"Specifiers:\n  - General: G\n  - Peaks: {', '.join(names)}")
     def print_props():
+        """
+        @meta
+        """
         print(f"Props:\n  - General: {', '.join(general_props)}\n  - Peaks: {', '.join(peak_props)}")
     def print_vals(BPM, shift, valves):
+        """
+        @meta
+        """
         print(f"""Original:\n  - shift: {shift}s\nModel:\n  - BPM: {BPM}\n  - Valves:""")
         for valve in valves:
             print("  - " + "\n    ".join(valve.toStr()))
     def print_help():
+        """
+        @meta
+        """
         print(f"""Help:
 
 Normal usage: 

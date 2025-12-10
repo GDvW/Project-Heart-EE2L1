@@ -2,6 +2,9 @@ from src.module_2.CommandProcessor import CommandProcessor
 from src.module_2.plot import Plot
 
 def generateStandardCommands(plot: Plot) -> CommandProcessor:
+    """
+    @meta
+    """
     cp = CommandProcessor()
     
     cp.register_command("reset", plot.reset, helpmsg="Reset the values to initial values")

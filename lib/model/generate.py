@@ -6,8 +6,14 @@ from lib.processing.functions import construct_bandpass_filter, apply_filter
 from random import random
 
 class ValveParams:
+    """
+    @meta
+    """
     def __init__(self, delay_ms:float, duration_total_ms: float, duration_onset_ms:float, a_onset: float, a_main: float, 
                          ampl_onset: float,  ampl_main:float, freq_onset:float, freq_main:float, name: str=None):
+        """
+        @meta
+        """
         self.delay = delay_ms / 1000
         self.duration_total = duration_total_ms / 1000
         self.duration_onset = duration_onset_ms / 1000
@@ -20,6 +26,9 @@ class ValveParams:
 
         self.name = name
     def toStr(self):
+        """
+        @meta
+        """
         return [
             f"Name: {self.name}",
             f"  Delay: {self.delay*1000}ms",
@@ -33,12 +42,24 @@ class ValveParams:
             f"  Freq main: {self.freq_main}Hz",
         ]
     def properties(self):
+        """
+        @meta
+        """
         return "name,delay,duration_total,duration_onset,a_onset,a_main,ampl_onset,ampl_main,freq_onset,freq_main"
     def values_str(self):
+        """
+        @meta
+        """
         return list(map(str, [self.name,self.delay,self.duration_total,self.duration_onset,self.a_onset,self.a_main,self.ampl_onset,self.ampl_main,self.freq_onset,self.freq_main]))
     def num_values(self):
+        """
+        @meta
+        """
         return [self.delay,self.duration_total,self.duration_onset,self.a_onset,self.a_main,self.ampl_onset,self.ampl_main,self.freq_onset,self.freq_main]
     def randomize(self, ratio):
+        """
+        @meta
+        """
         self.delay = randomize(self.delay, ratio)
         self.duration_total = randomize(self.duration_total, ratio)
         self.duration_onset = randomize(self.duration_onset, ratio)
@@ -50,6 +71,9 @@ class ValveParams:
         self.freq_main = randomize(self.freq_main, ratio)
 
 def advanced_model_valve_params(params: ValveParams, Fs:int):
+    """
+    @meta
+    """
     return advanced_model_valve(delay = params.delay, duration_total = params.duration_total, duration_onset = params.duration_onset, 
                                 a_onset = params.a_onset, a_main = params.a_main, ampl_onset = params.ampl_onset,  
                                 ampl_main = params.ampl_main, freq_onset = params.freq_onset, freq_main = params.freq_main, Fs = Fs)
@@ -59,6 +83,9 @@ def advanced_model_valve(delay:float, duration_total: float, duration_onset:floa
     # a_onset = 10
     # ampl_onset = 0.1
     # freq_onset = freq_main
+    """
+    @meta
+    """
     duration_main = duration_total - duration_onset if duration_total >= duration_onset else 0
     
     if duration_onset > 0:
@@ -94,6 +121,9 @@ def advanced_model_valve(delay:float, duration_total: float, duration_onset:floa
 
 def advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves):
     # Generate sounds of single valves
+    """
+    @meta
+    """
     t_out = []
     h_out = []
     for valve in valves:
@@ -128,6 +158,9 @@ def advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves):
     return t_filtered, h_filtered
 
 def advanced_model(Fs, BPM, lf, hf, order, size, valves, n, randomize_enabled: bool = False, r_ratio: float = 0, bpm_ratio: float = 0, noise: float = 0):
+    """
+    @meta
+    """
     if not randomize_enabled:
         t_filtered, h_filtered = advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves)
         return repeat(n, h_filtered, t_filtered, Fs, int(60/BPM*Fs))
@@ -155,9 +188,15 @@ def advanced_model(Fs, BPM, lf, hf, order, size, valves, n, randomize_enabled: b
         return t_full, h_full
         
 def randomize(val, ratio):
+    """
+    @meta
+    """
     return val * (1 + ratio * random())
 
 def repeat(n, h_filtered, t_filtered, Fs, length):
+    """
+    @meta
+    """
     h_full = np.zeros(length * n + max(0, len(h_filtered) - length))
     for i in range(0, n * length, length):
         h_full[i:i+len(h_filtered)] += h_filtered

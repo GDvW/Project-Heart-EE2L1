@@ -35,6 +35,9 @@ def insert_meta_into_file(path: str, self_path: str) -> bool:
     # don't modify this file itself
     if os.path.abspath(path) == os.path.abspath(self_path):
         return False
+    
+    if "tools" in path:
+        return False
 
     try:
         with open(path, "r", encoding="utf-8") as fh:

@@ -10,11 +10,18 @@ from lib.os.pathUtils import *
 from lib.config.ConfigParser import ConfigParser
 
 class OriginalSound:
+    """
+    @meta
+    """
     def __init__(self, file_path: str|Path, config: ConfigParser):
-        """Initialize a wrapper for the original sound.
+        """
+        @meta
+
+        Initialize a wrapper for the original sound.
 
         Args:
             config (ConfigParser): The config object.
+        
         """
         file_path = Path(file_path)
         if not file_path.exists():
@@ -29,15 +36,23 @@ class OriginalSound:
         self.original_Fs = None
         
     def reset(self) -> None:
-        """Reset the original sound to the initial values.
+        """
+        @meta
+
+        Reset the original sound to the initial values.
+        
         """
         self.shift = self.shift_init
         
     def get_sound_init(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Get all the properties of the origninal sound, including the frequency spectrum.
+        """
+        @meta
+
+        Get all the properties of the origninal sound, including the frequency spectrum.
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]: y_normalized (the amplitude axis), freq (the frequency axis), Y (the frequency amplitude spectrum)
+        
         """
         processor = Processor(self.file_path.resolve(), self.config, save_steps=True, write_result_processed=False, write_result_raw=False)
         processor.process()
@@ -52,27 +67,39 @@ class OriginalSound:
         return processor.y_normalized, freq, Y
     
     def get_time(self) -> np.ndarray:
-        """Get the time axis of the original sound.
+        """
+        @meta
+
+        Get the time axis of the original sound.
 
         Returns:
             np.ndarray: The time axis.
+        
         """
         return np.linspace(self.shift, self.shift+self.original_length/self.original_Fs, self.original_length)
 
     
     def generate_summary(self) -> str:
-        """Generate a readable summary of the original sound params.
+        """
+        @meta
+
+        Generate a readable summary of the original sound params.
 
         Returns:
             str: The summary.
+        
         """
         return f"Original:\n  - File: {self.file_path.stem}\n  e- Shift: {self.shift}"
     
     def import_csv(self, file_path: str|Path) -> None:
-        """Import the original sound params from a csv file.
+        """
+        @meta
+
+        Import the original sound params from a csv file.
 
         Args:
             file_path (str | Path): The path to the csv file.
+        
         """
         file_path = Path(file_path)
         if not file_path.exists():
@@ -83,10 +110,14 @@ class OriginalSound:
             self.import_csv_s(f.read())
         
     def import_csv_s(self, contents: str) -> None:
-        """Import the original sound params from a csv string.
+        """
+        @meta
+
+        Import the original sound params from a csv string.
 
         Args:
             contents (str): The csv in a string.
+        
         """
         # Filter the contents to only contain the correct information (Between 'Model:' and another line ending with ":"/EOF)
         filtered_contents = ""
@@ -120,20 +151,28 @@ class OriginalSound:
 
     
     def generate_csv(self) -> str:
-        """Generate the csv string for the params of the original sound.
+        """
+        @meta
+
+        Generate the csv string for the params of the original sound.
 
         Returns:
             str: The generated csv string.
+        
         """
         contents = [["OriginalSound:"], ["shift"],[str(self.shift)]]
         
         return "\n".join([",".join(c) for c in contents])
     
     def export_csv(self, file_path: str|Path) -> None:
-        """Export the params of the original sound to a csv file.
+        """
+        @meta
+
+        Export the params of the original sound to a csv file.
 
         Args:
             file_path (str | Path): The path to the csv file to export to.
+        
         """
         ensure_path_exists(file_path)
                 
@@ -141,10 +180,14 @@ class OriginalSound:
             fp.write(self.generate_csv())
             
     def export_readable(self, file_path: str|Path) -> None:
-        """Export the readable summary to a file.
+        """
+        @meta
+
+        Export the readable summary to a file.
 
         Args:
             file_path (str | Path): The path to the file to export to.
+        
         """
         ensure_path_exists(file_path)
         

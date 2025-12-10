@@ -4,7 +4,10 @@ from lib.config.ConfigDefaults import *
 from lib.config.AttrSection import AttrSection
 
 class ConfigParser:
-    """A minimal INI-like configuration parser with comment preservation
+    """
+    @meta
+
+    A minimal INI-like configuration parser with comment preservation
     and attribute-style section access.
 
     This class reads a configuration file, stores its sections, key/value
@@ -16,10 +19,14 @@ class ConfigParser:
         path (Path): Path to the configuration file.
         comments (dict[str, list[str]]): Mapping of section -> list of comment strings.
         config (dict[str, dict[str, Any]]): Parsed configuration data.
+    
     """
     
     def __init__(self, path: Path|str= CONFIG_PATH):
-        """Initialize a ConfigParser instance.
+        """
+        @meta
+
+        Initialize a ConfigParser instance.
 
         If the configuration file does not exist, a default configuration is
         created using DEFAULT_CONFIG and DEFAULT_COMMENTS. Otherwise, the file
@@ -29,6 +36,7 @@ class ConfigParser:
         Args:
             path (Path | str, optional): Path to the configuration file.
                 Defaults to CONFIG_PATH.
+        
         """
         self.path = Path(path)
         self.comments = {}
@@ -43,7 +51,10 @@ class ConfigParser:
             setattr(self, section, AttrSection(section, self.config))
             
     def read(self):
-        """Parse the configuration file from disk.
+        """
+        @meta
+
+        Parse the configuration file from disk.
 
         Reads the file line-by-line, identifying:
         - Section headers: [section]
@@ -56,6 +67,7 @@ class ConfigParser:
 
         Raises:
             FileNotFoundError: If the configuration file cannot be opened.
+        
         """
         current_section = ""
         with open(self.path) as fp:
@@ -84,7 +96,10 @@ class ConfigParser:
                     print(f"WARNING: did not recognize {line}, skipping")
                     
     def write(self):
-        """Write the current configuration and comments back to disk.
+        """
+        @meta
+
+        Write the current configuration and comments back to disk.
 
         Sections are written in the order they appear in `self.config`.
         Comments associated with each section (if any) are written immediately
@@ -98,6 +113,7 @@ class ConfigParser:
 
         Raises:
             OSError: If the file cannot be written.
+        
         """
         with open(self.path, "w") as fp:
             for section in self.sections():
@@ -109,49 +125,68 @@ class ConfigParser:
                 fp.write("\n")
                 
     def _create_default(self):
-        """Create a default configuration file.
+        """
+        @meta
+
+        Create a default configuration file.
 
         Loads `DEFAULT_CONFIG` and `DEFAULT_COMMENTS` from ConfigDefaults.py
         into memory and writes them to disk. This is called automatically
         when the target configuration file does not yet exist.
+        
         """
         self.comments = DEFAULT_COMMENTS
         self.config = DEFAULT_CONFIG
         self.write()
         
     def sections(self):
-        """Return a list of all section names.
+        """
+        @meta
+
+        Return a list of all section names.
 
         Returns:
             Iterable[str]: Names of all sections in the configuration.
+        
         """
         return self.config.keys()
     
     def addComment(self, section, comment):
-        """Attach a comment to the given section.
+        """
+        @meta
+
+        Attach a comment to the given section.
 
         Args:
             section (str): The section to which the comment belongs.
             comment (str): The comment line (including the '#' or ';' marker).
+        
         """
         if section not in self.comments:
             self.comments[section] = []
         self.comments[section].append(comment)
         
     def addSection(self, section):
-        """Ensure that a section exists in the configuration.
+        """
+        @meta
+
+        Ensure that a section exists in the configuration.
 
         Args:
             section (str): The section name.
 
         Notes:
             If the section already exists, this method does nothing.
+        
         """
         if section not in self.config:
             self.config[section] = {}
             
     def addAttribute(self, section, key, value):
-        """Add a key/value pair to a section with automatic type inference.
+        """
+        @meta
+
+        Add a key/value pair to a section with automatic type inference.
 
         The method attempts to detect numeric types:
 
@@ -163,6 +198,7 @@ class ConfigParser:
             section (str): The section to modify.
             key (str): The configuration key.
             value (str): The raw string value parsed from the file.
+        
         """
         # Check if it could be a int
         if re.match(r"\A[0-9]+\Z", value):

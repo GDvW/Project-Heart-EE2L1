@@ -1,5 +1,8 @@
 class AttrSection:
-    """Attribute-style access wrapper for a configuration section.
+    """
+    @meta
+
+    Attribute-style access wrapper for a configuration section.
 
     This class allows accessing configuration keys as Python attributes,
     e.g. `config.general.username`, while reading/writing the underlying
@@ -11,7 +14,10 @@ class AttrSection:
     """
     
     def __init__(self, section_name: str, config: dict):
-        """Initialize an attribute wrapper for a configuration section.
+        """
+        @meta
+
+        Initialize an attribute wrapper for a configuration section.
 
         Args:
             section_name (str): The name of the section this object wraps.
@@ -22,7 +28,10 @@ class AttrSection:
         self._config = config
         
     def __getattr__(self, name):
-        """Retrieve a configuration value as an attribute.
+        """
+        @meta
+
+        Retrieve a configuration value as an attribute.
 
         Args:
             name (str): The key name being accessed.
@@ -38,7 +47,11 @@ class AttrSection:
         raise AttributeError(f"No such field '{name}' in section '{self._section}'")
     
     def __setattr__(self, name, value):
-        """Assign a configuration value via attribute syntax.
+        """
+        @meta
+
+
+        Assign a configuration value via attribute syntax.
 
         If the attribute name begins with an underscore, it is treated as
         an internal attribute and assigned normally. Otherwise, the key is
@@ -54,7 +67,10 @@ class AttrSection:
             self._config[self._section][name] = str(value)
             
     def keys(self):
-        """Return all configuration keys in this section.
+        """
+        @meta
+
+        Return all configuration keys in this section.
 
         Returns:
             list[str]: A list of key names for this section.

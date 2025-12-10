@@ -8,7 +8,13 @@ from os.path import join
 from lib.processing.functions import construct_bandpass_filter, apply_filter
 
 class ValveParams:
+    """
+    @meta
+    """
     def __init__(self, duration_ms: float, freq: float, ampl:float, delay_ms:float, name: str=None):
+        """
+        @meta
+        """
         self.duration = duration_ms / 1000
         self.freq = freq
         self.ampl = ampl
@@ -16,9 +22,15 @@ class ValveParams:
         self.name = name
 
 def model_valve_params(params: ValveParams, Fs:int):
+    """
+    @meta
+    """
     return model_valve(params.duration, params.freq, params.ampl, params.delay, Fs)
 
 def model_valve(duration: float, freq:float, ampl:float, delay:float, Fs:int):
+    """
+    @meta
+    """
     a = 1/duration
     omega = 2*np.pi*freq
     # Create the transfer function system
@@ -35,6 +47,9 @@ def model_valve(duration: float, freq:float, ampl:float, delay:float, Fs:int):
     return t_out, h_out_delayed
 
 def simple_model():
+    """
+    @meta
+    """
     config = ConfigParser()
     valves = [
         ValveParams(20,  50,   1,  10, "M"),

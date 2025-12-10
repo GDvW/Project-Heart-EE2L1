@@ -3,7 +3,13 @@ from unittest.mock import patch
 from src.module_2.CommandProcessor import CommandProcessor
 
 class TestCommands(unittest.TestCase):
+    """
+    @meta
+    """
     def setUp(self):
+        """
+        @meta
+        """
         self.BPM = 100
         self.cmd = CommandProcessor()
         self.cmd.register_command("help", self.cmd.print_help, helpmsg="Show this help menu")
@@ -12,10 +18,16 @@ class TestCommands(unittest.TestCase):
         self.cmd.register_symbolic_prop("BPM", general_group, lambda obj: obj.BPM, lambda obj, val: setattr(obj, "BPM", val), dtype=int, helpmsg="The BPM of the heart signal")
         
     def test_set_bpm(self):
+        """
+        @meta
+        """
         self.cmd.process_command("G BPM 50")
         self.assertEqual(self.BPM, 50)
         
     def test_print_help(self):
+        """
+        @meta
+        """
         expected = [
             "\nCommands:",
             "  exit                            Shutdown the application",

@@ -8,11 +8,15 @@ from lib.processing.functions import construct_bandpass_filter
 from lib.processing.Processor import Processor
 
 def assignment422(config: ConfigParser, Fs: int=48e3):
-    """Executes assignment 4.2.2.
+    """
+    @meta
+
+    Executes assignment 4.2.2.
 
     Args:
         config (ConfigParser): The config object.
         Fs (int, optional): The desired sampling frequency of the filter in Hz. Defaults to 48e3.
+    
     """
     g = construct_bandpass_filter(
         config.LowpassFilter.LowFrequency, 
@@ -38,10 +42,14 @@ def assignment422(config: ConfigParser, Fs: int=48e3):
     plt.show()
     
 def assignment423(config: ConfigParser):
-    """Executes assignment 4.2.3.
+    """
+    @meta
+
+    Executes assignment 4.2.3.
 
     Args:
         config (ConfigParser): The config object.
+    
     """
     file_path = ".\\samples\\stethoscope_5_realHeart_\\recording_2025-07-10_14-40-12_channel_1.wav"
     
@@ -76,7 +84,11 @@ def assignment423(config: ConfigParser):
     plt.show()
     
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    """
+    @meta
+
+    The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    
     """
     config = ConfigParser()
     assignment422(config)

@@ -13,6 +13,9 @@ PLOT_RAW = False
 def segmentation(config):
     # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav"
+    """
+    @meta
+    """
     paths = [
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav",
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav",
@@ -95,7 +98,11 @@ def segmentation(config):
     plt.show()
 
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    """
+    @meta
+
+    The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    
     """
     config = ConfigParser()
     segmentation(config)

@@ -11,7 +11,13 @@ from src.module_2.cli import CLI
 
 
 class ParamMatcher:
+    """
+    @meta
+    """
     def __init__(self, path: str, config: ConfigParser):
+        """
+        @meta
+        """
         self.cmd_queue = queue.Queue()
         self.stop_event = threading.Event()
         self.executing_event = threading.Event()
@@ -24,6 +30,9 @@ class ParamMatcher:
         self.timer = None
         
     def run(self):
+        """
+        @meta
+        """
         self.plot.plot_init()
         self.cli.run()
         self.timer = self.plot.fig.canvas.new_timer(interval=150)
@@ -48,6 +57,9 @@ class ParamMatcher:
         
     # Process commands every tick of the timer
     def on_timer_tick(self):
+        """
+        @meta
+        """
         try:
             while not self.stop_event.is_set():
                 cmd = self.cmd_queue.get_nowait()
@@ -63,6 +75,9 @@ class ParamMatcher:
 
         
 def main():
+    """
+    @meta
+    """
     paths = [
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav",
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav",

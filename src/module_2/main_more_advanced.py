@@ -11,6 +11,9 @@ from lib.model.generate import *
 
 
 def main():
+    """
+    @meta
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     BPM = config.HeartSoundModel.BPM
@@ -31,6 +34,9 @@ def main():
     plt.show()
     
 def plotOriginal():
+    """
+    @meta
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     BPM = config.HeartSoundModel.BPM

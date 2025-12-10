@@ -25,7 +25,13 @@ mpl.rcParams['figure.raise_window'] = False
 plt.ion()
 
 class Plot:
+    """
+    @meta
+    """
     def __init__(self, soundfile: str, config: ConfigParser, log_enabled: bool = True):
+        """
+        @meta
+        """
         self.log_enabled = log_enabled
         
         self.model = Model(config)
@@ -39,6 +45,9 @@ class Plot:
         self.model_plot = None
         
     def plot_init(self):
+        """
+        @meta
+        """
         original_y, original_freq, original_Y = self.original_sound.get_sound_init()
         t_model, h_model, freq, H = self.model.generate_model_and_freq()
         min_t = min(t_model)-0.1
@@ -70,6 +79,9 @@ class Plot:
         freqax.set_ylabel("Amplitude")
         
     def update_original(self, refresh_view: bool = True):
+        """
+        @meta
+        """
         t = self.original_sound.get_time()
         self.original_plot.set_xdata(t)
                 
@@ -78,6 +90,9 @@ class Plot:
             
         
     def update_model(self, refresh_view: bool = True):
+        """
+        @meta
+        """
         t, h, freq, H = self.model.generate_model_and_freq()
         
         self.model_plot.set_xdata(t)
@@ -89,6 +104,9 @@ class Plot:
             self.fig.canvas.draw_idle()
     
     def reset(self):
+        """
+        @meta
+        """
         self.model.reset()
         self.original_sound.reset()
         
@@ -96,14 +114,23 @@ class Plot:
         self.update_original()
         
     def generate_summary(self):
+        """
+        @meta
+        """
         return self.original_sound.generate_summary() + "\n" + self.model.generate_summary()
             
     def export_readable(self, file_path):
+        """
+        @meta
+        """
         ensure_path_exists(file_path)
         with open(file_path, "w") as fp:
             fp.write(self.generate_summary())
             
     def export_csv(self, file_path: str):
+        """
+        @meta
+        """
         ensure_path_exists(file_path)
         
         contents = self.original_sound.generate_csv() + "\n" + self.model.generate_csv()
@@ -112,6 +139,9 @@ class Plot:
             fp.write(contents)
             
     def import_csv(self, file: str):
+        """
+        @meta
+        """
         file = Path(file)
         if not file.exists():
             print(f"{file} can not be found")
@@ -127,9 +157,15 @@ class Plot:
         self.update_original()
         
     def print(self):
+        """
+        @meta
+        """
         print(self.generate_summary().strip())
             
     def play_audio(self, duration: str = ""):
+        """
+        @meta
+        """
         t_model, h_model = self.model.generate_model()
         if len(duration) > 0:
             try:
@@ -145,18 +181,33 @@ class Plot:
             sd.play(h_model, self.Fs)
         
     def stop_audio(self):
+        """
+        @meta
+        """
         sd.stop()
     
     def print_order(self):
+        """
+        @meta
+        """
         print("Order: M, T, A, P")
     
     def log(self, msg):
+        """
+        @meta
+        """
         if self.log_enabled:
             print(msg)
             
     def show(self):
+        """
+        @meta
+        """
         plt.show()
         
     def close(self):
+        """
+        @meta
+        """
         plt.close(self.fig)
         

@@ -4,19 +4,31 @@ from enum import Enum
 from typing import Callable
 
 class HeartSound (Enum):
+    """
+    @meta
+    """
     S1 = 0
     S2 = 1
 
 def get_peaks(x: np.ndarray, min_height: float, min_dist: float):
+    """
+    @meta
+    """
     peaks, properties = signal.find_peaks(x, height=min_height, distance=min_dist)
 
     return peaks, properties
 
 def get_dist_peaks_to_next(x_peaks: np.ndarray):
+    """
+    @meta
+    """
     diff = np.diff(x_peaks)
     return dict(zip(x_peaks[:-1], diff))
 
 def remove_outliers(x: list[tuple[int, int]]):
+    """
+    @meta
+    """
     x = np.array(x)
     dist = x[:,1]
     Q1 = np.percentile(dist, 25)
@@ -33,6 +45,9 @@ def remove_outliers(x: list[tuple[int, int]]):
     return data, outliers
 
 def analyze_diff2(x_peaks: np.ndarray, diff: np.ndarray, diff2: np.ndarray):
+    """
+    @meta
+    """
     minima = []
     maxima = []
     uncertain = []
@@ -56,6 +71,9 @@ def analyze_diff2(x_peaks: np.ndarray, diff: np.ndarray, diff2: np.ndarray):
     return maxima, max_outliers, minima, min_outliers
 
 def classify_peaks(x_peaks: np.ndarray):
+    """
+    @meta
+    """
     raise NotImplementedError()
     diff = np.diff(x_peaks)
     diff2 = np.diff(diff)
@@ -65,15 +83,24 @@ def classify_peaks(x_peaks: np.ndarray):
     return np.array(s1_peaks), np.array(s2_peaks), np.array(s1_outliers), np.array(s2_outliers)
 
 def pop_np(x):
+    """
+    @meta
+    """
     return x[-1], x[:-1]
 
 def get_difference(a,b):
+    """
+    @meta
+    """
     a_rows = {tuple(row) for row in a}
     b_rows = {tuple(row) for row in b}
     
     return list(a_rows - b_rows)
 
 def detect_peak_domains(peaks: np.ndarray, see: np.ndarray, threshold: float):
+    """
+    @meta
+    """
     peak_start = None
     peaks_ind = []
     for i, s in enumerate(see):
@@ -86,6 +113,9 @@ def detect_peak_domains(peaks: np.ndarray, see: np.ndarray, threshold: float):
     return np.array(peaks_ind)
 
 def segment_only_with_len_filter_and_thus_deprecated_should_not_be_used(signal: np.ndarray, domains: np.ndarray, len_filter: int):
+    """
+    @meta
+    """
     mask = np.zeros(len(signal), dtype=bool)
     comp = int(len_filter / 2)
     for start, end in domains:
@@ -93,6 +123,9 @@ def segment_only_with_len_filter_and_thus_deprecated_should_not_be_used(signal: 
     return np.where(mask, signal, 0)
 
 def segment(signal: np.ndarray, domains: np.ndarray, comp: Callable[[int], int]):
+    """
+    @meta
+    """
     mask = np.zeros(len(signal), dtype=bool)
     concatenated = []
     for start, end in domains:

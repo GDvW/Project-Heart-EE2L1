@@ -8,13 +8,17 @@ from scipy.fft import fft
 import numpy as np
 
 def plot_pcg(file: str, time_ax: axes.Axes, freq_ax: axes.Axes, title:str=None):
-    """_summary_
+    """
+    @meta
+
+    _summary_
 
     Args:
         file (str): The file to render
         time_ax (axes.Axes): The matplotlib ax to plot the time domain of the signal on.
         freq_ax (axes.Axes): The matplotlib ax to plot the time domain of the signal on.
         title (str, optional): The title of the plot. Defaults to None.
+    
     """
     if title is None:
         title = basename(file).split("_")[0]
@@ -37,7 +41,10 @@ def plot_pcg(file: str, time_ax: axes.Axes, freq_ax: axes.Axes, title:str=None):
     
 
 def main(pcg_dir: str = "./samples/chapter_2/", csv_data_file: str = None):
-    """Creates plots of the signal and its frequency spectrum based on the files in pcg_dir
+    """
+    @meta
+
+    Creates plots of the signal and its frequency spectrum based on the files in pcg_dir
 
     Args:
         pcg_dir (str, optional): The path to the wav files. Defaults to "./samples/chapter_2/".
@@ -45,6 +52,7 @@ def main(pcg_dir: str = "./samples/chapter_2/", csv_data_file: str = None):
 
     Returns:
         int: 0 on success, -1 on failure
+    
     """
     # Get all wav files from the samples directory
     pcgs = get_files_ext(".wav", pcg_dir)
