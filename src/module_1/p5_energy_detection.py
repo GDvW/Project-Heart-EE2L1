@@ -13,9 +13,9 @@ def result45(config):
     @date: 10-12-2025
     """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
-    processor = Processor(path, config, save_steps=True)
+    processor = Processor(path, config)
     
-    processor.process()
+    processor.run()
     
     fig, ax = plt.subplots(4, 2, figsize=(8,12), constrained_layout=True)
     timeFrequencyPlot(
@@ -90,9 +90,9 @@ def filter45(config):
     @date: 10-12-2025
     """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
-    processor = Processor(path, config, save_steps=True)
+    processor = Processor(path, config)
     
-    processor.process()
+    processor.run()
 
     fig, ax = plt.subplots(1, 2, figsize=(8,4), constrained_layout=True)
     

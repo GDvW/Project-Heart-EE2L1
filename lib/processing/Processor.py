@@ -27,7 +27,7 @@ class Processor:
     This class allows to easily reuse code across the whole codebase and optionally save results for plotting them.
     
     """
-    def __init__(self, file_path: str, config: ConfigParser, subfolder: str = "", save_steps: bool = False, log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True, postprocessing: bool = True):
+    def __init__(self, file_path: str, config: ConfigParser, subfolder: str = "", log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True, postprocessing: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -69,7 +69,6 @@ class Processor:
         self.max_comp_height = config.Segmentation.MaxCompHeight
         self.max_comp_iter = config.Segmentation.MaxCompIter
         
-        self.save_steps = save_steps
         self.write_result_processed = write_result_processed
         self.write_result_raw = write_result_raw
         self.log_enabled = log
@@ -101,91 +100,126 @@ class Processor:
         self.segmented_s2 = None
         self.segmented_s1_raw = None
         self.segmented_s2_raw = None
-    def process(self):
+    def run(self):
         """
         @author: Gerrald
         @date: 10-12-2025
 
-        Initialize the processing and optionally save the steps in between.
+        Run the process.
         
+        """
+        self.load()
+        
+        self.preprocess()
+        
+        self.process()
+    
+        self.classify()
+
+        self.segment()
+
+        self.write()
+        
+        self.log("Finished! :-)")
+        self.log(f"Results:\n  - S1 count: {len(self.s1_peaks)}\n  - S2 count: {len(self.s2_peaks)}\n  - Uncertain: {len(self.uncertain)}")
+        
+            
+    def load(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
         """
         if self.file_path is None:
             raise RuntimeError("Filepath is None")
         self.log("Reading file...")
-        Fs_original, x = wavfile.read(self.file_path)
-    
+        self.Fs_original, self.x = wavfile.read(self.file_path)
+        
+    def preprocess(self):
+        if self.x is None or self.Fs_original is None:
+            self.load()
+        
         self.log("Constructing bandpass filter...")
-        g = construct_bandpass_filter(self.lp_low_freq, self.lp_high_freq, Fs_original, order=self.lp_filter_order, size=self.lp_filter_size)
+        self.g = construct_bandpass_filter(self.lp_low_freq, self.lp_high_freq, self.Fs_original, order=self.lp_filter_order, size=self.lp_filter_size)
         
         self.log("Filtering input signal...")
-        y = apply_filter(x, g)
+        self.y = apply_filter(self.x, self.g)
         
         self.log("Downsampling signal...")
-        y_downsampled, M = downsample(y, Fs_original, self.Fs_target)
+        self.y_downsampled, self.M = downsample(self.y, self.Fs_original, self.Fs_target)
         
         self.log("Normalizing signal...")
-        y_normalized = normalize(y_downsampled)
+        self.y_normalized = normalize(self.y_downsampled)
         
+    def process(self):
         self.log("Calculating Shannon energy...")
-        y_energy = shannon_energy(y_normalized)
+        self.y_energy = shannon_energy(self.y_normalized)
         
         self.log("Constructing Shannon Energy Envelope Filter...")
-        see_filter = construct_lowpass_filter(self.energy_cutoff_freq, self.Fs_target, self.energy_filter_order, self.energy_filter_size)
+        self.see_filter = construct_lowpass_filter(self.energy_cutoff_freq, self.Fs_target, self.energy_filter_order, self.energy_filter_size)
         
         self.log("Creating Shannon Energy Envelope...")
-        see = apply_filter(y_energy, see_filter)
+        self.see = apply_filter(self.y_energy, self.see_filter)
         
         self.log("Normalizing Shannon Energy Envelope...")
-        see_normalized = normalize(see, mode="stdev")
+        self.see_normalized = normalize(self.see, mode="stdev")
         
         self.log("Getting peaks of Shannon Energy Envelope...")
-        peaks, peak_properties = get_peaks(see_normalized, self.segmentation_min_height, self.segmentation_min_dist)
+        self.peaks, _ = get_peaks(self.see_normalized, self.segmentation_min_height, self.segmentation_min_dist)
         
+    def classify(self):
         self.log("Classifying peaks...")
-        # s1_peaks, s2_peaks, s1_outliers, s2_outliers = self.classify_peaks(peaks)
-        s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks)
-
-        self.log("Troubleshooting")
-        if len(uncertain) > 0 and self.postprocessing:
-            max_uncertain_count = self.max_uncertain_count_per_min * len(see_normalized) / self.Fs_target / 60
+        
+        # Initial classification - baseline measurement
+        self.s1_peaks, self.s2_peaks, self.uncertain = self.classify_peaks(self.peaks)
+        
+        if len(self.uncertain) > 0 and self.postprocessing:
+            self.log("Postprocessing...")
+            # Calculating some stats so that we can adjust the global threshold
+            max_uncertain_count = self.max_uncertain_count_per_min * len(self.see_normalized) / self.Fs_target / 60
             min_height = self.segmentation_min_height
             increase = (self.max_comp_height - self.segmentation_min_height) / self.max_comp_iter
-            print(max_uncertain_count)
-            while len(uncertain) > max_uncertain_count:
+            
+            if len(self.uncertain) > max_uncertain_count: self.log("Adjusting global threshold")
+            
+            # While we have too much uncertains (max count of uncertains per minute set in config), 
+            # slowly increase the global peak threshold till we meet a value that is beneath these.
+            while len(self.uncertain) > max_uncertain_count:
                 min_height += increase
                 
-                peaks, peak_properties = get_peaks(see_normalized, min_height, self.segmentation_min_dist)
-                s1_peaks, s2_peaks, uncertain = self.classify_peaks(peaks)
+                self.peaks, _ = get_peaks(self.see_normalized, min_height, self.segmentation_min_dist)
+                self.s1_peaks, self.s2_peaks, self.uncertain = self.classify_peaks(self.peaks)
                 
                 if min_height > self.max_comp_height:
                     raise RuntimeError(f"Did not succeed to achieve max {max_uncertain_count} uncertains")
-            self.log(f"Achieved {len(uncertain)} uncertains")
+                
+            self.log(f"Achieved {len(self.uncertain)} uncertains")
             self.actual_segmentation_min_height = min_height
-            s1_peaks, s2_peaks, uncertain = self.solve_uncertains(see_normalized, peaks, s1_peaks, s2_peaks, uncertain, 
+            # Do a last effort to locally increase/decrease the threshold to be more resistant against noise.
+            self.s1_peaks, self.s2_peaks, self.uncertain = self.solve_uncertains(self.see_normalized, self.peaks, self.s1_peaks, self.s2_peaks, self.uncertain, 
                                                                   self.segmentation_solve_uncertain_length, self.Fs_target, 
                                                                   self.segmentation_min_height, self.segmentation_min_dist)
-        self.actual_segmentation_min_height = 0
+        else:
+            self.actual_segmentation_min_height = 0
+        
 
+    def segment(self):
+        self.log("Segmenting them...")
         
         # Sort arrays for further processing
-        s1_peaks = s1_peaks[s1_peaks[:,0].argsort()]
-        s2_peaks = s2_peaks[s2_peaks[:,0].argsort()]
+        self.s1_peaks = self.s1_peaks[self.s1_peaks[:,0].argsort()]
+        self.s2_peaks = self.s2_peaks[self.s2_peaks[:,0].argsort()]
         
-        self.log("Segmenting them...")
-        ind_s1 = detect_peak_domains(s1_peaks, see_normalized, self.segmentation_threshold)
-        ind_s2 = detect_peak_domains(s2_peaks, see_normalized, self.segmentation_threshold)
+        self.ind_s1 = detect_peak_domains(self.s1_peaks, self.see_normalized, self.segmentation_threshold)
+        self.ind_s2 = detect_peak_domains(self.s2_peaks, self.see_normalized, self.segmentation_threshold)
+        # Calculate compensation for filters
+        see_filter_comp = int(len(self.see_filter)/2)
+        g_filter_comp = int(len(self.g)/2)
+        self.segmented_s1, self.segmented_s1_concat = segment(self.y_normalized, self.ind_s1, lambda index: (index - see_filter_comp))
+        self.segmented_s2, self.segmented_s2_concat = segment(self.y_normalized, self.ind_s2, lambda index: (index - see_filter_comp))
+        self.segmented_s1_raw, self.segmented_s1_raw_concat = segment(self.x, self.ind_s1, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
+        self.segmented_s2_raw, self.segmented_s2_raw_concat = segment(self.x, self.ind_s2, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
         
-        # segmented_s1 = segment(y_normalized, ind_s1, len(see_filter))
-        # segmented_s2 = segment(y_normalized, ind_s2, len(see_filter))
-        # segmented_s1_raw = segment(x, ind_s1, len(see_filter)+len(g))
-        # segmented_s2_raw = segment(x, ind_s2, len(see_filter)+len(g))
-        see_filter_comp = int(len(see_filter)/2)
-        g_filter_comp = int(len(g)/2)
-        segmented_s1, segmented_s1_concat = segment(y_normalized, ind_s1, lambda index: (index - see_filter_comp))
-        segmented_s2, segmented_s2_concat = segment(y_normalized, ind_s2, lambda index: (index - see_filter_comp))
-        segmented_s1_raw, segmented_s1_raw_concat = segment(x, ind_s1, lambda index: (index - see_filter_comp) * M - g_filter_comp)
-        segmented_s2_raw, segmented_s2_raw_concat = segment(x, ind_s2, lambda index: (index - see_filter_comp) * M - g_filter_comp)
-        
+    def write(self):
         # Path were it is saved "value from config/subfolder/(concat|segmented)/(raw|processed)/file"
         basefolder = join(self.generation_path, self.subfolder)
         
@@ -195,57 +229,26 @@ class Processor:
             
             concat_file_path = join(basefolder, self.concat_path, "processed")
             ensure_path_exists(concat_file_path, is_parent=True)
-            write(join(concat_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, segmented_s1_concat)
-            write(join(concat_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, segmented_s2_concat)
+            write(join(concat_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1_concat)
+            write(join(concat_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "processed")
             ensure_path_exists(segment_file_path, is_parent=True)
-            write(join(segment_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, segmented_s1)
-            write(join(segment_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, segmented_s2)
+            write(join(segment_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1)
+            write(join(segment_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2)
         if self.write_result_raw:
             self.log("Writing raw files...")
             file_name = splitext(basename(self.file_path))[0]
 
             concat_file_path = join(basefolder, self.concat_path, "raw")
             ensure_path_exists(concat_file_path, is_parent=True)
-            write(join(concat_file_path, f"segmented-s1-raw-{file_name}.wav"), Fs_original, segmented_s1_raw_concat)
-            write(join(concat_file_path, f"segmented-s2-raw-{file_name}.wav"), Fs_original, segmented_s2_raw_concat)
+            write(join(concat_file_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw_concat)
+            write(join(concat_file_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "raw")
             ensure_path_exists(segment_file_path, is_parent=True)
-            write(join(segment_file_path, f"segmented-s1-raw-{file_name}.wav"), Fs_original, segmented_s1_raw)
-            write(join(segment_file_path, f"segmented-s2-raw-{file_name}.wav"), Fs_original, segmented_s2_raw)
-
-        
-        self.log("Finished! :-)")
-        # self.log(f"Results:\n  - S1 count: {len(s1_peaks)}\n  - S2 count: {len(s2_peaks)}\n  - S1 outliers count: {len(s1_outliers)}\n  - S2 outliers count: {len(s2_outliers)}")
-        self.log(f"Results:\n  - S1 count: {len(s1_peaks)}\n  - S2 count: {len(s2_peaks)}\n  - Uncertain: {len(uncertain)}")
-        
-        if self.save_steps:
-            self.Fs_original = Fs_original
-            self.x = x
-            self.g = g
-            self.y = y
-            self.M = M
-            self.y_downsampled = y_downsampled
-            self.y_normalized = y_normalized
-            self.y_energy = y_energy
-            self.see_filter = see_filter
-            self.see = see
-            self.see_normalized = see_normalized
-            self.peaks = peaks
-            self.peak_properties = peak_properties
-            self.s1_peaks = s1_peaks
-            self.s2_peaks = s2_peaks
-            self.uncertain = uncertain
-            self.s1_outliers = None
-            self.s2_outliers = None
-            self.ind_s1 = ind_s1
-            self.ind_s2 = ind_s2
-            self.segmented_s1 = segmented_s1
-            self.segmented_s2 = segmented_s2
-            self.segmented_s1_raw = segmented_s1_raw
-            self.segmented_s2_raw = segmented_s2_raw
+            write(join(segment_file_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw)
+            write(join(segment_file_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw)
             
     def classify_peaks(self, x_peaks: np.ndarray, save_y_line: bool = True, save_peaks: bool = True):
         """

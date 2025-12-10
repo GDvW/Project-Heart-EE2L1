@@ -33,12 +33,12 @@ class Executor:
         @author: Gerrald
         @date: 10-12-2025
         """
-        processor = Processor(None, self.config, log=self.log_enabled, save_steps=True)
+        processor = Processor(None, self.config, log=self.log_enabled)
         for file in self.files:
             self.log(f"Processing {file.stem}")
             processor.open_file(file)
             try:
-                processor.process()
+                processor.run()
                 
                 self.results[file] = [len(processor.s1_peaks), len(processor.s2_peaks), len(processor.uncertain)]
             except Exception as e:

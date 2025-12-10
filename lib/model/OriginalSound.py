@@ -60,8 +60,8 @@ class OriginalSound:
             Tuple[np.ndarray, np.ndarray, np.ndarray]: y_normalized (the amplitude axis), freq (the frequency axis), Y (the frequency amplitude spectrum)
         
         """
-        processor = Processor(self.file_path.resolve(), self.config, save_steps=True, write_result_processed=False, write_result_raw=False)
-        processor.process()
+        processor = Processor(self.file_path.resolve(), self.config, write_result_processed=False, write_result_raw=False)
+        processor.run()
         
         self.original_length = len(processor.y_normalized)
         self.original_Fs = processor.Fs_target

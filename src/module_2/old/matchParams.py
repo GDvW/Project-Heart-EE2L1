@@ -73,7 +73,7 @@ def matchParams():
     valves = deepcopy(valves_init)
     
     # Get original heart sound
-    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, save_steps=True, write_result_processed=False, write_result_raw=False)
+    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, write_result_processed=False, write_result_raw=False)
     processor.process()
     
     t_model, h_model = advanced_model(

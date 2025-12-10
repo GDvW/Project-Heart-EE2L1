@@ -27,9 +27,9 @@ def segmentation(config):
     ]
     path = paths[1]
     path = ".\\generated\\hearbeat model\\Advanced-48000Hz-66BPM-200 beats.wav"
-    processor = Processor(path, config, save_steps=True, postprocessing=True, subfolder="Generated sounds")
+    processor = Processor(path, config, postprocessing=True, subfolder="Generated sounds")
     
-    processor.process()
+    processor.run()
     
     fig, ax = plt.subplots(3, 2, figsize=(8,6), constrained_layout=True)
     
