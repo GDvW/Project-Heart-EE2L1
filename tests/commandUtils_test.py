@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.module_2.CommandProcessor import CommandProcessor
+from lib.model_optimize.GUI.CommandProcessor import CommandProcessor
 
 class TestCommands(unittest.TestCase):
     """

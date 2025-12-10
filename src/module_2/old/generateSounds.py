@@ -15,7 +15,7 @@ def generateSounds(config: ConfigParser, valves: list[ValveParams]|None = None, 
     Fs = config.HeartSoundModel.Fs
 
     plot = Plot("", config, log_enabled=False, disable_orignal=True)
-    plot.import_csv(".\\src\\module_2\\quite_good_params.csv", run_plot=False)
+    plot.import_csv(".\\src\\module_2\\model_params.csv", run_plot=False)
     
     if valves is None:
         valves = plot.valves    

@@ -5,18 +5,6 @@ from lib.model.Model import Model
 import matplotlib.pyplot as plt
 from lib.model.generate import *
 
-
-# valve_locs = {"M":np.array((6.37,10.65,6.00)),
-#               "T":np.array((0.94,9.57,5.5)),
-#               "A":np.array((5.5,11.00,3.6)),
-#               "P":np.array((3.9,11.5,4.5))}
-# mic_locs = {0: np.array((2.5, 5, 0)),
-#             1: np.array((2.5, 10, 0)),
-#             2: np.array((2.5, 15, 0)),
-#             3: np.array((7.5, 5, 0)),
-#             4: np.array((7.5, 10, 0)),
-#             5: np.array((7.5, 15, 0))}
-
 valve_locs = np.array([(6.37,10.65,6.00), # M
               (0.94,9.57,5.5), # T
               (5.5,11.00,3.6), # A
@@ -29,11 +17,6 @@ mic_locs = np.array([(2.5, 5, 0), # 0
             (7.5, 5, 0), # 3
             (7.5, 10, 0), # 4
             (7.5, 15, 0)]) # 5
-
-# for i in range(6):
-#     mic_locs[i] = (2.5+(i//3)*5,(i%3)*5+5,0))
-
-
 
 def log(msg):
     """
@@ -51,7 +34,7 @@ def threeD_model():
     config = ConfigParser()
     
     model = Model(config)
-    model.import_csv(".\\src\\module_2\\quite_good_params.csv")
+    model.import_csv(".\\src\\module_2\\model_params.csv")
     # model.set_n(config.HeartSoundModel.NBeats)
     model.set_n(10)
     
