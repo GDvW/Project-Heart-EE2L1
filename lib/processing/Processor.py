@@ -206,18 +206,23 @@ class Processor:
                 
                 if min_height > self.max_comp_height:
                     t = np.linspace(0, len(self.see_normalized)/self.Fs_target, len(self.see_normalized))
-                    plt.hlines(self.max_comp_height, xmin=0, xmax=len(self.see_normalized)/self.Fs_target)
-                    plt.plot(t, self.see_normalized)
+                    plt.hlines(self.segmentation_min_height, xmin=0, xmax=len(self.see_normalized)/self.Fs_target, label="min")
+                    plt.hlines(self.max_comp_height, xmin=0, xmax=len(self.see_normalized)/self.Fs_target, label="max")
+                    plt.plot(t, self.see_normalized, color="orange", label="signal")
                     plt.title(f"Did not succeed with {Path(self.file_path).parent.stem + "/" + Path(self.file_path).stem}")
+                    plt.legend()
                     plt.show()
-                    raise RuntimeError(f"Did not succeed to achieve max {max_uncertain_count} uncertains - achieved {len(self.uncertain)}")
-                
+                    # raise RuntimeError(f"Did not succeed to achieve max {max_uncertain_count} uncertains - achieved {len(self.uncertain)}")
+                    self.peaks, _ = get_peaks(self.see_normalized, self.segmentation_min_height, self.segmentation_min_dist)
+                    self.s1_peaks, self.s2_peaks, self.uncertain = self.classify_peaks(self.peaks)
+                    print(f"Continuing with {len(self.uncertain)} uncertains")
+                    break
             self.log(f"Achieved {len(self.uncertain)} uncertains")
             self.actual_segmentation_min_height = min_height
             # Do a last effort to locally increase/decrease the threshold to be more resistant against noise.
             self.s1_peaks, self.s2_peaks, self.uncertain = self.solve_uncertains(self.see_normalized, self.peaks, self.s1_peaks, self.s2_peaks, self.uncertain, 
-                                                                  self.segmentation_solve_uncertain_length, self.Fs_target, 
-                                                                  self.segmentation_min_height, self.segmentation_min_dist)
+                                                                self.segmentation_solve_uncertain_length, self.Fs_target, 
+                                                                self.segmentation_min_height, self.segmentation_min_dist)
         else:
             self.actual_segmentation_min_height = 0
         

@@ -1,6 +1,7 @@
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+import traceback
 from lib.plot.timeFrequencyPlot import *
 from lib.plot.frequencyUtils import getDamping
 from lib.general.generalUtils import todB
@@ -31,7 +32,7 @@ def segmentation_light(config, path = None, write_results: bool = True):
     if path is None:
         path = paths[1]
         #path = ".\\generated\\hearbeat model\\Advanced-48000Hz-66BPM-200 beats.wav"
-    # path = "samples\\piezo_2_realHeart\\recording_2025-07-10_15-15-16_channel_4.wav"
+    path = "samples\\piezo_2_realHeart\\recording_2025-07-10_15-15-17_channel_6.wav"
     processor = Processor(path, config, postprocessing=True, write_result_processed=write_results, write_result_raw=write_results, subfolder="Generated sounds")
     
     processor.run()
@@ -95,4 +96,4 @@ for file in files:
     try:
         segmentation_light(config, str(file), write_results = False)
     except Exception as e:
-        print(f"ERROR: Failed {file}: {e}")
+        print(f"ERROR: Failed {file}: {traceback.format_exc()}")
