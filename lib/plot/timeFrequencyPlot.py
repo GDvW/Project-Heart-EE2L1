@@ -7,7 +7,7 @@ from lib.general.generalUtils import todB
 def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: axes.Axes, time_title:str=None, freq_title:str=None, grid: bool = True, samples_offset: float = 0, apply_fftshift:bool=False, resolution: int|None = None, freq_label: str="", time_label: str=""):
     """
     @author: Gerrald
-    @date: 10-12-2025
+    @date: 11-12-2025
 
     Plots the time and frequency spectrum of an input signal x.
 
@@ -26,31 +26,33 @@ def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: 
         time_label (str, optional): The label of the time spectrum plot. Defaults to None.
     
     """
-    if resolution is not None:
-        X = fft(x, resolution)
-    else:
-        X = fft(x)
+    if time_ax:
+        t = np.linspace(0 + samples_offset/Fs, (len(x) + samples_offset)/Fs, len(x))
+        time_ax.plot(t, x, label=time_label)
+        time_ax.set_xlabel("Time [s]")
+        time_ax.set_ylabel("Amplitude")
+        time_ax.grid(grid)
+        if time_title is not None:
+            time_ax.set_title(time_title)
+        
+    if freq_ax:
+        if resolution is not None:
+            X = fft(x, resolution)
+        else:
+            X = fft(x)
+        
+        
+        if apply_fftshift:
+            X = fftshift(X)
+            f = np.linspace(-Fs/2, Fs/2, len(X))
+        else:
+            f = np.linspace(0, Fs, len(X))
+        
+        freq_ax.plot(f, todB(np.abs(X)), label=freq_label)
+        freq_ax.set_xlabel("Frequency [Hz]")
+        freq_ax.set_ylabel("Amplitude(dB)")
+        
+        freq_ax.grid(grid)
     
-    t = np.linspace(0 + samples_offset/Fs, (len(x) + samples_offset)/Fs, len(x))
-    
-    if apply_fftshift:
-        X = fftshift(X)
-        f = np.linspace(-Fs/2, Fs/2, len(X))
-    else:
-        f = np.linspace(0, Fs, len(X))
-    
-    time_ax.plot(t, x, label=time_label)
-    time_ax.set_xlabel("Time [s]")
-    time_ax.set_ylabel("Amplitude")
-    
-    freq_ax.plot(f, todB(np.abs(X)), label=freq_label)
-    freq_ax.set_xlabel("Frequency [Hz]")
-    freq_ax.set_ylabel("Amplitude(dB)")
-    
-    time_ax.grid(grid)
-    freq_ax.grid(grid)
-    
-    if time_title is not None:
-        time_ax.set_title(time_title)
-    if freq_title is not None:
-        freq_ax.set_title(freq_title)
+        if freq_title is not None:
+            freq_ax.set_title(freq_title)
