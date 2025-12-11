@@ -1,11 +1,12 @@
-from lib.processing.functions import *
-from lib.processing.dataprocessing import *
-from lib.os.pathUtils import ensure_path_exists
-from lib.config.ConfigParser import ConfigParser
 from scipy.io import wavfile
 from pathlib import Path
 from scipy.io.wavfile import write
 from os.path import join, basename, splitext
+import matplotlib.pyplot as plt
+from lib.processing.functions import *
+from lib.processing.dataprocessing import *
+from lib.os.pathUtils import ensure_path_exists
+from lib.config.ConfigParser import ConfigParser
 
 class Classification(Enum):
     """
@@ -20,7 +21,7 @@ class Classification(Enum):
 class Processor:
     """
     @author: Gerrald
-    @date: 10-12-2025
+    @date: 11-12-2025
 
     Wrapper for the processing stage.
     
@@ -179,7 +180,7 @@ class Processor:
     def classify(self):
         """
         @author: Gerrald
-        @date: 10-12-2025
+        @date: 11-12-2025
         """
         self.log("Classifying peaks...")
         
@@ -204,7 +205,12 @@ class Processor:
                 self.s1_peaks, self.s2_peaks, self.uncertain = self.classify_peaks(self.peaks)
                 
                 if min_height > self.max_comp_height:
-                    raise RuntimeError(f"Did not succeed to achieve max {max_uncertain_count} uncertains")
+                    t = np.linspace(0, len(self.see_normalized)/self.Fs_target, len(self.see_normalized))
+                    plt.hlines(self.max_comp_height, xmin=0, xmax=len(self.see_normalized)/self.Fs_target)
+                    plt.plot(t, self.see_normalized)
+                    plt.title(f"Did not succeed with {Path(self.file_path).parent.stem + "/" + Path(self.file_path).stem}")
+                    plt.show()
+                    raise RuntimeError(f"Did not succeed to achieve max {max_uncertain_count} uncertains - achieved {len(self.uncertain)}")
                 
             self.log(f"Achieved {len(self.uncertain)} uncertains")
             self.actual_segmentation_min_height = min_height

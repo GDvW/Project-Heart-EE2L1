@@ -31,6 +31,7 @@ def segmentation_light(config, path = None, write_results: bool = True):
     if path is None:
         path = paths[1]
         #path = ".\\generated\\hearbeat model\\Advanced-48000Hz-66BPM-200 beats.wav"
+    # path = "samples\\piezo_2_realHeart\\recording_2025-07-10_15-15-16_channel_4.wav"
     processor = Processor(path, config, postprocessing=True, write_result_processed=write_results, write_result_raw=write_results, subfolder="Generated sounds")
     
     processor.run()
@@ -91,4 +92,7 @@ def segmentation_light(config, path = None, write_results: bool = True):
     plt.show()
 
 for file in files:
-    segmentation_light(config, str(file), write_results = False)
+    try:
+        segmentation_light(config, str(file), write_results = False)
+    except Exception as e:
+        print(f"ERROR: Failed {file}: {e}")
