@@ -4,23 +4,33 @@ from lib.config.ConfigParser import ConfigParser
 from lib.processing.Processor import Processor
 
 def assignment431():
-    """The function that houses assignment 4.3.1.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    The function that houses assignment 4.3.1.
+    
     """
     Fs_original = 48e3
     Fs_target = 4e3
     print(f"The downsampling factor M should be {Fs_original / Fs_target:.0f}")
 
 def assignment432(config: ConfigParser):
-    """The function that houses assignment 4.3.2.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    The function that houses assignment 4.3.2.
 
     Args:
         config (ConfigParser): The config object.
+    
     """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
     
-    processor = Processor(path, config, save_steps=True)
+    processor = Processor(path, config)
     
-    processor.process()
+    processor.preprocess()
     
     fig, ax = plt.subplots(2, 2, figsize=(8,4), constrained_layout=True)
     timeFrequencyPlot(
@@ -48,7 +58,12 @@ def assignment432(config: ConfigParser):
     plt.show()
 
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.3.1 or 4.3.2.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    The main loop. Can be changed to choose whether to run assignment 4.3.1 or 4.3.2.
+    
     """
     config = ConfigParser()
     assignment432(config)

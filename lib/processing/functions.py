@@ -3,7 +3,11 @@ import numpy as np
 from math import floor
 
 def construct_bandpass_filter(low: float, high: float, Fs: int, order: int = 2, size: int = 2000):
-    """Construct a bandpass non-causal Butterworth filter with a phase of 0.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Construct a bandpass non-causal Butterworth filter with a phase of 0.
 
     Args:
         low (float): The lower cutoff frequency in Hz.
@@ -14,6 +18,7 @@ def construct_bandpass_filter(low: float, high: float, Fs: int, order: int = 2, 
 
     Returns:
         g (np.ndarray): returns the filter with length of size+1.
+    
     """
     resolution = floor(size/2)
     
@@ -22,7 +27,11 @@ def construct_bandpass_filter(low: float, high: float, Fs: int, order: int = 2, 
     return g
 
 def construct_lowpass_filter(fc: float, Fs: int, order: int = 2, size: int = 2000):
-    """Construct a lowpass non-causal Butterworth filter with a phase of 0.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Construct a lowpass non-causal Butterworth filter with a phase of 0.
 
     Args:
         fc (float): The cutoff frequency in Hz.
@@ -32,6 +41,7 @@ def construct_lowpass_filter(fc: float, Fs: int, order: int = 2, size: int = 200
 
     Returns:
         g (np.ndarray): returns the filter with length of size+1.
+    
     """
     resolution = floor(size/2)
     
@@ -40,7 +50,11 @@ def construct_lowpass_filter(fc: float, Fs: int, order: int = 2, size: int = 200
     return g
 
 def apply_filter(x: list|np.ndarray, g: list|np.ndarray):
-    """Filter x through g by convolution.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Filter x through g by convolution.
 
     Args:
         x (list | np.ndarray): The signal.
@@ -48,11 +62,16 @@ def apply_filter(x: list|np.ndarray, g: list|np.ndarray):
 
     Returns:
         y (np.ndarray): The result.
+    
     """
     return np.convolve(x, g)
 
 def downsample(x: list|np.ndarray, Fs_original:int, Fs_target: int):
-    """Downsample x from Fs_original Hz to Fs_target Hz. Only possible if Fs_original is a multiple of Fs_target.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Downsample x from Fs_original Hz to Fs_target Hz. Only possible if Fs_original is a multiple of Fs_target.
 
     Args:
         x (list | np.ndarray): The signal to downsample.
@@ -64,6 +83,7 @@ def downsample(x: list|np.ndarray, Fs_original:int, Fs_target: int):
 
     Returns:
         x_downsampled (list | np.ndarray): The downsampled signal.
+    
     """
     M = Fs_original / Fs_target
     
@@ -77,7 +97,11 @@ def downsample(x: list|np.ndarray, Fs_original:int, Fs_target: int):
     return x_downsampled, M
 
 def normalize(x: np.ndarray, mode: str="max"):
-    """Returns the normalized input signal.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Returns the normalized input signal.
 
     Args:
         x (np.ndarray): The input signal.
@@ -85,6 +109,7 @@ def normalize(x: np.ndarray, mode: str="max"):
 
     Returns:
         np.ndarray: The normalized input signal.
+    
     """
     match mode:
         case "max":
@@ -95,12 +120,17 @@ def normalize(x: np.ndarray, mode: str="max"):
             raise ValueError(f"{mode} is not supported")
 
 def shannon_energy(x: np.ndarray):
-    """Returns the Shannon energy of a normalized signal
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Returns the Shannon energy of a normalized signal
 
     Args:
         x (np.ndarray): The normalized input signal.
 
     Returns:
         np.ndarray: The Shannon energy of the input signal.
+    
     """
     return - x**2 * np.log10(np.fmax(x, 1e-4)**2)

@@ -4,14 +4,22 @@ import queue
 
 from lib.config.ConfigParser import ConfigParser
 
-from src.module_2.plot import Plot
-from src.module_2.CommandProcessor import CommandProcessor
-from src.module_2.commandUtils import generateStandardCommands
-from src.module_2.cli import CLI
+from lib.model_optimize.TUI.CLI import CLI
+from lib.model_optimize.TUI.CommandProcessor import CommandProcessor
+from lib.model_optimize.TUI.CommandUtils import generateStandardCommands
+from lib.model_optimize.TUI.Plot import Plot
 
 
 class ParamMatcher:
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     def __init__(self, path: str, config: ConfigParser):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.cmd_queue = queue.Queue()
         self.stop_event = threading.Event()
         self.executing_event = threading.Event()
@@ -24,6 +32,10 @@ class ParamMatcher:
         self.timer = None
         
     def run(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.plot.plot_init()
         self.cli.run()
         self.timer = self.plot.fig.canvas.new_timer(interval=150)
@@ -48,6 +60,10 @@ class ParamMatcher:
         
     # Process commands every tick of the timer
     def on_timer_tick(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         try:
             while not self.stop_event.is_set():
                 cmd = self.cmd_queue.get_nowait()
@@ -63,6 +79,10 @@ class ParamMatcher:
 
         
 def main():
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     paths = [
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav",
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav",

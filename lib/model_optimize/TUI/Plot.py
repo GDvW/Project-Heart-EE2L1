@@ -1,22 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from copy import deepcopy
 import sounddevice as sd
-from copy import deepcopy
 from pathlib import Path
 from math import ceil
-from scipy.fft import fft, fftshift
-import csv
 
 from lib.config.ConfigParser import ConfigParser
-from lib.processing.Processor import Processor
 from lib.model.Model import Model
 from lib.model.OriginalSound import OriginalSound
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 from lib.model.generate import *
-
-
 
 mpl.use('qtagg')
 mpl.rcParams["path.simplify"] = True
@@ -25,7 +18,15 @@ mpl.rcParams['figure.raise_window'] = False
 plt.ion()
 
 class Plot:
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     def __init__(self, soundfile: str, config: ConfigParser, log_enabled: bool = True):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.log_enabled = log_enabled
         
         self.model = Model(config)
@@ -39,6 +40,10 @@ class Plot:
         self.model_plot = None
         
     def plot_init(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         original_y, original_freq, original_Y = self.original_sound.get_sound_init()
         t_model, h_model, freq, H = self.model.generate_model_and_freq()
         min_t = min(t_model)-0.1
@@ -70,6 +75,10 @@ class Plot:
         freqax.set_ylabel("Amplitude")
         
     def update_original(self, refresh_view: bool = True):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         t = self.original_sound.get_time()
         self.original_plot.set_xdata(t)
                 
@@ -78,6 +87,10 @@ class Plot:
             
         
     def update_model(self, refresh_view: bool = True):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         t, h, freq, H = self.model.generate_model_and_freq()
         
         self.model_plot.set_xdata(t)
@@ -89,6 +102,10 @@ class Plot:
             self.fig.canvas.draw_idle()
     
     def reset(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.model.reset()
         self.original_sound.reset()
         
@@ -96,14 +113,26 @@ class Plot:
         self.update_original()
         
     def generate_summary(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         return self.original_sound.generate_summary() + "\n" + self.model.generate_summary()
             
     def export_readable(self, file_path):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         ensure_path_exists(file_path)
         with open(file_path, "w") as fp:
             fp.write(self.generate_summary())
             
     def export_csv(self, file_path: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         ensure_path_exists(file_path)
         
         contents = self.original_sound.generate_csv() + "\n" + self.model.generate_csv()
@@ -112,6 +141,10 @@ class Plot:
             fp.write(contents)
             
     def import_csv(self, file: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         file = Path(file)
         if not file.exists():
             print(f"{file} can not be found")
@@ -127,9 +160,17 @@ class Plot:
         self.update_original()
         
     def print(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print(self.generate_summary().strip())
             
     def play_audio(self, duration: str = ""):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         t_model, h_model = self.model.generate_model()
         if len(duration) > 0:
             try:
@@ -145,18 +186,38 @@ class Plot:
             sd.play(h_model, self.Fs)
         
     def stop_audio(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         sd.stop()
     
     def print_order(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print("Order: M, T, A, P")
     
     def log(self, msg):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         if self.log_enabled:
             print(msg)
             
     def show(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         plt.show()
         
     def close(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         plt.close(self.fig)
         

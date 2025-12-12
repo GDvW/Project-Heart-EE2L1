@@ -1,7 +1,11 @@
-from src.module_2.CommandProcessor import CommandProcessor
-from src.module_2.plot import Plot
+from lib.model_optimize.TUI.Plot import Plot
+from lib.model_optimize.TUI.CommandProcessor import CommandProcessor
 
 def generateStandardCommands(plot: Plot) -> CommandProcessor:
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     cp = CommandProcessor()
     
     cp.register_command("reset", plot.reset, helpmsg="Reset the values to initial values")

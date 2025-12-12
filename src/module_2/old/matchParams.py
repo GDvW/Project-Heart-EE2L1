@@ -14,6 +14,10 @@ mpl.rcParams["path.simplify_threshold"] = 1
 plt.ion()
 
 def getData():
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     config = ConfigParser()
 
     t_model, h_model = advanced_model(config) 
@@ -21,9 +25,17 @@ def getData():
     return t_model, h_model
 
 def timeOriginal(shift, length, Fs):
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     return np.linspace(shift, shift+length/Fs, length)
     
 def getCommand(cmd: str, general_specifiers: list, general_props: list, peak_specifiers: list, peak_props: list):
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     pattern = fr"^((?P<specg>[{''.join(general_specifiers)}])\s+(?P<propg>{'|'.join(general_props)})\s+(?P<valg>[\-0-9.,_]+)|"+\
         fr"(?P<specp>[{''.join(peak_specifiers)}])\s+(?P<propp>{'|'.join(peak_props)})\s+(?P<valp>[\-0-9.,_]+))$"
     m = re.match(pattern, cmd)
@@ -35,6 +47,10 @@ def getCommand(cmd: str, general_specifiers: list, general_props: list, peak_spe
     return False
 
 def matchParams():
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     len_g = config.LowpassFilter.Size
@@ -57,7 +73,7 @@ def matchParams():
     valves = deepcopy(valves_init)
     
     # Get original heart sound
-    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, save_steps=True, write_result_processed=False, write_result_raw=False)
+    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, write_result_processed=False, write_result_raw=False)
     processor.process()
     
     t_model, h_model = advanced_model(
@@ -83,11 +99,19 @@ def matchParams():
     ax.grid(True)
     
     def updateOriginal(shift):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         t = timeOriginal(shift, len(processor.y_normalized), processor.Fs_target)
         original.set_xdata(t)
         fig.canvas.draw_idle()
         
     def updateModel(BPM, n, valves):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         t_model, h_model = advanced_model(
             Fs,
             BPM,
@@ -114,14 +138,30 @@ def matchParams():
     general_specs = ["G"]
     
     def print_specs():
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print(f"Specifiers:\n  - General: G\n  - Peaks: {', '.join(names)}")
     def print_props():
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print(f"Props:\n  - General: {', '.join(general_props)}\n  - Peaks: {', '.join(peak_props)}")
     def print_vals(BPM, shift, valves):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print(f"""Original:\n  - shift: {shift}s\nModel:\n  - BPM: {BPM}\n  - Valves:""")
         for valve in valves:
             print("  - " + "\n    ".join(valve.toStr()))
     def print_help():
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print(f"""Help:
 
 Normal usage: 

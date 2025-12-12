@@ -6,15 +6,26 @@ from typing import Tuple
 import numpy as np
 
 from lib.processing.Processor import Processor
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 from lib.config.ConfigParser import ConfigParser
 
 class OriginalSound:
-    def __init__(self, file_path: str|Path, config: ConfigParser):
-        """Initialize a wrapper for the original sound.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    
+    Wrapper for the original sound to make it easier to plot it.
+    """
+    def __init__(self, file_path: str|Path, config: ConfigParser) -> None:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Initialize a wrapper for the original sound.
 
         Args:
             config (ConfigParser): The config object.
+        
         """
         file_path = Path(file_path)
         if not file_path.exists():
@@ -27,52 +38,80 @@ class OriginalSound:
         
         self.original_length = None
         self.original_Fs = None
+        self.processor = None
         
     def reset(self) -> None:
-        """Reset the original sound to the initial values.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Reset the original sound to the initial values.
+        
         """
         self.shift = self.shift_init
         
     def get_sound_init(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Get all the properties of the origninal sound, including the frequency spectrum.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Get all the properties of the origninal sound, including the frequency spectrum.
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]: y_normalized (the amplitude axis), freq (the frequency axis), Y (the frequency amplitude spectrum)
+        
         """
-        processor = Processor(self.file_path.resolve(), self.config, save_steps=True, write_result_processed=False, write_result_raw=False)
-        processor.process()
+        if self.processor is None or self.processor.y_normalized is None or self.processor.Fs_target is None:
+            self.processor = Processor(self.file_path.resolve(), self.config, write_result_processed=False, write_result_raw=False)
+            self.processor.preprocess()
         
-        self.original_length = len(processor.y_normalized)
-        self.original_Fs = processor.Fs_target
+        self.original_length = len(self.processor.y_normalized)
+        self.original_Fs = self.processor.Fs_target
         
-        Y = fftshift(fft(processor.y_normalized))
+        Y = fftshift(fft(self.processor.y_normalized))
         Y = Y/np.max(np.abs(Y))
-        freq = np.linspace(-processor.Fs_target/2, processor.Fs_target/2, len(Y))
+        freq = np.linspace(-self.processor.Fs_target/2, self.processor.Fs_target/2, len(Y))
         
-        return processor.y_normalized, freq, Y
+        return self.processor.y_normalized, freq, Y
     
     def get_time(self) -> np.ndarray:
-        """Get the time axis of the original sound.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Get the time axis of the original sound.
 
         Returns:
             np.ndarray: The time axis.
+        
         """
         return np.linspace(self.shift, self.shift+self.original_length/self.original_Fs, self.original_length)
 
     
     def generate_summary(self) -> str:
-        """Generate a readable summary of the original sound params.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generate a readable summary of the original sound params.
 
         Returns:
             str: The summary.
+        
         """
         return f"Original:\n  - File: {self.file_path.stem}\n  e- Shift: {self.shift}"
     
     def import_csv(self, file_path: str|Path) -> None:
-        """Import the original sound params from a csv file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Import the original sound params from a csv file. 
+        Only considers the section between `OriginalSound:` and the next `:`
 
         Args:
             file_path (str | Path): The path to the csv file.
+        
         """
         file_path = Path(file_path)
         if not file_path.exists():
@@ -83,10 +122,16 @@ class OriginalSound:
             self.import_csv_s(f.read())
         
     def import_csv_s(self, contents: str) -> None:
-        """Import the original sound params from a csv string.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Import the original sound params from a csv string.
+        Only considers the section between `OriginalSound:` and the next `:`
 
         Args:
             contents (str): The csv in a string.
+        
         """
         # Filter the contents to only contain the correct information (Between 'Model:' and another line ending with ":"/EOF)
         filtered_contents = ""
@@ -120,20 +165,30 @@ class OriginalSound:
 
     
     def generate_csv(self) -> str:
-        """Generate the csv string for the params of the original sound.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generate the csv string for the params of the original sound.
 
         Returns:
             str: The generated csv string.
+        
         """
         contents = [["OriginalSound:"], ["shift"],[str(self.shift)]]
         
         return "\n".join([",".join(c) for c in contents])
     
     def export_csv(self, file_path: str|Path) -> None:
-        """Export the params of the original sound to a csv file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Export the params of the original sound to a csv file.
 
         Args:
             file_path (str | Path): The path to the csv file to export to.
+        
         """
         ensure_path_exists(file_path)
                 
@@ -141,10 +196,15 @@ class OriginalSound:
             fp.write(self.generate_csv())
             
     def export_readable(self, file_path: str|Path) -> None:
-        """Export the readable summary to a file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Export the readable summary to a file.
 
         Args:
             file_path (str | Path): The path to the file to export to.
+        
         """
         ensure_path_exists(file_path)
         

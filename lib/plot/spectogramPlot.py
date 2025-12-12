@@ -5,13 +5,18 @@ from scipy.signal import ShortTimeFFT, spectrogram
 from scipy.signal.windows import gaussian
 
 def spectogramPlot(x: list|np.ndarray, Fs: int, plot: axes.Axes, title:str=None):
-    """Plots a spectogram
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Plots a spectogram
 
     Args:
         x (list | np.ndarray): The input signal.
         Fs (int): The sampling frequency.
         plot (axes.Axes): The matplotlib axes object to plot the image on.
         title (str, optional): The title of the plot. Defaults to None.
+    
     """
 
     N = len(x)

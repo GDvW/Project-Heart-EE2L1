@@ -1,16 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from lib.plot.timeFrequencyPlot import *
-from lib.plot.frequencyUtils import getDamping
 from lib.plot.spectogramPlot import spectogramPlot
-from lib.general.generalUtils import todB
 from lib.config.ConfigParser import ConfigParser
-from lib.processing.functions import construct_bandpass_filter
-from lib.processing.Processor import Processor
 from scipy.io import wavfile
 from pathlib import Path
 
 def assignment441(config):
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_5.wav"
     Fs, x = wavfile.read(path)
     
@@ -28,7 +27,12 @@ def assignment441(config):
 
 
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.4.2 or 4.4.3.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    The main loop. Can be changed to choose whether to run assignment 4.4.2 or 4.4.3.
+    
     """
     config = ConfigParser()
     assignment441(config)

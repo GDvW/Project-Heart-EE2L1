@@ -11,6 +11,10 @@ from lib.model.generate import *
 
 
 def main():
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     BPM = config.HeartSoundModel.BPM
@@ -31,6 +35,10 @@ def main():
     plt.show()
     
 def plotOriginal():
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     BPM = config.HeartSoundModel.BPM
@@ -38,7 +46,7 @@ def plotOriginal():
     len_g = config.LowpassFilter.Size
     
     # Get original heart sound
-    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, save_steps=True, write_result_processed=False, write_result_raw=False)
+    processor = Processor("samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav", config, write_result_processed=False, write_result_raw=False)
     processor.process()
     
     shift = -2.25

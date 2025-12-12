@@ -4,7 +4,11 @@ from scipy.fft import fft, fftshift
 import numpy as np
 
 def getDamping(x: list|np.ndarray, freq:int, Fs: int, resolution: int|None = None):
-    """Get the damping of a transfer function x at freq Hz.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Get the damping of a transfer function x at freq Hz.
 
     Args:
         x (list | np.ndarray): The transfer function of the filter.
@@ -14,6 +18,7 @@ def getDamping(x: list|np.ndarray, freq:int, Fs: int, resolution: int|None = Non
 
     Returns:
         (float, float): The frequency the damping was measured on. Can be a little different from the requested frequency. Increase resolution for a better approximation. The second argument is the damping (linear) at the given frequency.
+    
     """
     if resolution is not None:
         X = fft(x, resolution)

@@ -10,9 +10,11 @@ from lib.processing.dataprocessing import HeartSound
 
 PLOT_RAW = False
 
-def segmentation(config):
-    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav"
-    # path = ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_4.wav"
+def segmentation(config, path = None, write_results: bool = True):
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     paths = [
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_1.wav",
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-04_channel_2.wav",
@@ -21,14 +23,15 @@ def segmentation(config):
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_5.wav",
         ".\\samples\\stethoscope_2_realHeart_\\recording_2025-07-10_14-34-05_channel_6.wav",
     ]
-    path = paths[1]
-    path = ".\\generated\\hearbeat model\\Advanced-48000Hz-66BPM-200 beats.wav"
-    processor = Processor(path, config, save_steps=True, postprocessing=True, subfolder="Generated sounds")
+    if path is None:
+        path = paths[1]
+        #path = ".\\generated\\hearbeat model\\Advanced-48000Hz-66BPM-200 beats.wav"
+    processor = Processor(path, config, postprocessing=True, write_result_processed=write_results, write_result_raw=write_results, subfolder="Generated sounds")
     
-    processor.process()
+    processor.run()
     
     fig, ax = plt.subplots(3, 2, figsize=(8,6), constrained_layout=True)
-    
+    fig.suptitle(path)
     timeFrequencyPlot(
         processor.y_energy, 
         processor.Fs_target, 
@@ -95,7 +98,12 @@ def segmentation(config):
     plt.show()
 
 def main():
-    """The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    The main loop. Can be changed to choose whether to run assignment 4.2.2 or 4.2.3.
+    
     """
     config = ConfigParser()
     segmentation(config)

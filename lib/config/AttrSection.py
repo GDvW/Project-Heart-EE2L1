@@ -1,5 +1,11 @@
+from typing import Any
+
 class AttrSection:
-    """Attribute-style access wrapper for a configuration section.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+
+    Attribute-style access wrapper for a configuration section.
 
     This class allows accessing configuration keys as Python attributes,
     e.g. `config.general.username`, while reading/writing the underlying
@@ -10,8 +16,12 @@ class AttrSection:
     to the configuration dictionary.
     """
     
-    def __init__(self, section_name: str, config: dict):
-        """Initialize an attribute wrapper for a configuration section.
+    def __init__(self, section_name: str, config: dict) -> None:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Initialize an attribute wrapper for a configuration section.
 
         Args:
             section_name (str): The name of the section this object wraps.
@@ -21,8 +31,12 @@ class AttrSection:
         self._section = section_name
         self._config = config
         
-    def __getattr__(self, name):
-        """Retrieve a configuration value as an attribute.
+    def __getattr__(self, name: str) -> Any:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Retrieve a configuration value as an attribute.
 
         Args:
             name (str): The key name being accessed.
@@ -37,8 +51,13 @@ class AttrSection:
             return self._config[self._section][name]
         raise AttributeError(f"No such field '{name}' in section '{self._section}'")
     
-    def __setattr__(self, name, value):
-        """Assign a configuration value via attribute syntax.
+    def __setattr__(self, name: str, value: Any) -> None:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+
+        Assign a configuration value via attribute syntax.
 
         If the attribute name begins with an underscore, it is treated as
         an internal attribute and assigned normally. Otherwise, the key is
@@ -53,8 +72,12 @@ class AttrSection:
         else:
             self._config[self._section][name] = str(value)
             
-    def keys(self):
-        """Return all configuration keys in this section.
+    def keys(self) -> list[str]:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Return all configuration keys in this section.
 
         Returns:
             list[str]: A list of key names for this section.

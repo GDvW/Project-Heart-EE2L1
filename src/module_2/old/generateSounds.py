@@ -7,11 +7,15 @@ from src.module_2.plot import Plot
 
 
 def generateSounds(config: ConfigParser, valves: list[ValveParams]|None = None, write_enabled: bool = True, randomize: bool = False):
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     n = config.HeartSoundModel.NBeats
     Fs = config.HeartSoundModel.Fs
 
     plot = Plot("", config, log_enabled=False, disable_orignal=True)
-    plot.import_csv(".\\src\\module_2\\quite_good_params.csv", run_plot=False)
+    plot.import_csv(".\\src\\module_2\\model_params.csv", run_plot=False)
     
     if valves is None:
         valves = plot.valves    

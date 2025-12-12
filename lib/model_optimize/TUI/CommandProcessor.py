@@ -2,7 +2,15 @@ from typing import Callable, Any
 
 
 class CommandProcessor:
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    """
     def __init__(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.commands = {}
         self.symbolics = {}
         self.symbolic_groups = {}
@@ -11,6 +19,10 @@ class CommandProcessor:
         self.register_command("help", self.print_help, helpmsg="Show the help menu")
         
     def register_command(self, name: str, func: Callable, args: list = [], helpmsg: str = ""):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.commands[name] = {
             "func": func,
             "args": args,
@@ -18,12 +30,20 @@ class CommandProcessor:
         }
     
     def register_symbolic_group(self, group: str, group_name: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         if not group in self.symbolics:
             self.symbolics[group] = {"specs":{}, "props":{}}
         self.symbolic_groups[group] = group_name
         return group
 
     def register_symbolic_spec(self, spec: str, group: str, get_obj: Callable[[], object], helpmsg: str = None):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         if not group in self.symbolics:
             raise KeyError(f"Group {group} does not exist")
         self.symbolics[group]["specs"][spec] = {
@@ -32,6 +52,10 @@ class CommandProcessor:
         }
         
     def register_symbolic_prop(self, prop: str, group: str, getter: Callable[[object], Any], setter: Callable[[object, object], bool], dtype: type, helpmsg: str = None):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         if not group in self.symbolics:
             raise KeyError(f"Group {group} does not exist")
         self.symbolics[group]["props"][prop] = {
@@ -42,9 +66,17 @@ class CommandProcessor:
         }
         
     def register_action_after_symbolic(self, fn: Callable[[], None]):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         self.actions_after_symbolic.append(fn)
         
     def get_symbolic_group(self, spec: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         specs = {
             spec:group 
             for group, data in self.symbolics.items() 
@@ -55,6 +87,10 @@ class CommandProcessor:
         return False
         
     def process_command(self, cmd: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         tokens = cmd.split(" ")
         
         if not tokens:
@@ -70,6 +106,10 @@ class CommandProcessor:
         print("Unknown command, type 'help'")
         
     def process_symbolic(self, tokens: list):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         token_length = len(tokens)
         if token_length != 2 and token_length != 3:
             return False
@@ -103,6 +143,10 @@ class CommandProcessor:
         
         
     def process_literal(self, tokens: list):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         name = tokens[0]
         if name not in self.commands:
             return False
@@ -120,15 +164,27 @@ class CommandProcessor:
         return True
     
     def execute_after_symbolic(self):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         for fn in self.actions_after_symbolic:
             fn()
     
     def print_arg_error(self, name: str):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         cmd = self.commands[name]
         args = " ".join(f"<{a}>" for a in cmd["args"])
         print(f"Usage: {name} {args}")
         
     def print_help(self, *_):
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         print("\nCommands:")
         
         for name, meta in sorted(self.commands.items()):
@@ -154,6 +210,10 @@ class CommandProcessor:
                 
     def get_autocompletion_dict(self):
         # Add the commands 
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+        """
         autocompletion = {command:None for command in self.commands}
             
         # Add the symbolics

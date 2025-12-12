@@ -9,15 +9,26 @@ from os.path import join
 
 from lib.config.ConfigParser import ConfigParser
 from lib.model.generate import *
-from lib.general.pathUtils import *
+from lib.os.pathUtils import *
 
 class Model:
-    def __init__(self, config: ConfigParser, randomize_enabled: bool = False):
-        """Initialize a wrapper for the model.
+    """
+    @author: Gerrald
+    @date: 10-12-2025
+    
+    Wrapper for the original sound to make it easier to plot it.
+    """
+    def __init__(self, config: ConfigParser, randomize_enabled: bool = False) -> None:
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Initialize a wrapper for the model.
 
         Args:
             config (ConfigParser): The config object.
             randomize_enabled (bool): Whether to randomize the parameters a bit to check robustness of the algorithm.
+        
         """
         self.Fs = config.HeartSoundModel.Fs
         self.len_g = config.LowpassFilter.Size
@@ -42,17 +53,27 @@ class Model:
         self.valves = deepcopy(self.valves_init)
         
     def reset(self) -> None:
-        """Reset the model to the initial values.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Reset the model to the initial values.
+        
         """
         self.n = self.n_init
         self.BPM = self.BPM_init
         self.valves = deepcopy(self.valves_init)
     
     def generate_summary(self) -> str:
-        """Generate a readable summary of the model.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generate a readable summary of the model.
 
         Returns:
             str: The summary.
+        
         """
         s = ""
         s += f"""Model:\n  - BPM: {self.BPM}\n  - n: {self.n}\n  - Valves:\n"""
@@ -61,10 +82,15 @@ class Model:
         return s
     
     def save(self, file_path: str|None = None) -> None:
-        """Writes the model as a sound file in the path given in the config.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Writes the model as a sound file in the path given in the config.
         
         Args:
             file_path (str | None): If specified, write to that file, otherwise write to standard file.
+        
         """
         wav_path = file_path if file_path is not None else join(self.sounds_path, f"Advanced-{self.Fs}Hz-{self.BPM}BPM-{self.n} beats.wav")
         
@@ -75,10 +101,15 @@ class Model:
         write(wav_path, self.Fs, h_model)
     
     def generate_model(self) -> Tuple[np.ndarray, np.ndarray]:
-        """Generates the model time and amplitude axis.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generates the model time and amplitude axis.
 
         Returns:
             Tuple[np.ndarray, np.ndarray]: t_model (the time axis), h_model (the amplitude axis).
+        
         """
         t_model, h_model = advanced_model(
             self.Fs,
@@ -90,16 +121,21 @@ class Model:
             self.valves,
             self.n, 
             randomize_enabled=self.randomize_enabled,
-            noise=0.1
-        ) 
+            noise=0.01
+        )
         
         return t_model, h_model
     
     def generate_model_and_freq(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Generates the model time, amplitude and frequency axis.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generates the model time, amplitude and frequency axis.
 
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: t_model (the time axis), h_model (the amplitude axis), freq (the frequency axis), H (the frequency amplitude spectrum)
+        
         """
         t_model, h_model = self.generate_model()
         
@@ -110,10 +146,16 @@ class Model:
         return t_model, h_model, np.array(freq), np.array(H)
     
     def import_csv(self, file_path: str|Path) -> None:
-        """Import the model from a csv file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Import the model from a csv file.
+        Only considers the section between `Model:` and the next `:`
 
         Args:
             file_path (str | Path): The path to the csv file.
+        
         """
         file_path = Path(file_path)
         if not file_path.exists():
@@ -124,10 +166,16 @@ class Model:
             self.import_csv_s(f.read())
         
     def import_csv_s(self, contents: str) -> None:
-        """Import the model from a csv string.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Import the model from a csv string.
+        Only considers the section between `Model:` and the next `:`
 
         Args:
             contents (str): The csv in a string.
+        
         """
         # Filter the contents to only contain the correct information (Between 'Model:' and another line ending with ":"/EOF)
         filtered_contents = ""
@@ -188,18 +236,28 @@ class Model:
             return
         
     def set_n(self, n: int) -> None:
-        """Sets the amount of beats to a higher value
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Sets the amount of beats to a different value.
 
         Args:
-            n (int): The amount of beats to generate
+            n (int): The amount of beats to generate.
+        
         """
         self.n = n
     
     def generate_csv(self) -> str:
-        """Generate the csv string for the params of the model.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Generate the csv string for the params of the model.
 
         Returns:
             str: The generated csv string.
+        
         """
         contents = [["Model:"], ["BPM", "n"], [str(self.BPM), str(self.n)], [self.valves[0].properties()]]
         for valve in self.valves:
@@ -208,10 +266,15 @@ class Model:
         return "\n".join([",".join(c) for c in contents])
     
     def export_csv(self, file_path: str|Path) -> None:
-        """Export the params of the model to a csv file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Export the params of the model to a csv file.
 
         Args:
             file_path (str | Path): The path to the csv file to export to.
+        
         """
         ensure_path_exists(file_path)
                 
@@ -219,10 +282,15 @@ class Model:
             fp.write(self.generate_csv())
             
     def export_readable(self, file_path: str|Path) -> None:
-        """Export the readable summary to a file.
+        """
+        @author: Gerrald
+        @date: 10-12-2025
+
+        Export the readable summary to a file.
 
         Args:
             file_path (str | Path): The path to the file to export to.
+        
         """
         ensure_path_exists(file_path)
         
