@@ -1,3 +1,7 @@
+import beamforming
+from beamforming import a_lin
+from beamforming import test_a_lin
+from beamforming import spatial_spectrum
 def main():
     """
     @author: Gerrald
