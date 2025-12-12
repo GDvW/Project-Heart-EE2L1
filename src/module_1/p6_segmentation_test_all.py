@@ -93,7 +93,8 @@ def segmentation_light(config, path = None, write_results: bool = True):
     plt.show()
 
 # Some structure to skip the files till the file in the last var
-last = ".\\samples\\piezo_4_realHeart\\recording_2025-07-10_15-19-01_channel_2.wav"
+# last = ".\\samples\\piezo_4_realHeart\\recording_2025-07-10_15-19-01_channel_5.wav"
+last = ""
 passed_last = False
 for file in files:
     if not passed_last:
