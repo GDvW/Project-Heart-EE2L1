@@ -45,8 +45,9 @@ style=ieee,
 % Python code display
 \usepackage{minted}
 % Set theme. pastie has more contrast than solarized-light
-%\usemintedstyle{solarized-light}
-\usemintedstyle{pastie}
+\usemintedstyle{solarized-light}
+%\usemintedstyle{pastie} %Does not break strings
+\setminted{breaklines, breakanywhere}
 \renewcommand{\theFancyVerbLine}{\textcolor{darkgray}{\small\arabic{FancyVerbLine}}}
 % Define a Python style
 \newmintedfile{python}{ linenos,
@@ -56,7 +57,6 @@ style=ieee,
             fontsize=\small,        % font size
             bgcolor=black!3,        % light gray background
             baselinestretch=1.2,    % line spacing
-            breaklines=true,        % wrap long lines
 }
 \newmintedfile{ini}{ linenos,
             breakanywhere=true,
@@ -65,9 +65,7 @@ style=ieee,
             fontsize=\small,        % font size
             bgcolor=black!3,        % light gray background
             baselinestretch=1.2,    % line spacing
-            breaklines=true,        % wrap long lines
 }
-
 
 %% Setup
 % Base path for all figures
@@ -182,6 +180,7 @@ Bachelor Electrical Engineering,\\
  
 \appendix
 \input{appendix}
+\input{docs/assignments/Midterm report/ap_code}
 
 \end{document}
 
