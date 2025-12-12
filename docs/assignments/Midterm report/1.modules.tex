@@ -116,9 +116,13 @@ For simplicity, it is convenient to model the heart as 4 valves. Then, a generic
 \subsubsection{Single valve model}
 For the single valve model, two transferfunctions based on two poles are created. One to create an onset, and one as main transferfunction. The impulse response of each transferfunction was created using two poles, $a-j\omega$ and $a+j\omega$, where a is the damping of the function and $\omega$ is the radial frequency of the function. The transferfunction is then truncated based on the "duration" parameter, and multiplied by the parameter "ampl", to be able to implement a relative damping of the valve (with respect to the other 3 valves). After both transferfunctions are generated, they are concatenated, and preceded by a number of zero's, based on de "delay" parameter. This delay parameter only defines the delay in time relative to the start of a heart beat. This result in a transferfunction for one valve.
 
+
 \subsubsection{Optimizing model parameters}
 In order to optimize the parameters of the model, an interface was made. This interface uses the terminal in combination with a matplotlib plot. Writing commands in the terminal adjusts the parameters, which are immediately visible in the plot. 
 A good measurement was plotted together with the model. This was used to adjust the parameters such that the model approximately follows that signal. The resulting model and a measurement have been plotted in \ref{fig:modeled_signal}.
+
+\subsubsection{Randomizing}
+In order to not generate purely identical heart beats, an option was made to randomize the parameters of the model slightly and add noise. However, this severely slows down the generation of the model, and therefore it was not used in the plot.
 
 
 \subsubsection{Spatial delay}
@@ -133,21 +137,24 @@ As it is required to output 6 signals, one signal for each microphone, the funct
 \subsection{Testing}
 %Testing: how do we test, what are the results? (plots!)
 
-The model was tested in to ways. Firstly, it was compared to an actual measurement. As the model parameters were generated based on a measurement, the model resembles the used measurement quite closely. The model was also compared to other signals, which, other than having slightly different heart beat rates, also coincide quite closely. In Fig. \ref{fig:modeled_signal} this plot is shown for one heart beat. 
+The single valve model was tested in to ways. Firstly, it was compared to an actual measurement. As the model parameters were generated based on a measurement, the model resembles the used measurement quite closely. The model was also compared to other signals, which, other than having slightly different heart beat rates, also coincide quite closely. In Fig. \ref{fig:modeled_signal} this plot is shown for one heart beat. 
 \newline
-The model was also saved as an audio file and listened to. Based on subjective opinions, the model was found to sound quite an actual heart, as the characteristic "lub-dub" sound was heard.
-
+The single valve model was also saved as an audio file and listened to. Based on subjective opinions, the model was found to sound quite an actual heart, as the characteristic "lub-dub" sound was heard.
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_2/Modeled_signal.png}
-    \caption{Plot of one heart beat of the resulting modeled signal}  
+    \includegraphics[width=0.9\textwidth]{docs/assignments/Midterm report/figures/module_2/Modeled_signal.png}
+    \caption{Measurement of one heart beat and the signal of the resulting single valve model.}  
     \label{fig:modeled_signal}
 \end{figure}
 
+The damping and delay of the multichannel recording were tested by inspection. As can be seen in Fig. [\ref{fig:multichannel_damping}], the model generates signals with different amplitudes for the microphones. In Fig. [\ref{fig:multichannel_delay}], the delay created by the model is visible. The small delay is expected, as the distances between the valves and the microphones is very small.
+
+
+
 \subsection{Conclusion}
 %Conclusion: summarize results, claims on expected accuracy
-
+Concluding, a model of the sound the heart creates has been made. This model has been applied to 6 microphones, where the spatial differences between microphones and valves has also been accounted for. The resulting model seems to be quite accurate, as the single valve model looks and sounds like an actual heart beat, and the spatial results seem realistic.
 
 \section{Module 3}
 \subsection{Beamformer}
@@ -304,12 +311,13 @@ If the central frequency is higher then the lobes created by the 2 sources are s
 
 
 \subsection{MVDR}
+
+\subsubsection{Analysis}
 The MVDR beamformer type that works differently from the one described previously. The objective of implementing an MVDR is to choose a direction from where the source is coming and to minimize the gain of the rest of the angles. This translates to two requirements that must be implemented:
 \begin{enumerate}
 \item The strength of a signal coming from a chosen angle $\theta_0$ should not be reduced.
 \item The response of the signal coming from any other angle should be minimized.
 \end{enumerate}
-
 In practice, $\theta_0$ can be multiple $\theta$'s
 
 \subsubsection{Design}
@@ -337,6 +345,22 @@ The power response of the system will be the output:
 \begin{equation}
     P_y(\theta)=\textbf{w}^\textit{H}\textbf{R}_x\textbf{w}=\frac{1}{\textbf{a}^\textit{H}(\theta)\textbf{R}_x^{-1}\textbf{a}(\theta)}
 \end{equation}
+The intuition behind the power equation needs to be explained. In practice, Rx expresses the power of the signal along different directions \textbf{\theta}. This means that Rx is bigger in where the power of the signal is larger. Thus $R_x^{-1}$ is smaller along the direction where the power is larger, and bigger where the power is lower, as it is the inverse of Rx. Thus when \mathbf{{a}(\theta)} points along the direction with the higher power $R_x^{-1}$\mathbf{{a}(\theta)} becomes small, so \frac{1}{$R_x^{-1}$\mathbf{{a}(\theta)}} large. That is why there will be a peak. In the other case, the power will be small because the denominator is going to be large.
+
+
+Analysis of the functions used in MVDR:
+\begin{itemize}
+    \item The function  
+    \begin{lstlisting}[language=Python]
+    def a_lin(theta, M, d, v, f0):
+    \end{lstlisting}  
+    theta is a given angle, M is the number of microphones, d is the spacing between the microphones, v is the speed of sound, and f0 is a chosen frequency (more later). The function computes and returns the steering vector $mathbf{a}(\theta)$ as shown in  \ref{steering_vector_calculation}.
+
+    \item The function \begin{lstlisting}[language=Python]
+    def matchedbeamforming(th_range, M, d, v, f0, Rx):
+    \end{lstlisting} 
+    M, d, v and f0 are the same as above. Rx is the auto covariance of the signal. For a given range of angles ($th_range$), the function computes the output power and returns the power spectrum.  
+\end{itemize}
 
 \subsubsection{Testing}
 Testing: how do we test, what are the results? (plots!)
