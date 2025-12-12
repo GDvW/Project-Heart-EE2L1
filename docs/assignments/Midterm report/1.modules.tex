@@ -275,7 +275,9 @@ For testing the beamformer, measurements with one signal source at  $0^\circ$, $
     \label{fig:beamformer_0_degrees}
 \end{figure}
 
-For $30^\circ$ the plot can be seen here .
+For $30^\circ$ the plot can be seen here [\ref{fig:beamformer_30_degrees}]. The accuracy is on spot.
+
+For $60^\circ$ the plot can be seen here [\ref{fig:beamformer_60_degrees}]. There is an offset of around $2^\circ$. This might be because of the setup. In specific the angle might not exactly have been $60^\circ$. Also the angle to the source in the setup is measured from the middle of the array, while in \ref{fig:beamformer_principle}, the angle is taken from the first microphone of the array.
 
 
 \paragraph{2 sources}
@@ -288,7 +290,7 @@ As explained in \label{beamformer_assumption_constraints}, there is a tradeoff b
     \label{fig:beamformer_2_source_1687Hz}
 \end{figure}
 
-If the central frequency is higher then the lobes created by the 2 sources are sharper and are not merged in one thick lobe. Thus there are 2 peaks but also spatial aliasing.In this case it is known that the 2 peaks seen are not result of aliasing. In lower frequencies \ref{fig:beamformer_2_source_1687Hz}, the peak of the power is around the center of the graph. Thus most of the signal lies there. As a result, it it known that the peaks caused by the 2 sources will occur in that region. 
+If the central frequency is higher then the lobes created by the 2 sources are sharper and are not merged in one thick lobe. Thus there are 2 peaks but also spatial aliasing.In this case it is known that the 2 peaks seen are not result of aliasing. In lower frequencies \ref{fig:beamformer_2_source_1687Hz}, the peak of the power is around the center of the graph. Thus most of the signal lies there. As a result, it it known that the peaks caused by the 2 sources will occur in that region. The plot was expected, as 2 peaks are visible but they are still sort of merged, justifying the operation of the beamformer. 
 
 \begin{figure} [H]
     \centering
