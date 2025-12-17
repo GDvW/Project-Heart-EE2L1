@@ -7,9 +7,48 @@ from lib.config.ConfigParser import ConfigParser
 from lib.processing.functions import construct_bandpass_filter, apply_filter
 from lib.general.generalUtils import randomize
 
-def growing_oscillation(omega, a, t_len, Fs):
-    t = np.linspace(0, t_len, t_len * Fs)
+def growing_oscillation(omega: float, a: float, t_len: float, Fs: int) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    @author: Gerrald
+    @date: 17-12-2025
+    
+    Simplified function instead of using a transfer function.
+
+    Args:
+        omega (float): The angular frequency.
+        a (float): The gain.
+        t_len (float): The duration in seconds.
+        Fs (int): The sampling frequency (virtual, Hz).
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: t, h
+    """
+    t = np.linspace(0, t_len, int(t_len * Fs))
     h = np.exp(a * t) * np.sin(omega * t)
+    return t, h
+
+def transfer_function_oscillation(omega: float, a: float, t_len: float, Fs: int) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    @author: Gerrald
+    @date: 17-12-2025
+    
+    Same as growing_oscillation, but now with a transfer function
+
+    Args:
+        omega (float): The angular frequency.
+        a (float): The gain.
+        t_len (float): The duration in seconds.
+        Fs (int): The sampling frequency (virtual, Hz).
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: t, h
+    """
+    b, a = zpk2tf([], [a-1j*omega, a+1j*omega], omega)
+    system = TransferFunction(b, a)
+    # Time array (from 0 to duration with step size of 1/Fs)
+    t = np.linspace(0, t_len, int(Fs * t_len))
+    # Impulse response (time domain)
+    t, h = impulse(system, T=t)
     return t, h
 
 def advanced_model_valve_params(params: ValveParams, Fs:int, use_transfer: bool = True):
@@ -60,13 +99,7 @@ def advanced_model_valve(delay:float, duration_total: float, duration_onset:floa
     if duration_onset > 0:
         omega_onset = 2*np.pi*freq_onset
         if use_transfer:
-            # Create the transfer function system of the sound
-            b, a = zpk2tf([], [a_onset-1j*omega_onset, a_onset+1j*omega_onset], omega_onset)
-            system = TransferFunction(b, a)
-            # Time array (from 0 to duration with step size of 1/Fs)
-            t = np.linspace(0, duration_onset, int(Fs * duration_onset))
-            # Impulse response (time domain)
-            t_onset, h_onset = impulse(system, T=t)
+            t_onset, h_onset = transfer_function_oscillation(omega_onset, a_onset, duration_onset, Fs)
         else:
             t_onset, h_onset = growing_oscillation(omega_onset, a_onset, duration_onset, Fs)
         h_onset *= ampl_onset
@@ -74,17 +107,10 @@ def advanced_model_valve(delay:float, duration_total: float, duration_onset:floa
     if duration_main > 0:
         omega_main = 2*np.pi*freq_main
         if use_transfer:
-            # Create the transfer function system of the sound
-            b, a = zpk2tf([], [a_main-1j*omega_main, a_main+1j*omega_main], omega_main)
-            system = TransferFunction(b, a)
-            # Time array (from 0 to duration with step size of 1/Fs)
-            t = np.linspace(0, duration_main, int(Fs * duration_main))
-            # Impulse response (time domain)
-            t_main, h_main = impulse(system, T=t)
+            t_main, h_main = transfer_function_oscillation(omega_main, a_main, duration_main, Fs)
         else:
             t_main, h_main = growing_oscillation(omega_main, a_main, duration_main, Fs)
         h_main *= ampl_main
-    
     
     # Assemble reponse
     samples_delay = int(Fs * delay)
