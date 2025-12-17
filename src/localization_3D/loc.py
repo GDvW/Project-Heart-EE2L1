@@ -57,7 +57,7 @@ def generate_scan_points(radius, zoff):
     [radius * np.cos(np.deg2rad(angle)),
      radius * np.sin(np.deg2rad(angle)),
      zoff]
-    for angle in range(-90, 91)
+    for angle in range(-90, 90)
     ])
 
     return result
@@ -66,8 +66,8 @@ def test_shit ():
     return 0
 
 def generate_mic_positions(d, M):
-    mic_positions = np.array([d * step for step in range (M)])
-    middle_point = mic_positions[len(mic_positions) / 2]
+    mic_positions = np.array( [ [d * step , 0, 0] for step in range (M) ])
+    middle_point = mic_positions[ int(len(mic_positions) / 2 - 1), :]
     result = np.array([mic_positions[i] - middle_point for i in range (len(mic_positions))])
     return result
 

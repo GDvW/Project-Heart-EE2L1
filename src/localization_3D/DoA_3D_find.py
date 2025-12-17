@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     Delta_f = f_bins[1] - f_bins[0]
     print( Delta_f)
-    bin = 9
+    bin = 6
     central_freq = bin*Delta_f
     X = Sx_all[:,bin , :]
     print(X.shape)
@@ -78,39 +78,17 @@ if __name__ == "__main__":
     f0 = central_freq
     d = 0.10
     Rx = (X @ X.conj().T) / X.shape[1]
-    radius = 8
+    radius = 7
     zoff = 0
     xyz_points = generate_scan_points(radius, zoff)
-    mic_positions = generate_mic_positions(M, d)
+    mic_positions = generate_mic_positions(d, M)
 
-    Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
+    Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
+    print(xyz_points.shape)
+    print(Pout.shape)
+    
+    point_range = np.arange(len(Pout))
+    plt.plot(point_range, Pout)
 
-    angles = np.linspace(-90, 90, 360)
-
-
-
-
-
-    #We need to plot it
-    plt.figure(figsize=(8,4))
-    plt.plot(angles, np.abs(Pout), linewidth=2)
-
-    ymax = np.max(np.abs(Pout))
-
-    # vertical lines at the two source angles (now red)
-    plt.axvline(55.181, linestyle='--', color='red')
-    #plt.axvline(6.22,  linestyle='--', color='red')
-
-    # labels, slightly shifted so they don't overlap
-    plt.text(55.181 -3, ymax - 1, "55.181°",
-             ha='right', va='bottom', fontsize=13, color='red')
-    #plt.text(6.22 + 3,  ymax - 1, "6.22°",
-             #ha='left', va='bottom', fontsize=10, color='red')
-
-    plt.xlabel("Angle (degrees)", fontsize=12)
-    plt.ylabel("MUSIC Spectrum", fontsize=12)
-    plt.title("MUSIC Spectrum (1 source at 60°) / Bin Frequency = 1687 Hz" , fontsize=13)
-
-    plt.grid(True, linestyle="--", alpha=0.4)
-    plt.tight_layout()
+    
     plt.show()
