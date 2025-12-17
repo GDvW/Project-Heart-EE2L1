@@ -101,13 +101,15 @@ class Processor:
         self.segmented_s2 = None
         self.segmented_s1_raw = None
         self.segmented_s2_raw = None
-    def run(self):
+    def run(self, write_enabled: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
 
         Run the process.
         
+        Args:
+            write_enabled (bool, optional): Whether to write the segmentation result. Defaults to True.
         """
         self.load()
         
@@ -119,7 +121,8 @@ class Processor:
 
         self.segment()
 
-        self.write()
+        if write_enabled:
+            self.write()
         
         self.log("Finished! :-)")
         self.log(f"Results:\n  - S1 count: {len(self.s1_peaks)}\n  - S2 count: {len(self.s2_peaks)}\n  - Uncertain: {len(self.uncertain)}")

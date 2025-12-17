@@ -1,4 +1,6 @@
 from pathlib import Path
+import numpy as np
+from collections import defaultdict
 
 from lib.config.ConfigParser import ConfigParser
 from lib.processing.Processor import Processor
@@ -33,16 +35,45 @@ class Executor:
         @author: Gerrald
         @date: 10-12-2025
         """
-        processor = Processor(None, self.config, log=self.log_enabled)
         for file in self.files:
             self.log(f"Processing {file.stem}")
+            processor = Processor(None, self.config, log=self.log_enabled)
             processor.open_file(file)
-            try:
-                processor.run()
+            try:    
+                processor.run(write_enabled=False)
                 
-                self.results[file] = [len(processor.s1_peaks), len(processor.s2_peaks), len(processor.uncertain)]
+                self.results[file] = [len(processor.s1_peaks), len(processor.s2_peaks), len(processor.uncertain), processor]
             except Exception as e:
                 self.log(f"{file} failed, Error: {e}")
+                
+        uncertain_zero = [
+            [file, value[0], value[1]]
+            for file, value in self.results.items()
+            if value[2] == 0
+        ]
+        
+        pairs = defaultdict(list)
+        for file, v0, v1 in uncertain_zero:
+            pairs[(v0, v1)].append(file)
+        
+        if len(uncertain_zero) == 0 or len(pairs) > 1:
+            print("ERROR: Non-program-solvable challenge, but UI not implemented yet.")
+            return
+        
+        file_used = next(iter(pairs.values()))[0]
+        self.log(f"Using {file_used}: s1_peaks:{len(processor.s1_peaks)}, s2_peaks:{len(processor.s2_peaks)}, uncertain:{len(processor.uncertain)}")
+        used_peaks_s1 = self.results[file_used][3].s1_peaks
+        used_peaks_s2 = self.results[file_used][3].s2_peaks
+        
+        for file, value in self.results.items():
+            processor = value[3]
+            
+            processor.s1_peaks = used_peaks_s1
+            processor.s2_peaks = used_peaks_s2
+            
+            processor.segment()
+            processor.write()
+            
         self.log("Finished!")
         
     def summarize(self):
