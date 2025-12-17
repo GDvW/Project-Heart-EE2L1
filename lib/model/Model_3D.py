@@ -57,6 +57,8 @@ class Model_3D:
         self.model.import_csv(file_path)
         if self.reduce_n:
             self.model.set_n(10)
+        else:
+            self.model.set_n(self.config.HeartSoundModel.NBeats)
         
         self.valves = self.model.valves
         
