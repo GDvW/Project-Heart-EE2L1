@@ -14,7 +14,7 @@ def testingfunction(config):
     """
     executor = Executor("samples\\piezo_4_realHeart", config, True)
     executor.execute(write_enabled=False)
-    fig, ax = plt.subplots(3, 2, figsize=(20,20), sharex="all", sharey="all", constrained_layout=True)
+    fig, ax = plt.subplots(3, 2, figsize=(16,16), sharex="all", sharey="all", constrained_layout=True)
     for file, values, plot in zip(executor.results.keys(), executor.results.values(), np.array(ax).flatten()):
         processor = values[3]
         status = values[4]

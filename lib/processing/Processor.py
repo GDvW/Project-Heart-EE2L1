@@ -28,7 +28,7 @@ class Processor:
     This class allows to easily reuse code across the whole codebase and optionally save results for plotting them.
     
     """
-    def __init__(self, file_path: str, config: ConfigParser, subfolder: str = "", log: bool=True, write_result_processed: bool = True, write_result_raw: bool = True, postprocessing: bool = True):
+    def __init__(self, file_path: str, config: ConfigParser, subfolder: str = "", log: bool=True, verbose: bool = False, write_result_processed: bool = True, write_result_raw: bool = True, postprocessing: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -73,6 +73,7 @@ class Processor:
         self.write_result_processed = write_result_processed
         self.write_result_raw = write_result_raw
         self.log_enabled = log
+        self.verbose = verbose
         self.postprocessing = postprocessing
         # Initialize fields that values can be saved to
         self.Fs_original = None
@@ -123,7 +124,7 @@ class Processor:
     
         self.classify()
 
-        self.segment()
+        self.segment(verbose = self.verbose)
 
         if write_enabled:
             self.write()
@@ -234,7 +235,7 @@ class Processor:
             self.actual_segmentation_min_height = 0
         
 
-    def segment(self):
+    def segment(self, verbose: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -245,8 +246,8 @@ class Processor:
         self.s1_peaks = self.s1_peaks[self.s1_peaks[:,0].argsort()]
         self.s2_peaks = self.s2_peaks[self.s2_peaks[:,0].argsort()]
         
-        self.ind_s1 = detect_peak_domains(self.s1_peaks, self.see_normalized, self.segmentation_threshold)
-        self.ind_s2 = detect_peak_domains(self.s2_peaks, self.see_normalized, self.segmentation_threshold)
+        self.ind_s1, self.ind_s2 = detect_peak_domains(self.s1_peaks, self.s2_peaks, self.see_normalized, self.segmentation_threshold, verbose=verbose)
+            
         # Calculate compensation for filters
         see_filter_comp = int(len(self.see_filter)/2)
         g_filter_comp = int(len(self.g)/2)

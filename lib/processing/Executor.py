@@ -78,14 +78,15 @@ class Executor:
             status: Result = value[4]
             
             if status == Result.Success:
-                processor.segment()
+                self.log(f"Segmenting original data for comparison for file {file}")
+                # processor.segment(verbose=False)
                 
                 ind_s1_self = processor.ind_s1
                 ind_s2_self = processor.ind_s2
             
             processor.s1_peaks = used_peaks_s1
             processor.s2_peaks = used_peaks_s2
-            
+            self.log(f"Segmenting based on one audio sample for file {file}")
             processor.segment()
             
             if status == Result.Success:
