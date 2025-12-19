@@ -6,24 +6,26 @@ import matplotlib.pyplot as plt
 
 SIGNAL_LENGTH = 0.25 #seconds
 SAVE = True
-PLOT = True
+PLOT = False
 
 def main():
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     
-    signal = white_noise(SIGNAL_LENGTH, Fs)
+    signal1 = white_noise(SIGNAL_LENGTH, Fs)
+    signal2 = white_noise(SIGNAL_LENGTH, Fs)
     mic_locs = [Point(2.5, 5, 0), # 0
                 Point(2.5, 10, 0), # 1
                 Point(2.5, 15, 0), # 2
                 Point(7.5, 5, 0), # 3
                 Point(7.5, 10, 0), # 4
                 Point(7.5, 15, 0)]
-    source_loc = Point(-1,8,-15)
+    source_loc = [Point(-1,8,-15),
+                  Point(3,7,0)]
     
     model = Model_3D(config, source_loc, mic_locs)
     
-    h = model.generate(signal)
+    h = model.generate([signal1, signal2])
     
     if PLOT:
         for i, x in enumerate(h):
