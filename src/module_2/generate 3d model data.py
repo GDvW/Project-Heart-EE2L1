@@ -14,12 +14,12 @@ def main():
     
     signal1 = white_noise(SIGNAL_LENGTH, Fs)
     signal2 = white_noise(SIGNAL_LENGTH, Fs)
-    mic_locs = [Point(2.5, 5, 0), # 0
-                Point(2.5, 10, 0), # 1
-                Point(2.5, 15, 0), # 2
-                Point(7.5, 5, 0), # 3
-                Point(7.5, 10, 0), # 4
-                Point(7.5, 15, 0)]
+    mic_locs = [Point(-0.25, 0, 0), # 0
+                Point(-0.15, 0, 0), # 1
+                Point(-0.05, 0, 0), # 2
+                Point(0.05, 0, 0), # 3
+                Point(0.015, 0, 0), # 4
+                Point(0.025, 0, 0)]
     source_loc = [Point(-1,8,-15),
                   Point(3,7,0)]
     
