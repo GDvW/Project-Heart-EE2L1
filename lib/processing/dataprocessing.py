@@ -107,6 +107,10 @@ def get_difference(a,b):
     return list(a_rows - b_rows)
 
 def detect_peak_domains(s1_peaks: np.ndarray, s2_peaks: np.ndarray, see: np.ndarray, threshold: float, verbose: bool = True):
+    """
+    @author: Gerrald
+    @date: 19-12-2025
+    """
     ind_s1 = detect_peak_domains_single_sound(s1_peaks, see, threshold)
     ind_s2 = detect_peak_domains_single_sound(s2_peaks, see, threshold)
     
@@ -114,34 +118,29 @@ def detect_peak_domains(s1_peaks: np.ndarray, s2_peaks: np.ndarray, see: np.ndar
     unique_domains, counts = np.unique(domains, axis=0, return_counts=True)
     if len(unique_domains) != len(domains):
         # There are overlapping segments, threshold should be increased
-        # We suppose only a consquential S1 and S2 can overlap, not S2 and then S1, because the diastole is longer, but this was not true
+        # For a double S1 peak that is in one domain, the `detect_peak_domains_single_sound` only returns one domain
+        # But then there is always a S2 peak, so there we can detect whether the range contains too much
         duplicates = unique_domains[counts > 1]
         duplicate_count = counts[counts > 1]
         for cur_domain, count in zip(duplicates, duplicate_count):
             s1_peak_in_domain = s1_peaks[(s1_peaks[:,0] >= cur_domain[0]) & (s1_peaks[:,0] <= cur_domain[1])]
             s2_peak_in_domain = s2_peaks[(s2_peaks[:,0] >= cur_domain[0]) & (s2_peaks[:,0] <= cur_domain[1])]
-            if len(s1_peak_in_domain) + len(s2_peak_in_domain) != count:
-                if verbose: print(f"WARNING [Segmentation]: Different amount of peaks in domain than count of domains ({len(s1_peak_in_domain) + len(s2_peak_in_domain)} != {count})")
-                ind_s1 = ind_s1[np.all(ind_s1 != cur_domain, axis=1)]
-                ind_s2 = ind_s2[np.all(ind_s2 != cur_domain, axis=1)]
-                continue
             
             merged = [(s1[0], "S1") for s1 in s1_peak_in_domain] + [(s2[0], "S2") for s2 in s2_peak_in_domain]
             merged.sort(key=lambda x: x[0])
             
             pairs = [(merged[i][0], merged[i][1], merged[i+1][0]) for i in range(len(merged) - 1)]
-            pairs.append((merged[-1][0], merged[-1][1], cur_domain[1]))
             
             new_domains = []
             previous_index = cur_domain[0]
             for first, first_type, second in pairs:
                 inv_peaks, _ = find_peaks(-see[first:second+1])
                 if len(inv_peaks) == 0:
-                    print(f"ERROR: No minimums between {first} and {second}. Resulting data will be invalid")
+                    if verbose: print(f"ERROR: No minimums between {first} and {second}. Resulting data will be invalid")
                     continue
                 inv_peaks_height = see[inv_peaks]
                 
-                split_index = inv_peaks[np.argmin(inv_peaks_height)] + first
+                split_index = inv_peaks[np.argmax(inv_peaks_height)] + first
                 
                 if split_index in [first, second]:
                     inv_peaks = inv_peaks[inv_peaks_height.argsort()] + first
@@ -149,11 +148,11 @@ def detect_peak_domains(s1_peaks: np.ndarray, s2_peaks: np.ndarray, see: np.ndar
                         if not split_index in [first, second]:
                             break
                     else: 
-                        print(f"ERROR: No eligible minimums between {first} and {second}. Resulting data will be invalid")
+                        if verbose: print(f"ERROR: No eligible minimums between {first} and {second}. Resulting data will be invalid")
                         
-                
                 new_domains.append([previous_index, split_index, first_type])
                 previous_index = split_index
+            new_domains.append([split_index, cur_domain[1], merged[-1][1]])
                 
             ind_s1 = ind_s1[np.all(ind_s1 != cur_domain, axis=1)]
             ind_s2 = ind_s2[np.all(ind_s2 != cur_domain, axis=1)]
@@ -164,13 +163,13 @@ def detect_peak_domains(s1_peaks: np.ndarray, s2_peaks: np.ndarray, see: np.ndar
                 elif new_domain[2] == "S2":
                     ind_s2 = np.r_[ind_s2, [new_domain[:2]]]
                 else:
-                    print(f"WARNING: invalid peak type: {new_domain[2]}")
+                    if verbose: print(f"WARNING: invalid peak type: {new_domain[2]}")
 
     return ind_s1, ind_s2
 def detect_peak_domains_single_sound(peaks: np.ndarray, see: np.ndarray, threshold: float): 
     """
     @author: Gerrald
-    @date: 10-12-2025
+    @date: 19-12-2025
     """
     peak_start = None
     peaks_ind = []
