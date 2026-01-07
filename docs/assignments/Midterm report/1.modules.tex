@@ -72,7 +72,7 @@ For each group, it then first checks if any of the peaks in the group have a "di
 
 Firstly, if this check is true, it is known that too many peaks are detected, so then another loop is entered, which, in each iteration, removes the peak with the smallest height in the group, and recomputes the classifications for the peaks using the "classify\_peaks" function. The loop terminates if all the uncertains in the group are resolved, or if all the peaks in the group are removed by the loop, meaning that no uncertain peaks were possible to be classified as an S1 or S2 peak. 
 
-The other possibility is that this check did not pass. Now, it is known that not enough peaks have been detected, which must have resulted in a peak with a "diff" value that is too high. This is because if a peak is removed (or not detected), the "diff" value of the peak before that increases by the "diff" value of the removed peak, which is apparent by the definition of the "diff" value. 
+Secondly it is possible that this check did not pass. Now, it is known that not enough peaks have been detected, which must have resulted in a peak with a "diff" value that is too high. This is because if a peak is removed (or not detected), the "diff" value of the peak before that increases by the "diff" value of the removed peak, which is apparent by the definition of the "diff" value. 
 
 To try to solve this, a segment of the Shannon energy envelope is taken, which includes the peaks of the group and a padding of 2 seconds of samples on each side, defined by "SolveUncertainLength" in "config.ini" to be able to use those peaks to check whether the current uncertain peak is S1 or S2. Then, the "find\_peaks" function is used to detect all peaks in the segment, where the threshold requirement is omitted, and only the "min\_dist" argument is given, to not detect a very unrealistic number of peaks. The peaks that are detected in this way are compared to the peaks that were already in the group, and the difference is put in the variable "new\_peaks".
 
@@ -85,7 +85,7 @@ At the end, the "solve\_uncertains" function returns the new arrays for "s1\_pea
 \subsubsection{Segmentation}
 Lastly, using the indices of the peaks and a threshold, defined as "EnvelopeThreshold" in "config.ini", domains are generated where the whole peaks occur. This is done by first getting the segments of the energy envelope which have a Shannon energy higher than the threshold. After that only the segments that contain a classified peak are kept; the others are discarded. This is easily done by checking the thresholds
 
-As these segments contain indices for samples, they can be applied on either the raw input signal or the downsampled, filtered and downsampled one. Multiple files are generated using these segments: files for the S1 peaks and the S2 peaks, and by applying those segment on the "raw" and "processed" signals. There are also two ways the segment indices can be applied: either the samples that are not in the segments are set to zero, or are omitted altogether, resulting in a shorter signal. This means that there will be 8 files generated.
+As these segments contain indices for samples, they can be applied on either the raw input signal or the filtered and downsampled one. Multiple files are generated using these segments: files for the S1 peaks and the S2 peaks, and by applying those segment on the "raw" and "processed" signals. There are also two ways the segment indices can be applied: either the samples that are not in the segments are set to zero, or are omitted altogether, resulting in a shorter signal. This means that there will be 8 files generated.
 
 The class "Executor" (\ref{ap:Executor}) is able to loop through multiple files, and call the "Processor" class for each file. It also organizes the output files in folders for ease of use. This is our implementation for multi-channel segmentation.
 
@@ -194,11 +194,11 @@ The damping and delay of the multichannel recording were tested by inspection. A
 %Conclusion: summarize results, claims on expected accuracy
 Concluding, a model of the sound the heart creates has been made. This model has been applied to 6 microphones, where the spatial differences between microphones and valves has also been accounted for. The resulting model seems to be quite accurate, as the single valve model looks and sounds like an actual heart beat, and the spatial results seem realistic.
 
-\chapter{Module 3}
-\subsection{Beamformer} 
+\section{Module 3}
+\subsection{Matched Beamformer} 
 
 \subsubsection{Specifications}
-The goal of this module is to create a system that is able to determine in which direction the source of a signal is located. There are multiple approaches to this problem, the ones discussed here are the beamformer and MVDR. The implemented system should use files of multiple microphones as input and the output will be a plot that shows the position of the signal's source.
+The goal of this module is to create a system that is able to determine in which direction the source of a signal is located. There are multiple approaches to this problem, the ones discussed here are the beamformer and MVDR. The implemented system should use files of multiple microphones as input and the output will be a plot that shows the direction of the signal's source.
 
 \subsubsection{Analysis}
 \paragraph{Signal model}
@@ -231,7 +231,7 @@ e^{-j(M-1)(d/v)\sin(\theta)\Omega_0}
 Here, $\theta$ expresses the direction of arrival, $d$ the microphone spacing, $v$ the speed of the wave (sound in this case), and $\Omega_0$ the radial frequency.
 
 \paragraph{Beamforming principle}
-The delay and sum beamformer was used. What the beamformer does, according to \cite{IP3Man}, it synchronizes/aligns signals that come from a given angle $\theta$ and it doesn't alter signals from other directions (e.g. noise in this case). Then it sums them up, so the signals from a wanted angle add up in phase (constructively), while the unwanted signals add up destructively thus becoming less important.
+The delay and sum mabeamformer was used. What the beamformer does, according to \cite{IP3Man}, it synchronizes/aligns signals that come from a given angle $\theta$ and it doesn't alter signals from other directions (e.g. noise in this case). Then it sums them up, so the signals from a wanted angle add up in phase (constructively), while the unwanted signals add up destructively thus becoming less important.
 
 According to \cite{IP3Man}, for the given signal of unity power $\mathbf{x}$ and a given angle of arrival $\theta_0$, the output $y$ is
 \[
@@ -256,13 +256,13 @@ In order to use the beamformer model the following assumptions, constraints and 
     B \ll \frac{v}{D}, \quad \text{where } D = (M-1)d.
     \] D here is the length of the microphone array. Because this condition does not hold for the signals of this project, a bandpass filter centered at a chosen frequency needs to be applied. This is analyzed more in the design section.
     
-    \item Spatial aliasing. According to \cite{IP3Man} and confirmed by assignment [\ref{assigment_6.2.6}, each microphone samples the input signal in time. However, the microphone array samples the input
+    \item Spatial aliasing. According to \cite{IP3Man} and confirmed by assignment [\ref{assigment_6.2.6}], each microphone samples the input signal in time. However, the microphone array samples the input
     signal in space, and just as with sampling in time, the issue of aliasing comes up. To avoid this, spatial sampling needs to happen more densely than half the wavelength. So \[
     \Delta = \frac{d}{\lambda} < \frac{1}{2}
     \] 
     where $\Delta$ is the length measured in wavelengths, needs to be smaller than 1/2.\label{aliasing}
 
-    \item Resolution - Aliasing tradeoff. As proven by \cite{IP3Man} and [\ref{assigment_6.2.6}, the highest the central frequency chosen, the better the resolution. This means that the lobes of the peaks of graphs are more sharp. On the other hand, if the central frequency is increased a lot then the wavelength $\lambda$ becomes smaller and thus the $\Delta$ bigger which leads to aliasing. So at low frequencies, 2 lobes might be merged with each other and be indistinguishable, but in high frequencies they might be disrupted by destructive aliasing.   
+    \item Resolution - Aliasing tradeoff. As proven by \cite{IP3Man} and [\ref{assigment_6.2.6}], the highest the central frequency chosen, the better the resolution. This means that the lobes of the graphs are more sharp. On the other hand, if the central frequency is increased a lot then the wavelength $\lambda$ becomes smaller and thus the $\Delta$ bigger which leads to aliasing. So at low frequencies, 2 lobes might be merged with each other and be indistinguishable, but in high frequencies they might be disrupted by destructive aliasing.   
 
 \end{itemize}
 
@@ -277,13 +277,15 @@ P_y(\theta) = \mathbf{a}^H(\theta) \mathbf{R}_x \mathbf{a}(\theta)
 Here $\alpha$ is the steering vector and $R\_x$ is the auto covariance of the signal.
 Thus the $\theta$ where the power is maximized is our direction of arrival.
 
-\subsubsection{Analysis of the functions used in beamforming}
+\paragraph{Analysis of the functions used in beamforming}
 \label{beam_funcs}
 \begin{itemize}
     \item The function "a\_lin" takes the arguments "theta", an angle, "M", the number of microphones, "d", the spacing between the microphones, "v", the speed of sound, and "f0", a frequency. This function computes and returns the steering vector $\mathbf{a}(\theta)$, using the steps described in \ref{steering_vector_calculation}.
 
     \item The function "matchedbeamforming" uses the same arguments "M", "d", "v" and "f0". It also takes an argument "Rx", which is the auto covariance. For a given range of angles (given by the argument "th\_range"), the function computes the output power and returns the power spectrum.
 \end{itemize}
+
+An example of the outputs of the functions can be seen in \ref{Assignment_6.4.1}. The plots there confirm the sort of wider lobes the matched beamformer creates and as a result 2 sources are overlapping in the power spectrum.
 
 The pipeline for applying beamforming can be seen in Fig. \ref{fig:beamformer_pipeline}. It is thus apparent that the central frequency selection and the computation of the STFT (Short Time Fourier Transform) are crucial steps. Both of these are explained in \cite{IP3Man}. The core idea is that the STFT transforms the signal into the frequency domain. It essentially decomposes the signal into separate frequency bins, where each bin represents a narrow band version of the original signal evolving over time. 
 
@@ -302,7 +304,8 @@ As explained in [\ref{beamformer_assumption_constraints}], there is a tradeoff b
 
 
 \subsubsection{Testing}
-For testing the beamformer, measurements with one signal source at  $0^\circ$, $30^\circ$ and $60^\circ$ were made, but also for 2 sources located at $+7^\circ$ and $-7^\circ$. 
+\label{beamformer_testing}
+Four configurations were used to acquire measurements to test all the algorithms. The configurations included an array of six microphones and one or two speakers.  The first three of the configurations included a single speaker that was placed at three different angles, one was placed 7.4 meters in front of the microphones (at an angle of zero degrees). In the second configuration the speaker was placed at an angle of 30 degrees and in the third configuration it was placed at an angle of 60 degrees. The fourth configuration contained two sources placed at +7$^\circ$ and -7$^\circ$. During the tests, the speakers were playing white noise, this was done to be able to select frequency slices while processing the data of the measurement to compare the results at different frequencies. Below is the analysis for the measurements.
 
 
 \paragraph{One source} For one source at $0^\circ$, the beamformer performs satisfactory. There is an absolute error of $0.45^\circ$.
@@ -321,7 +324,7 @@ The $60^\circ$ plot as shown in Fig. \ref{fig:beamformer_60_degrees} shows there
 \paragraph{2 sources}
 
 \label{beamformer_resolution_2_sources_problem}
-As explained in [\ref{beamformer_assumption_constraints}], there is a tradeoff between spatial aliasing and resolution. If there are 2 sources in a signal, the final power spectrum plotted for the beamformer, is practically the sum of the power spectrum for each source as if they were received in different signals. So the power spectrum of 2 sources is the sum of 2 power spectra of one source like \ref{fig:beamformer_0_degrees}. If the central frequency is lower, each of the lobes is thicker/more spread out. Thus the peak of their sum is somewhere in between, and the 2 sources are indistinguishable. This can be seen below.
+As explained in \ref{beamformer_assumption_constraints}, there is a tradeoff between spatial aliasing and resolution. If there are 2 sources in a signal, the final power spectrum plotted for the beamformer, is practically the sum of the power spectrum for each source as if they were received in different signals. So the power spectrum of 2 sources is the sum of 2 power spectra of one source like \ref{fig:beamformer_0_degrees}. If the central frequency is lower, each of the lobes is thicker/more spread out. Thus the peak of their sum is somewhere in between, and the 2 sources are indistinguishable. This can be seen below.
 
 \begin{figure} [H]
     \centering
@@ -330,7 +333,7 @@ As explained in [\ref{beamformer_assumption_constraints}], there is a tradeoff b
     \label{fig:beamformer_2_source_1687Hz}
 \end{figure}
 
-If the central frequency is higher then the lobes created by the 2 sources are sharper and are not merged in one thick lobe. Thus there are 2 peaks but also spatial aliasing.In this case it is known that the 2 peaks seen are not result of aliasing. In lower frequencies \ref{fig:beamformer_2_source_1687Hz}, the peak of the power is around the center of the graph. Thus most of the signal lies there. As a result, it it known that the peaks caused by the 2 sources will occur in that region. The plot was expected, as 2 peaks are visible but they are still sort of merged, justifying the operation of the beamformer. 
+If the central frequency is higher then the lobes created by the 2 sources are sharper and are not merged in one thick lobe. Thus there are 2 peaks but also spatial aliasing.In this case it is known that the 2 peaks seen are not result of aliasing. In lower frequencies \ref{fig:beamformer_2_source_1687Hz}, the peak of the power is around the center of the graph. Thus most of the signal lies there. As a result, it is known that the peaks caused by the 2 sources will occur in that region. The plot was expected, as 2 peaks are visible but they are still sort of merged, justifying the operation of the beamformer. This is also justified in [\ref{Assignment_6.4.1}] where there are 2 sources at  $0^\circ$ and $15^\circ$ by using a simulated signal.  
 
 \begin{figure} [H]
     \centering
@@ -344,6 +347,8 @@ If the central frequency is higher then the lobes created by the 2 sources are s
 
 
 \subsection{MVDR}
+\subsubsection{Specifications}
+The MVDR beamformer needs to do exactly what the matched beamformer does, take as input a signal and output the direction of the signal source(s).
 
 \subsubsection{Analysis}
 The MVDR beamformer works differently from the one described previously. The objective of implementing an MVDR is to choose a direction from where the source is coming and to minimize the gain of the rest of the angles. This translates to two requirements that must be implemented:
@@ -374,6 +379,7 @@ The two requirements were implemented as the following constraints:
 \begin{equation}
 \textbf{w}_{opt}=\frac{\textbf{R}_x^{-1}\textbf{a}(\theta)}{\textbf{a}^\textit{H}(\theta)\textbf{R}_x\textbf{a}(\theta)}
 \end{equation}
+\label{MVDR_beamformer}
 The power response of the system will be the output:
 
 \begin{equation}
@@ -392,17 +398,18 @@ That is why there will be a peak. When $\mathbf{a}(\theta)$ does not point along
 
 \subsubsection{Analysis of the main functions used in MVDR:}
 \begin{itemize}
-    \item The function "a\_lin" is the same as used in the previous section [\ref{beam_funcs}].
+    \item The function "a\_lin" is the same as used in the previous section \ref{beam_funcs}.
 
-    \item The function "MVDR" takes the same arguments as the "matchedbeamforming" function of the previous section [\ref{beam_funcs}], and computes and returns the same. 
+    \item The function "MVDR" takes the same arguments as the "matchedbeamforming" function of the previous section (\ref{beam_funcs}), and computes and returns the power spectrum. 
+
+    \item The function "find MVDR beamformer" takes the same arguments as the "matchedbeamforming" function of the previous section (\ref{beam_funcs}) and also an angle where the beamformer should focus and returns the beamformer as in \ref{MVDR_beamformer}.
 \end{itemize}
+An example of the outputs of the functions can be seen in \ref{Assignment_6.4.1}. The plots there confirm the sharp lobes of the MVDR beamformer and show that this type of beamformer doesn't alter the gain from one angle and tries to minimize the gain from all other angles.
 
 
 \subsubsection{Testing}
 
-Four configurations were used to acquire measurements to test the MVDR and fixed beamformer. The configurations included an array of six microphones and one or two speakers.  The first three of the configurations included a single speaker that was placed at three different angles, one was placed 8 meters in front of the microphones (at an angle of zero degrees). In the second configuration the speaker was placed at an angle of 30 degrees and in the third configuration it was placed at an angle of 60 degrees. The fourth configuration contained two sources placed at +7$^\circ$ and -7$^\circ$. During the tests, the speakers were playing white noise, this was done to be able to select frequency slices while processing the data of the measurement to compare the results at different frequencies. Below is the analysis for the measurements, the sampled measurement results that were already provided will be discussed first. After that, the measurements made during the lab sessions will be shown and discussed to know wether any irregularity is due to the code itself or due to measurement flaws.
-
-
+The configuration for testing is the same for all algorithms, explained in \ref{beamformer_testing}.
 
 \paragraph{One source} The graph obtained from the measurements of the setup where the speaker was placed at $0^\circ$ can be seen below. The peak seen in the plot shows that the angle of the signal's source was placed at an angle of $-1^\circ$. This is a sufficiently accurate result as the speaker was probably not \textit{exactly} placed at an angle of $0^\circ$ for the measurement. It is reasonable to assume that most of the measurements have an offset like this that is due to the imperfect placing of the speakers and the microphones. Another factor that can contribute to an unideal response is the reflection of sound from other objects in the room or the walls.
 
@@ -420,7 +427,14 @@ The plot obtained after changing the angle of the source to $30^\circ$, shown in
 
 The graph acquired after measuring the response of the microphones with the source placed at $\theta=60^\circ$, shown in Fig. \ref{fig:MVDR_60_degrees}, shows the peak at about $60^\circ$. 
 
-\paragraph{Two sources} The fourth measurement configuration included two speakers placed in front of the microphone array. One of them was placed at an angle of $7^\circ$, the other one was placed at $-7^\circ$. As explained earlier in this chapter [\ref{aliasing}], when $\Delta$ surpasses $\frac{1}{2}$, spacial aliasing occurs. Because the frequency selected for this measurement was 3000 Hz instead of the previously used 1687 Hz, $\Delta$ surpassed $\frac{1}{2}$ (as $\Delta=\frac{d}{\lambda}$ and $\lambda=\frac{v}{f}$). The aliasing is visible on the ends of the graph obtained during this measurement (see Fig. \ref{fig:MVDR_2_sources}).
+\paragraph{Two sources} The fourth measurement configuration included two speakers placed in front of the microphone array. One of them was placed at an angle of $7^\circ$, the other one was placed at $-7^\circ$. As explained earlier in this chapter (\ref{aliasing}), when $\Delta$ surpasses $\frac{1}{2}$, spacial aliasing occurs. Because the frequency selected for this measurement was 3000 Hz instead of the previously used 1687 Hz, $\Delta$ surpassed $\frac{1}{2}$ (as $\Delta=\frac{d}{\lambda}$ and $\lambda=\frac{v}{f}$). The aliasing is visible on the ends of the graph obtained during this measurement (see Fig. \ref{fig:MVDR_2_sources}).
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{docs/assignments/Midterm report/figures/module_3/MVDR/MVDR 2 source/MVDR_7_-7.png}
+    \caption{MVDR at $60^\circ$.}  
+    \label{fig:MVDR_2_sources}
+\end{figure}
 
 %The results of the measurements that were made during the labs (see \ref{} ...) reflect the same expectations, even though the angles of the peaks are not as accurate as the ones that were found in the measurements that were already given.
 
@@ -429,8 +443,13 @@ The graph acquired after measuring the response of the microphones with the sour
 \subsection{Conclusion}
 
 
-As the MVDR was explicitly designed to minimize the power response from angles that do not contain the source of the signal, it is reasonable to expect that its output is lower than the output of the other beamformer (except for the angles that do not contain the source, which are 0$^\circ$, 30$^\circ$, and 60$^\circ$ respectively). This is confirmed by the plots (Fig. \ref{fig:beamformer_0_degrees} and \ref{fig:beamformer_30_degrees}) where, especially in the first two configurations, the ripples of the beamformer seem significantly larger than the ripples seen in the power response of the MVDR beamformer (Fig. \ref{fig:MVDR_0_degrees} and \ref{fig:MVDR_30_degrees}). The rest of the single source measurements can be seen in Fig. \ref{fig:beamformer_60_degrees} and \ref{fig:MVDR_60_degrees}. \\
-The same is observed when analyzing the results for the double source setup (Fig. \ref{fig:beamformer_2_source_3000Hz} and \ref{fig:MVDR_2_sources}).
+The MVDR beamformer gives a sharper and more accurate spatial response than the conventional beamformer, but its output contains more ripple. This is because MVDR suppresses signals coming from directions other than the source, which leads to narrower peaks and deeper nulls. The conventional beamformer has a smoother response and broader peaks, which makes it more suitable for single-source situations. The same behavior is observed for both the single-source and two-source measurements. Thus the MVDR is more suitable for 2 sources. 
+
+For testing, the recordings that were made in the last year were used, as advised by the professors. However, there were similar recordings made this year, which seem to have more noise. They can be seen in Fig. \ref{module_3_recordings}. Recordings where made for one source for a variety of angles between $0^\circ$ and $60^\circ$. For 2 sources the same happened with the sources being from $+60^\circ$ and $-60^\circ$ to $+20^\circ$ and $-20^\circ$.
+Both algorithms performed with an offset up to $5^\circ$ in the single source estimations, which is satisfactory taking into account the fact that there were a narrow walls which would cause signal reflections.
+However in the 2 source estimates, exactly because of the signal reflections, the signals coming from the 2 sources interfere with each other as they get reflected thus causing the accuracy to drop by a lot.
+
+Overall other factors that could have affected the results are people talking, other noise form outside and inaccurate setup of the equipment.
 
 
 
@@ -447,7 +466,7 @@ The same is observed when analyzing the results for the double source setup (Fig
 
 \subsection{Analysis}
 \paragraph{SVD and Signal Subspace analysis}
-As also explained by \cite{IP3Man}, when there are many sources, the signal \textbf{X} can be modeled as :
+As also explained by \cite{IP3Man}, when there are many sources, the signal \textbf{X} can be modeled as:
 \begin{equation}
 \mathbf{X} = \mathbf{A}\mathbf{S} : M \times N, \quad
 \mathbf{A} = [\mathbf{a}_0 \ \mathbf{a}_1 \ \cdots \ \mathbf{a}_Q] : M \times Q, \quad
@@ -460,7 +479,7 @@ As also explained by \cite{IP3Man}, when there are many sources, the signal \tex
 \end{equation}
 
 Where M is number of microphones, Q the number of sources and N the number of samples.
-Because the columns of \textbf{X} are linear combinations of the vectors inside \textbf{A}, the rank of \textbf{X} will be the number of sources Q.
+Because the columns of \textbf{X} are linear combinations of the vectors inside \textbf{A}, the rank of \textbf{X} will be the number of sources Q. This can be verified in an example [\ref{fig:assignment_7.1.4_plot}].
 
 According to the properties of the Singular Value decomposition (SVD), the columns of the matrix \textbf{U} will be orthonormal. Also, as shown in \cite{IP3Man} and in Fig. \ref{fig:SVD_interpretation}, the dominant singular vectors of the matrix \textbf{U} span the same subspace as the matrix \textbf{A}, but orthogonally. Additionally, the singular vectors that are really small (zero) span the subspace of the noise \textbf{$U_n$}.
 $$
@@ -518,9 +537,9 @@ For one source the results of the MUSIC were satisfactory.
 \end{figure}
 It is apparent that the lobe is really sharp, exactly because of the way the MUSIC works. There is a small offset of 0.5$^\circ$, but this can be due to set up errors. 
 
-The plot for $30^\circ$ can be seen here [\ref{fig:music_1_source_30_degrees}]. There is also a really small offset of $30.332^\circ$, but offsets that small can be negligible.
+The plot for $30^\circ$ can be seen in Fig. \ref{fig:music_1_source_30_degrees}. There is also a really small offset of $30.332^\circ$, but offsets that small can be negligible.
 
-The plot for $60^\circ$ can be seen here [\ref{fig:music_1_source_60_degrees}]. A larger offset of $4.82^\circ$ is visible.This is due to finite sample, because as explained in \cite{IP3Man} MUSIC's resolution depends on the number of samples N. Also aliasing has started to appear. Aliasing is logical because with the chosen central frequency, we are on the verge of aliasing as explained in \ref{central_frequency_selection}. Also it is clear that aliasing is just at the start, because it happens only on the sides of the graph.
+The plot for $60^\circ$ can be seen in Fig. \ref{fig:music_1_source_60_degrees}. A larger offset of $4.82^\circ$ is visible.This is due to finite sample, because as explained in \cite{IP3Man} MUSIC's resolution depends on the number of samples N. Also aliasing has started to appear. Aliasing is logical because with the chosen central frequency, we are on the verge of aliasing as explained in Fig. \ref{central_frequency_selection}. Also it is clear that aliasing is just at the start, because it happens only on the sides of the graph.
 
 
 \paragraph{Two Sources}
@@ -537,6 +556,8 @@ This is seen with 3185.5 \textbf{Hz}.
 The peak on the right is due to spatial aliasing and is not the actual signal. This is because, in lower frequencies [\ref{fig:music_2_source_1687}], the most "power" is concentrated in the centre. Thus the area to search while increasing the frequency is the area that the big lobe takes at [\ref{fig:music_2_source_1687}].
 It can be seen that with high enough frequency, MUSIC lobes are really sharp and the accuracy is impeccable with less than a degree of error per side.
 
+\subsection{Conclusion}
 
+It is clear that MUSIC is more accurate than the other 2 algorithms previously discussed. The peaks are more sharp, thus indicating better where the signal is coming from. As in the previous modules, the recordings that were made in the last year were used, as advised by the professors. However, there were similar recordings made this year, which seem to have more noise. They can be seen in \ref{module_4_recordings}. As the 2 previous algorithms MUSIC performs better in one source estimation, and even better than MVDR and matched beamformer. However when it comes to 2 sources, the results were not satisfactory. Factors that could have affected the results are people talking, other noise form outside, inaccurate setup of the equipment and obviously and most importantly, reflections of each of the signals to the walls.
 
 
