@@ -1,6 +1,9 @@
 \chapter{Modules}
-
-\section{Module 1: Segmentation}
+\todo{Seperate modules in chapters, remove modules chapter}
+\todo{Show more results}
+\todo{Summarize manual more and expand about testing and output}
+\todo{Revise structure so that specifications,analysis,etc do not appear literally}
+\section{Heart Sound Segmentation}
 
 \subsection{Specifications}
 %Specifications: what is given, notation
@@ -92,7 +95,8 @@ The class "Executor" (\ref{ap:Executor}) is able to loop through multiple files,
 
 \subsection{Testing}
 %Testing: how do we test, what are the results? (plots!)
-
+\todo{We are not qualified, so make clear this was the case and what we have done precisely}
+\todo{Add graph of visual inspection in report}
 The classification algorithm was tested by applying it on a data set of heart recordings. The results of the algorithm were checked by hand. It was checked if the algorithm missed peaks where there were peaks, or marked peaks where there were no peaks present. The latter did only occur twice. The results using the data acquired using a piezo electric element are presented in Table \ref{tab:test_piezo_segmentation}, the results using the data acquired using a stethoscope are presented in Table \ref{tab:test_stethoscope_segmentation}. Using this data, the accuracy of the algorithm can be computed. As there are a lot of samples (almost all of them) which were not marked as peaks, type I errors are neglected, of which only two were made.
 
 To answer the question: "If I take a random peak (S1/S2) in the sound signal, what is the chance this peak is correctly classified?", this test data can be summarized as seen in Table \ref{tab:piezo_results} and Table \ref{tab:stethoscope_results}. Table \ref{tab:piezo_results} summarizes the results for the piezo recordings, and Table \ref{tab:stethoscope_results} those of the stethoscope recordings. "Uncertain/skipped" indicates the percentage of the peaks that were skipped, or marked as uncertain and therefore skipped too in further processing. "Incorrectly labeled peak" treats the cases where a S1 peak was labeled as an S2 peak, or vice versa. A "correctly labeled peak" is a peak that was correctly classified. 
@@ -137,7 +141,8 @@ Marked as correct peak & 99.56\% & 99.55\% \\
 %Conclusion: summarize results, claims on expected accuracy
 To conclude, the algorithm works quite well and is quite robust, as it seems from testing. However, it should also be noted that there are still occurrences where the algorithm makes mistakes. Very noisy data has not been tested. It would be possible to embed more parameters in the optimization steps, although it could also be better to have a human check and adjust parameters as needed.
 
-\section{Module 2}
+\section{Heart Sound Modeling}
+\todo{Add formula $e^-at*sin(omega t)u(t)$}
 \subsection{Specifications}
 %Specifications: what is given, notation
 The aim of this module is to generate a sound model of the human heart, and be able to generate test data using the model. 
@@ -194,7 +199,8 @@ The damping and delay of the multichannel recording were tested by inspection. A
 %Conclusion: summarize results, claims on expected accuracy
 Concluding, a model of the sound the heart creates has been made. This model has been applied to 6 microphones, where the spatial differences between microphones and valves has also been accounted for. The resulting model seems to be quite accurate, as the single valve model looks and sounds like an actual heart beat, and the spatial results seem realistic.
 
-\section{Module 3}
+\section{Beamfomer and MVDR}
+\todo{Change module name to something else without module}
 \subsection{Beamformer} 
 
 \subsubsection{Specifications}
@@ -417,7 +423,12 @@ The plot obtained after changing the angle of the source to $30^\circ$, shown in
 
 The graph acquired after measuring the response of the microphones with the source placed at $\theta=60^\circ$, shown in Fig. \ref{fig:MVDR_60_degrees}, shows the peak at about $60^\circ$. 
 
+
+
 \paragraph{Two sources} The fourth measurement configuration included two speakers placed in front of the microphone array. One of them was placed at an angle of $7^\circ$, the other one was placed at $-7^\circ$. As explained earlier in this chapter [\ref{aliasing}], when $\Delta$ surpasses $\frac{1}{2}$, spacial aliasing occurs. Because the frequency selected for this measurement was 3000 Hz instead of the previously used 1687 Hz, $\Delta$ surpassed $\frac{1}{2}$ (as $\Delta=\frac{d}{\lambda}$ and $\lambda=\frac{v}{f}$). The aliasing is visible on the ends of the graph obtained during this measurement (see Fig. \ref{fig:MVDR_2_sources}).
+
+\paragraph{Key observations}
+These responses show that when comparing the response of an MVDR beamformer with a fixed beamformer response, the heights of the sidelobes compared with the main lobe appear significantly lower. These graphs also show that the main lobe of an MVDR is much narrower when compared to the main lobe in the response of a fixed beamformer, making it much easier to determine the angle of the source. In short, these MVDR responses tell us that it is easier to ascertain the angle of the source location than it would be when using a fixed beamformer.
 
 %The results of the measurements that were made during the labs (see \ref{} ...) reflect the same expectations, even though the angles of the peaks are not as accurate as the ones that were found in the measurements that were already given.
 
@@ -431,8 +442,7 @@ The same is observed when analyzing the results for the double source setup (Fig
 
 
 
-\section{Module 4}
-
+\section{MUSIC direction finding}
 %Specifications: what is given, notation
 %Analysis: which problems have to be overcome
 %Design: 
@@ -513,6 +523,9 @@ For one source the results of the MUSIC were satisfactory.
     \caption{Beamformer at +7$^\circ$, -7$^\circ$, higher resolution.}  
     \label{fig:music_1_source_0_degrees}
 \end{figure}
+
+
+
 It is apparent that the lobe is really sharp, exactly because of the way the MUSIC works. There is a small offset of 0.5$^\circ$, but this can be due to set up errors. 
 
 The plot for $30^\circ$ can be seen here [\ref{fig:music_1_source_30_degrees}]. There is also a really small offset of $30.332^\circ$, but offsets that small can be negligible.
@@ -520,8 +533,11 @@ The plot for $30^\circ$ can be seen here [\ref{fig:music_1_source_30_degrees}]. 
 The plot for $60^\circ$ can be seen here [\ref{fig:music_1_source_60_degrees}]. A larger offset of $4.82^\circ$ is visible.This is due to finite sample, because as explained in \cite{IP3Man} MUSIC's resolution depends on the number of samples N. Also aliasing has started to appear. Aliasing is logical because with the chosen central frequency, we are on the verge of aliasing as explained in \ref{central_frequency_selection}. Also it is clear that aliasing is just at the start, because it happens only on the sides of the graph.
 
 
+
 \paragraph{Two Sources}
 For 2 sources the situation for MUSIC is similar to \ref{beamformer_resolution_2_sources_problem} and can be seen in \ref{fig:music_2_source_1687}. So there needs to be a higher central frequency for the peaks to separate.
+
+
 
 This is seen with 3185.5 \textbf{Hz}. 
 \begin{figure} [H]
@@ -531,9 +547,11 @@ This is seen with 3185.5 \textbf{Hz}.
     \label{fig:music_1_source_0_degrees}
 \end{figure}
 
-The peak on the right comes due to aliasing and is not the actual signal. This is because, in lower frequencies [\ref{fig:music_2_source_1687}], the most "power" is concentrated in the centre. Thus the area to search while increasing the frequency is the area that the big lobe takes at [\ref{fig:music_2_source_1687}].
+The peak on the right is due to spatial aliasing and is not the actual signal. This is because, in lower frequencies [\ref{fig:music_2_source_1687}], the most "power" is concentrated in the centre. Thus the area to search while increasing the frequency is the area that the big lobe takes at [\ref{fig:music_2_source_1687}].
+
 It can be seen that with high enough frequency, MUSIC lobes are really sharp and the accuracy is impeccable with less than a degree of error per side.
 
-
+\paragraph{Key observations}
+When comparing the MUSIC responses to those of the MVDR, the differences are more or less identical to the differences between the MVDR and the fixed beamformer. The response of the MUSIC spectrum shows that the size of the sidelobes has dropped even further and the width of the main lobe has become even slimmer.
 
 
