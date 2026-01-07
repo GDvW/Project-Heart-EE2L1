@@ -1,6 +1,6 @@
-\chapter{Modules}
+\chapter{Segmentation}
 
-\section{Module 1: Segmentation}
+
 
 \subsection{Specifications}
 %Specifications: what is given, notation
@@ -137,7 +137,7 @@ Marked as correct peak & 99.56\% & 99.55\% \\
 %Conclusion: summarize results, claims on expected accuracy
 To conclude, the algorithm works quite well and is quite robust, as it seems from testing. However, it should also be noted that there are still occurrences where the algorithm makes mistakes. Very noisy data has not been tested. It would be possible to embed more parameters in the optimization steps, although it could also be better to have a human check and adjust parameters as needed.
 
-\section{Module 2}
+\Chapter{Heart Sound Modeling}
 \subsection{Specifications}
 %Specifications: what is given, notation
 The aim of this module is to generate a sound model of the human heart, and be able to generate test data using the model. 
@@ -194,7 +194,7 @@ The damping and delay of the multichannel recording were tested by inspection. A
 %Conclusion: summarize results, claims on expected accuracy
 Concluding, a model of the sound the heart creates has been made. This model has been applied to 6 microphones, where the spatial differences between microphones and valves has also been accounted for. The resulting model seems to be quite accurate, as the single valve model looks and sounds like an actual heart beat, and the spatial results seem realistic.
 
-\section{Module 3}
+\chapter{Module 3}
 \subsection{Beamformer} 
 
 \subsubsection{Specifications}
@@ -431,7 +431,7 @@ The same is observed when analyzing the results for the double source setup (Fig
 
 
 
-\section{Module 4}
+\chapter{Module 4}
 
 %Specifications: what is given, notation
 %Analysis: which problems have to be overcome
@@ -531,7 +531,7 @@ This is seen with 3185.5 \textbf{Hz}.
     \label{fig:music_1_source_0_degrees}
 \end{figure}
 
-The peak on the right comes due to aliasing and is not the actual signal. This is because, in lower frequencies [\ref{fig:music_2_source_1687}], the most "power" is concentrated in the centre. Thus the area to search while increasing the frequency is the area that the big lobe takes at [\ref{fig:music_2_source_1687}].
+The peak on the right is due to spatial aliasing and is not the actual signal. This is because, in lower frequencies [\ref{fig:music_2_source_1687}], the most "power" is concentrated in the centre. Thus the area to search while increasing the frequency is the area that the big lobe takes at [\ref{fig:music_2_source_1687}].
 It can be seen that with high enough frequency, MUSIC lobes are really sharp and the accuracy is impeccable with less than a degree of error per side.
 
 
