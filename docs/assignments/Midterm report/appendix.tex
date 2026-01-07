@@ -77,12 +77,7 @@ Given the spacing $d = 0.1$ m and assuming the speed of sound $v = 343$ m/s:
     \label{fig:MVDR_60_degrees}
 \end{figure}
 
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_3/MVDR/MVDR 2 source/MVDR_7_-7.png}
-    \caption{MVDR at $60^\circ$.}  
-    \label{fig:MVDR_2_sources}
-\end{figure}
+
 
 \chapter{Module 4 figures}
 \begin{figure} [H]
@@ -117,7 +112,7 @@ Given the spacing $d = 0.1$ m and assuming the speed of sound $v = 343$ m/s:
 
 \section{Assignments module 3 and 4}
 \subsection{Assignment 6.2.3}
-
+The function is created, and tested via printing and checking the complex numbers it gives.
 \subsection{Assignment 6.2.6}
 \label{assigment_6.2.6}
 For direction of arrival at $0^\circ$, $M = 7$, $f = 500\text{Hz}$, 
@@ -199,6 +194,213 @@ For a different angle , e.g. $30^\circ$, the following plots were obtained, conf
     $\Delta = d/\lambda$ represents the sampling density in space.
     \begin{itemize}
         \item \textbf{Smaller $\Delta$:} Samples are very close. This reduces the phase difference between microphones, making the main lobe wider (worse resolution).
-        \item \textbf{Larger $\Delta$:} Samples are far apart. This improves resolution (sharper lobe), but if $\Delta > 0.5$, the sensors are too far apart to distinguish the wave cycle uniqueley (undersampling), causing spatial aliasing (false peaks).
+        \item \textbf{Larger $\Delta$:} Samples are far apart. This improves resolution (sharper lobe), but if $\Delta > 0.5$, the sensors are too far apart to distinguish the wave cycle uniquely (undersampling), causing spatial aliasing (false peaks).
     \end{itemize}
 \end{enumerate}
+
+\subsection{Assignment 6.4.1}
+\label{Assignment_6.4.1}
+The functions in the code appendix have been implemented and the following plots were created. There are 2 sources at $0^\circ$ and $15^\circ$.
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/matched_beamformer.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_beamformer}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/MVDR.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_MVDR}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/MVDR beamformer.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_MVDR_beamformer}
+\end{figure}
+
+It is clear that given the angle $15^\circ$ the MVDR beamformer has a zero response/amplitude in the direction of the other source at $0^\circ$.
+
+
+\subsection{Assignment 6.6.2}
+The first part of this assignment was implemented a bit differently. First there was a central frequency that was chosen. Then this resulted in a signal \textbf{X} which would be M x N and computing the auto covariance could be done with np.cov(X). The implementation is visible in the code appendix
+
+
+\subsection {Assignment 7.1.4}
+The following plot was created. There are three sources at $10^\circ$, $90^\circ$ and $60^\circ$
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/assigment_7.1.4.png}
+    \caption{}  
+    \label{fig:assignment_7.1.4_plot}
+\end{figure}
+This verifies that the number of non zero singular values is the same as the rank of the matrix \textbf{X}. 
+
+\subsection{Assignment 7.2.1}
+\begin{itemize}
+\item Narrowband assumption: each source is treated as a single frequency so delays become simple phase shifts, while real signals are wideband.
+\item Far-field (plane-wave) assumption: the source is assumed to be far away, but in practice it can be in the near field.
+\item No reflections or multipath: only a direct path is assumed, while real environments contain echoes and reflections.
+\item Ideal microphones and geometry: microphones are assumed identical and perfectly positioned, which is not true in practice.
+\item Simple noise model: noise is assumed additive and uncorrelated, whereas real noise can be colored and correlated across microphones.
+\end{itemize}
+
+
+\subsection{Module 3 recordings}
+\label{module_3_recordings}
+Generally whenever the angle is measured to be e.g $-15^\circ$ the actual angle is $15^\circ$. This is because the microphone array was rotated in place of the source. 
+
+
+\paragraph{For beamforming}
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:beam1}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:beam3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:beam4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:beam5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:beam6}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:beam7}
+\end{figure}
+
+
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR1}
+\end{figure}
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR2}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR6}
+\end{figure}
+
+\subsection{Module 4 recordings}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC1}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC2}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC6}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC7}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC8}
+\end{figure}
+
+
+
