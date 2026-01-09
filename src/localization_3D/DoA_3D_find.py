@@ -86,7 +86,7 @@ if __name__ == "__main__":
     mic_positions = generate_mic_positions(d, M)
     print(f"mic positions: {mic_positions}")
 
-    Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
+    Pout = mvdr_z(Rx,Q, M, xyz_points, v, f0, mic_positions)#2
     
     point_range = np.arange(-len(Pout)/2, len(Pout)/2)
     plt.plot(point_range, Pout)
