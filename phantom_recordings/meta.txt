@@ -10,3 +10,16 @@ m t - 15:21
 
 right is toward tower
 negative y-axis too
+
+
+Microphone locations: (mm)
+
+1. x: -26.052; y: 46.959
+2. x: 23.154; y: 48.927 
+3. x: -25.825; y: -3.398 
+4. x: 25.354; y: -2.115d
+5. x: -23.613; y: -52.407
+6. x: 24.461; y: -53.514
+
+upper source: y: 21.307
+lower source: y: -23.562
