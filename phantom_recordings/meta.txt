@@ -1,0 +1,12 @@
+silent white - 15:15
+white silent - 15:17
+white white - 15:18
+m silent - 15:19
+silent t - 15:20
+m t - 15:21
+
+
+
+
+right is toward tower
+negative y-axis too

@@ -98,7 +98,9 @@ last = ""
 passed_last = False
 for file in files:
     if not passed_last:
-        if not Path(last) in files:
+        if last == "":
+            passed_last = True
+        elif not Path(last) in files:
             print(f"WARNING: {last} not in {", ".join([file.parent.stem+"\\"+file.stem+file.suffix for file in files])}")
             break
         if Path(last) == file:
