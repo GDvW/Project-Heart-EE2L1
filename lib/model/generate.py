@@ -199,7 +199,7 @@ def advanced_model(Fs: int, BPM: int, lf: float, hf: float, order: int, size: in
         Tuple[np.ndarray, np.ndarray]: t_model, h_model
     """
     if not randomize_enabled:
-        t_filtered, h_filtered = advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves)
+        t_filtered, h_filtered = advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves, use_transfer=use_transfer)
         return repeat(n, h_filtered, t_filtered, Fs, int(60/BPM*Fs))
     else:
         max_h_len = int(60/(BPM*(1-bpm_ratio))*Fs) * n
