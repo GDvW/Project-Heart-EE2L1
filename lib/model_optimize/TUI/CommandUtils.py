@@ -1,7 +1,7 @@
 from lib.model_optimize.TUI.Plot import Plot
 from lib.model_optimize.TUI.CommandProcessor import CommandProcessor
 
-def generateStandardCommands(plot: Plot) -> CommandProcessor:
+def generateStandardCommandsModel(plot: Plot) -> CommandProcessor:
     """
     @author: Gerrald
     @date: 10-12-2025

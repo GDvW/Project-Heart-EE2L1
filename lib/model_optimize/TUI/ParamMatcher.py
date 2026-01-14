@@ -6,7 +6,7 @@ from lib.config.ConfigParser import ConfigParser
 
 from lib.model_optimize.TUI.CLI import CLI
 from lib.model_optimize.TUI.CommandProcessor import CommandProcessor
-from lib.model_optimize.TUI.CommandUtils import generateStandardCommands
+from lib.model_optimize.TUI.CommandUtils import generateStandardCommandsModel
 from lib.model_optimize.TUI.Plot import Plot
 
 
@@ -26,7 +26,7 @@ class ParamMatcher:
         self.cancelled_event = threading.Event()
         
         self.plot = Plot(path, config)
-        self.commands: CommandProcessor = generateStandardCommands(self.plot)
+        self.commands: CommandProcessor = generateStandardCommandsModel(self.plot)
         self.cli = CLI(self.cmd_queue, self.stop_event, self.executing_event, self.cancelled_event, self.commands.get_autocompletion_dict())
         
         self.timer = None
