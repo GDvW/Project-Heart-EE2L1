@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from lib.config.ConfigParser import ConfigParser
 from lib.processing.Processor import Processor
 from lib.general.Result import Result
+from lib.general.generalUtils import get_unique_domains
 
 class Executor:
     """
@@ -38,8 +39,7 @@ class Executor:
         @author: Gerrald
         @date: 17-12-2025
         """
-        plt.ion()
-        
+        # Process files on themselves        
         for file in self.files:
             self.log(f"Processing {file.stem}")
             processor = Processor(None, self.config, log=self.log_enabled)
@@ -51,8 +51,8 @@ class Executor:
             except Exception as e:
                 self.log(f"{file} failed, Error: {e}")
                 self.results[file] = [len(processor.s1_peaks), len(processor.s2_peaks), len(processor.uncertain), processor, Result.Failure]
-                
-        plt.ioff()
+        
+        # Get the file where segmentation succeeded best
         uncertain_zero = [
             [file, value[0], value[1]]
             for file, value in self.results.items()
@@ -67,6 +67,7 @@ class Executor:
             print("ERROR: Non-program-solvable challenge, but UI not implemented yet.")
             return
         
+        # Get the domains of the segmentation based on one result of the fist segmentation
         file_used = next(iter(pairs.values()))[0]
         p = self.results[file_used][3]
         self.log(f"Using {file_used}: s1_peaks:{len(p.s1_peaks)}, s2_peaks:{len(p.s2_peaks)}, uncertain:{len(p.uncertain)}")
@@ -81,17 +82,29 @@ class Executor:
                 self.log(f"Segmenting original data for comparison for file {file}")
                 # processor.segment(verbose=False)
                 
-                ind_s1_self = processor.ind_s1
-                ind_s2_self = processor.ind_s2
+                self.results[file].append([processor.ind_s1, processor.ind_s2])
+            else:
+                self.results[file].append([])
             
             processor.s1_peaks = used_peaks_s1
             processor.s2_peaks = used_peaks_s2
             self.log(f"Segmenting based on one audio sample for file {file}")
-            processor.segment()
+            
+            s1_domains, s2_domains = processor.get_segmentation_domains()
+            self.results[file].append([s1_domains, s2_domains])
+            
+        # Find the max and min interval for each segmentation
+        self.full_domains_s1 = get_unique_domains([row[6][0] for row in self.results.values()])
+        self.full_domains_s2 = get_unique_domains([row[6][1] for row in self.results.values()])
+        
+        for file, value in self.results.items():
+            processor: Processor = value[3]
+            status: Result = value[4]
+            processor.segment(self.full_domains_s1, self.full_domains_s2)
             
             if status == Result.Success:
-                s1_before = set(map(tuple, ind_s1_self))
-                s2_before = set(map(tuple, ind_s2_self))
+                s1_before = set(map(tuple, value[5][0]))
+                s2_before = set(map(tuple, value[5][1]))
                 s1_after = set(map(tuple, processor.ind_s1))
                 s2_after = set(map(tuple, processor.ind_s2))
                 

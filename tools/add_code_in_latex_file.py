@@ -29,7 +29,7 @@ def get_unique_label(path: Path, labels: list[str]) -> str:
     
 
 include_paths = ["./src", "./lib"]
-include_extensions = ["*.py", "*.ini"]
+include_extensions = ["*.py", "*.ini", "*.csv"]
 exclude = ["NoCommit_", "\\old\\", "__init__"]
 
 files = [

@@ -235,7 +235,7 @@ class Processor:
             self.actual_segmentation_min_height = 0
         
 
-    def segment(self, verbose: bool = True):
+    def get_segmentation_domains(self, verbose: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -247,14 +247,17 @@ class Processor:
         self.s2_peaks = self.s2_peaks[self.s2_peaks[:,0].argsort()]
         
         self.ind_s1, self.ind_s2 = detect_peak_domains(self.s1_peaks, self.s2_peaks, self.see_normalized, self.segmentation_threshold, verbose=verbose)
+        
+        return self.ind_s1, self.ind_s2
             
+    def segment(self, full_domains_s1 = None, full_domains_s2 = None, verbose: bool = True):
         # Calculate compensation for filters
         see_filter_comp = int(len(self.see_filter)/2)
         g_filter_comp = int(len(self.g)/2)
-        self.segmented_s1, self.segmented_s1_concat = segment(self.y_normalized, self.ind_s1, lambda index: (index - see_filter_comp))
-        self.segmented_s2, self.segmented_s2_concat = segment(self.y_normalized, self.ind_s2, lambda index: (index - see_filter_comp))
-        self.segmented_s1_raw, self.segmented_s1_raw_concat = segment(self.x, self.ind_s1, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
-        self.segmented_s2_raw, self.segmented_s2_raw_concat = segment(self.x, self.ind_s2, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
+        self.segmented_s1, self.segmented_s1_concat = segment(self.y_normalized, self.ind_s1, full_domains_s1, lambda index: (index - see_filter_comp))
+        self.segmented_s2, self.segmented_s2_concat = segment(self.y_normalized, self.ind_s2, full_domains_s2, lambda index: (index - see_filter_comp))
+        self.segmented_s1_raw, self.segmented_s1_raw_concat = segment(self.x, self.ind_s1, full_domains_s1, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
+        self.segmented_s2_raw, self.segmented_s2_raw_concat = segment(self.x, self.ind_s2, full_domains_s2, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
         
     def write(self):
         # Path were it is saved "value from config/subfolder/(concat|segmented)/(raw|processed)/file"

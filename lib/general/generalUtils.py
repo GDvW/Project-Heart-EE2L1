@@ -71,3 +71,17 @@ def write_stereo(left: np.ndarray, right: np.ndarray, Fs: int, path: str, float_
     if stereo.dtype in [np.float64, np.float32] and float_to_int_conversion:
         stereo = np.int16(stereo * 32767)
     write(path, Fs, stereo)
+    
+def get_unique_domains(domains: list[np.ndarray]):
+    """
+    @author: Gerrald
+    @date: 14-01-2026
+    """
+    stacked_domains = np.stack(domains)
+
+    full_domains = np.column_stack([ 
+        stacked_domains[:,:,0].min(axis=0), # min of first column 
+        stacked_domains[:,:,1].max(axis=0) # max of second column 
+    ])
+    
+    return full_domains
