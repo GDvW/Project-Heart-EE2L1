@@ -20,7 +20,7 @@ def main():
                 Point(0.05, 0, 0), # 3
                 Point(0.15, 0, 0), # 4
                 Point(0.25, 0, 0)]
-    source_loc = [Point(-3,3,0),Point(3,3,0)] 
+    source_loc = [Point(0,np.sqrt(18),0),Point(3,3,0)] 
     
     model = Model_3D(config, source_loc, mic_locs)
     
