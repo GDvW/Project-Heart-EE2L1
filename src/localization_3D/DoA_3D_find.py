@@ -17,9 +17,9 @@ from pathlib import Path
 if __name__ == "__main__":
     fs = 48000
     win = ('gaussian', 1e-2 * fs)
-    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 128 ,noverlap=0, scale_to='magnitude', phase_shift=None)
+    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 256 ,noverlap=0, scale_to='magnitude', phase_shift=None)
     root = Path("generated\\hearbeat model\\3d-model\\White Noise")
-    for i, file in enumerate(root.glob("*01-15_*.wav")):
+    for i, file in enumerate(root.glob("*15-00_*.wav")):
         rate, globals()[f"signal{i+1}"] = wavfile.read(file)
     
     #path2source = Path(r"C:\Users\kkouk\IP3\2 source, distance 7 meter, microphone stand at 0 degrees, speaker at 7 degrees left and right.wav")
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     Delta_f = f_bins[1] - f_bins[0]
     print( Delta_f)
-    bin = 4
+    bin = 1
     central_freq = bin*Delta_f
     X = Sx_all[:,bin , :]
     print(X.shape)
@@ -77,22 +77,22 @@ if __name__ == "__main__":
     #Now we got the X selected
 
     #define parameters
-    Q = 2
+    Q = 1
     M = 6
     v = 343
     f0 = central_freq
     d = 0.10
     Rx = (X @ X.conj().T) / X.shape[1]
     #radius = 7.5
-    radius=np.sqrt(18)
-    zoff = 0
+    radius=np.sqrt(0.1*0.1+0.1*0.1)
+    zoff = 0.15
 
 
     xyz_points = generate_scan_points(radius, zoff)
     mic_positions = generate_mic_positions(d, M)
     print(f"mic positions: {mic_positions}")
 
-    Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
+    Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
     point_range = np.arange(-len(Pout)/2, len(Pout)/2)
     print(f"point range: {point_range.shape}")
     print(f"Pout: {Pout.shape}")

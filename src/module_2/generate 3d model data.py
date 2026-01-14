@@ -14,13 +14,13 @@ def main():
     
     signal1 = white_noise(SIGNAL_LENGTH, Fs)
     signal2 = white_noise(SIGNAL_LENGTH, Fs)
-    mic_locs = [Point(-0.25, 0, 0), # 0
-                Point(-0.15, 0, 0), # 1
-                Point(-0.05, 0, 0), # 2
-                Point(0.05, 0, 0), # 3
-                Point(0.15, 0, 0), # 4
-                Point(0.25, 0, 0)]
-    source_loc = [Point(0,np.sqrt(18),0),Point(3,3,0)] 
+    mic_locs = [Point(-0.025, 0.05, 0), # 0
+                Point(0.025, 0.05, 0), # 1
+                Point(-0.025, 0, 0), # 2
+                Point(0.025, 0, 0), # 3
+                Point(-0.025, -0.05, 0), # 4
+                Point(0.025, -0.05, 0)]
+    source_loc = [Point(0.1,0.1,0.15)] 
     
     model = Model_3D(config, source_loc, mic_locs)
     

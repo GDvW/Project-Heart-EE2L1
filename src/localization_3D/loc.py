@@ -68,10 +68,23 @@ def test_shit ():
     return 0
 
 def generate_mic_positions(d, M):
-    mic_positions = np.array( [ [d * step , 0, 0] for step in range (M) ])
-    middle_point = mic_positions[len(mic_positions) - 1]/2
-    result = np.array([(mic_positions[i] - middle_point) for i in range (len(mic_positions))])
-    return result
+    #mic_positions = np.array( [ [d * step , 0, 0] for step in range (M) ])
+    #middle_point = mic_positions[len(mic_positions) - 1]/2
+    #result = np.array([(mic_positions[i] - middle_point) for i in range (len(mic_positions))])
+    #return result
+
+    mic_locs_data = [
+    [-0.025, 0.05, 0],  # 0
+    [ 0.025, 0.05, 0],  # 1
+    [-0.025, 0,    0],  # 2
+    [ 0.025, 0,    0],  # 3
+    [-0.025, -0.05, 0], # 4
+    [ 0.025, -0.05, 0]  # 5
+    ]
+
+    # Convert to a NumPy array
+    mic_array = np.array(mic_locs_data)
+    return mic_array
 
 if __name__ == "__main__":
     pass
