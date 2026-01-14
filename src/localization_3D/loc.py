@@ -32,9 +32,9 @@ def music_z(Rx, Q, M, xyz_points, v, f0, mic_positions):
         to_append = np.matmul(a.conj().T, Un)
         to_append = np.matmul(to_append, Un.conj().T)
         to_append = np.matmul(to_append, a)
-        result.append(to_append)
+        result.append(1/to_append)
 
-    result = np.array([1 / result[i] for i in range (len(result)) ])
+    result = np.array(result)
 
     return result
 
