@@ -112,7 +112,7 @@ class Executor:
         """
         print(f"Finished with the following results:")
         for file, r in self.results.items():
-            print(f"{file.stem}: s1: {r[0]};  s2: {r[1]}; u: {r[2]}; tot: {sum(r)}")
+            print(f"{file.stem}: s1: {r[0]};  s2: {r[1]}; u: {r[2]}; tot: {sum(r[:2])}")
     def log(self, msg):
         """
         @author: Gerrald

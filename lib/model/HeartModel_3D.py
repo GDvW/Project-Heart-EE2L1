@@ -6,14 +6,13 @@ from lib.general.generalUtils import white_noise
 from lib.config.ConfigParser import ConfigParser
 from lib.model.Model import Model
 
-
 def apply_heart_model():
     config = ConfigParser()
     Fs = config.HeartSoundModel.Fs
     
-    model = Model(config, randomize_enabled=True, simulate_S2=True)
+    model = Model(config, randomize_enabled=False, simulate_S2=True)
     model.import_csv(".\\src\\module_2\\model_params.csv")
-    model.set_n(2)
+    model.set_n(config.HeartSoundModel.NBeats)
     mic_locs = [Point(2.5, 5, 0), # 0
                 Point(2.5, 10, 0), # 1
                 Point(2.5, 15, 0), # 2
@@ -33,7 +32,7 @@ def apply_heart_model():
     model = Model_3D(config, source_locs, mic_locs)
     
     h = model.generate(signals)
-    
+
     return h
     
 
