@@ -19,12 +19,12 @@ if __name__ == "__main__":
     win = ('gaussian', 1e-2 * fs)
     SFT = ShortTimeFFT.from_window(win, fs, nperseg = 128 ,noverlap=0, scale_to='magnitude', phase_shift=None)
     #path2source = Path(r"C:\Users\kkouk\IP3\2 source, distance 7 meter, microphone stand at 0 degrees, speaker at 7 degrees left and right.wav")
-    filepath1 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_1.wav")
-    filepath2 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_2.wav")
-    filepath3 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_3.wav")
-    filepath4 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_4.wav")
-    filepath5 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-48_channel_5.wav")
-    filepath6 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-48_channel_6.wav")
+    filepath1 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_0.wav")
+    filepath2 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_1.wav")
+    filepath3 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_2.wav")
+    filepath4 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_3.wav")
+    filepath5 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_4.wav")
+    filepath6 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-14_14-30-25_channel_5.wav")
 
     #sources, rate = sf.read(path2source)
     rate, signal1 = wavfile.read(filepath1)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     d = 0.10
     Rx = (X @ X.conj().T) / X.shape[1]
     radius = 7.5
-    radius=10
+    radius=np.sqrt(18)
     zoff = 0
 
 
