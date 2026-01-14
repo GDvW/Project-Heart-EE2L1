@@ -17,15 +17,15 @@ from loc import generate_mic_positions
 if __name__ == "__main__":
     fs = 48000
     win = ('gaussian', 1e-2 * fs)
-    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 256 ,noverlap=0, scale_to='magnitude', phase_shift=None)
+    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 128 ,noverlap=0, scale_to='magnitude', phase_shift=None)
     #path2source = Path(r"C:\Users\kkouk\IP3\2 source, distance 7 meter, microphone stand at 0 degrees, speaker at 7 degrees left and right.wav")
-    filepath1 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_0.wav")
-    filepath2 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_1.wav")
-    filepath3 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_2.wav")
-    filepath4 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_3.wav")
-    filepath5 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_4.wav")
-    filepath6 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\generated\hearbeat model\3d-model\White Noise\generated_2026-01-07_15-46-30_channel_5.wav")
-    
+    filepath1 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_1.wav")
+    filepath2 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_2.wav")
+    filepath3 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_3.wav")
+    filepath4 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-47_channel_4.wav")
+    filepath5 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-48_channel_5.wav")
+    filepath6 = Path(r"C:\Users\anlug\Downloads\EE2L1 git\Project-Heart-EE2L1\recording_2024-09-30_12-55-48_channel_6.wav")
+
     #sources, rate = sf.read(path2source)
     rate, signal1 = wavfile.read(filepath1)
     rate, signal2 = wavfile.read(filepath2)
@@ -62,11 +62,11 @@ if __name__ == "__main__":
 
     Delta_f = f_bins[1] - f_bins[0]
     print( Delta_f)
-    bin = 16
+    bin = 4
     central_freq = bin*Delta_f
     X = Sx_all[:,bin , :]
     print(X.shape)
-    print(central_freq)
+    print(f"central_freq: {central_freq}")
 
 
     #Now we got the X selected
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     d = 0.10
     Rx = (X @ X.conj().T) / X.shape[1]
     radius = 7.5
+    radius=10
     zoff = 0
 
 
@@ -87,9 +88,12 @@ if __name__ == "__main__":
     print(f"mic positions: {mic_positions}")
 
     Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
-    
     point_range = np.arange(-len(Pout)/2, len(Pout)/2)
-    plt.plot(point_range, Pout)
+    print(f"point range: {point_range.shape}")
+    print(f"Pout: {Pout.shape}")
+    Pout=Pout.reshape(180)
+    print(f"Pout: {Pout.shape}")
+    plt.plot(point_range, np.abs(Pout))
 
     
     plt.show()
