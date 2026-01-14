@@ -134,7 +134,8 @@ class Model:
             self.n, 
             randomize_enabled=self.randomize_enabled,
             noise=0.01,
-            use_transfer=use_transfer
+            use_transfer=use_transfer,
+            r_ratio = 0.2
         )
         
         return t_model, h_model

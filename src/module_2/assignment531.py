@@ -3,12 +3,12 @@ from lib.config.ConfigParser import ConfigParser
 from copy import deepcopy
 import matplotlib.pyplot as plt
 from lib.model.generate import *
-from lib.model.Model_3D_old import Model_3D
+from lib.model.Model_3D import Model_3D
 
 # Define what this program should do
 WRITE = False
 PLOT = True
-S1 = False
+S1 = True
 S2 = True
 
 def plot(signals, Fs):
