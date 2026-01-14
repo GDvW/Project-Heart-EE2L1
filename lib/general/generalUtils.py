@@ -1,5 +1,7 @@
 import numpy as np
 from random import random
+from scipy.io.wavfile import write
+from pathlib import Path
 
 def todB(value: float|list|np.ndarray, power: bool = False) -> float | list | np.ndarray:
     """
@@ -57,3 +59,15 @@ def white_noise(duration: float, Fs: int):
     @date: 17-12-2025
     """
     return np.random.rand(round(duration * Fs)) * np.sign(np.random.rand(round(duration * Fs)) - 0.5)
+
+def write_stereo(left: np.ndarray, right: np.ndarray, Fs: int, path: str, float_to_int_conversion: bool = False):
+    """
+    @author: Gerrald
+    @date: 09-01-2026
+    """
+    Path(path).parent.mkdir(exist_ok=True, parents=True)
+    assert left.shape == right.shape
+    stereo = np.column_stack((left, right))
+    if stereo.dtype in [np.float64, np.float32] and float_to_int_conversion:
+        stereo = np.int16(stereo * 32767)
+    write(path, Fs, stereo)
