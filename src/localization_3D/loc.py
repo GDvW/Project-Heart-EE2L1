@@ -24,45 +24,40 @@ def music_z(Rx, Q, M, xyz_points, v, f0, mic_positions):
     noises = M - Q
     Un = eigenvecs[:, :noises]
 
-    result = []
-    for candidate_source_location in xyz_points:
-        
-        a = a_z(candidate_source_location, mic_positions, M, v, f0)
+    result = np.zeros(shape = xyz_points.shape[:2])
+    for i, row in enumerate(xyz_points):
+        for j, cell in enumerate(row):
 
-        to_append = np.matmul(a.conj().T, Un)
-        to_append = np.matmul(to_append, Un.conj().T)
-        to_append = np.matmul(to_append, a)
-        result.append(1/to_append)
+            a = a_z(cell, mic_positions, M, v, f0)
 
-    result = np.array(result)
+            to_append = np.matmul(a.conj().T, Un)
+            to_append = np.matmul(to_append, Un.conj().T)
+            to_append = np.matmul(to_append, a)
+            result[i, j] = 20*np.log10(np.abs(1/to_append))
+
 
     return result
 
 
 def mvdr_z(Rx, M, xyz_points, v, f0, mic_positions):
     
-    
-    result = []
-    for candidate_source_location in xyz_points:
-        a = a_z(candidate_source_location, mic_positions, M, v, f0).reshape(M,1)
+    result = np.zeros(shape = xyz_points.shape[:2])
+    for i, row in enumerate(xyz_points):
+        for j, cell in enumerate(row):
 
-        to_append = np.matmul(a.conj().T, np.linalg.inv(Rx))
-        to_append = np.matmul(to_append, a)
-        result.append(1/to_append)
-    result = np.array(result)
+            a = a_z(cell, mic_positions, M, v, f0)
 
-    return result
-
-def generate_scan_points(radius, zoff):
-    
-    result = np.array([
-    [radius * np.sin(np.deg2rad(angle)),
-     radius * np.cos(np.deg2rad(angle)),
-     zoff]
-    for angle in range(-90,90)
-    ])
+            to_append = np.matmul(a.conj().T, np.linalg.inv(Rx))
+            to_append = np.matmul(to_append, a)
+            result[i, j] = 20*np.log10(np.abs(1/to_append))
 
     return result
+
+def generate_scan_points(xRange, yRange, zoff, resolution):
+    
+    result = [[(x, y ,zoff) for x in np.arange(min(xRange), max(xRange), resolution)] for y in np.arange(min(yRange), max(yRange), resolution)]
+
+    return np.array(result)
 
 def test_shit ():
     return 0
