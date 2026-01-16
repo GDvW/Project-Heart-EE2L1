@@ -196,7 +196,6 @@ class Processor:
         self.s1_peaks, self.s2_peaks, self.uncertain = self.classify_peaks(self.peaks)
         
         if len(self.uncertain) > 0 and self.postprocessing:
-            
             self.log("Postprocessing...")
             # Calculating some stats so that we can adjust the global threshold
             max_uncertain_count = self.max_uncertain_count_per_min * len(self.see_normalized) / self.Fs_target / 60
