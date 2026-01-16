@@ -37,7 +37,7 @@ source_locs = [Point(-1,8,-15),#Order: MTAP
                 Point(6,14,-15),
                 Point(7,9,-15)]
 signals = []
-for valve, source in zip (model.valves_init, source_locs):
+for valve, source in zip (model.valves, source_locs):
     model.valves = [valve]
     t_model, heart_sound = model.generate_model()
     signals.append(heart_sound)

@@ -46,7 +46,7 @@ if __name__ == "__main__":
                     Point(7,9,-15)]
     signals = []
     source_locs_ordered = []
-    for valve, source in zip (model.valves_init, source_locs):
+    for valve, source in zip (model.valves, source_locs):
         model.valves = [valve]
         t_model, heart_sound = model.generate_model(use_transfer=False)
         signals.append(heart_sound)

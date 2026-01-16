@@ -151,7 +151,7 @@ class Model:
             Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: t_model (the time axis), h_model (the amplitude axis), freq (the frequency axis), H (the frequency amplitude spectrum)
         
         """
-        t_model, h_model = self.generate_model()
+        t_model, h_model = self.generate_model(False)
         
         H = fftshift(fft(h_model))
         H = H/np.max(np.abs(H))
