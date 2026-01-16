@@ -123,6 +123,8 @@ class Processor:
         self.process()
     
         self.classify()
+        
+        self.get_segmentation_domains()
 
         self.segment(verbose = self.verbose)
 
