@@ -3,23 +3,30 @@ from scipy.signal.windows import gaussian
 from pathlib import Path
 import matplotlib.pyplot as plt
 from copy import deepcopy
+import os
 from lib.localization.LocalizationParams import LocalizationParams
 from lib.localization.Localization import *
 from src.localization_3D.loc import * 
+from lib.localization.Utils import * 
 
-def scale(im):
-    im1 = im - np.min(im)
-    if np.max(im1) > 0:
-        im1 = im1/np.max(im1)
-    return im1
+if os.getenv("USE_LARGE_FONT") == "1":
+    plt.rcParams.update({
+        'font.size': 30,
+        "lines.markersize": 16,
+        "patch.edgecolor": "black", 
+        "scatter.edgecolors": "black"
+    })
+    linewidth = 5
+else:
+    linewidth = 2
 
 class LocalizationPlot:
     def __init__(self, folder_path):
         self.root = Path(folder_path)
         
         self.params = LocalizationParams(
-            bin = 4,
-            z = 0.10,
+            bin = 0,
+            z = 0.02,
             Fs = 48_000,
             Q = 2,
             M = 6,
@@ -33,7 +40,7 @@ class LocalizationPlot:
         
         self.old_params = deepcopy(self.params)
         
-        self.x_range = [-0.08, 0.12]
+        self.x_range = [-0.08, 0.08]
         self.y_range = [-0.08, 0.12]
         
         self.win = ('gaussian', 256)
@@ -44,6 +51,7 @@ class LocalizationPlot:
         self.scan_points = None
         self.mic_positions = None
         self.f0 = None
+        self.likely_scatter = None
         
         self.Sx_all, self.delta_f = prepare(self.params, self.win, self.root)
     
@@ -69,6 +77,17 @@ class LocalizationPlot:
                 self.Pout = music_z(self.Rx, self.params.Q, self.params.M, self.scan_points, self.params.v_sound, self.f0, self.mic_positions)
             case "mvdr":
                 self.Pout = mvdr_z(self.Rx, self.params.M, self.scan_points, self.params.v_sound, self.f0, self.mic_positions)
+                
+        self.likely_source_locs = np.array([
+            convert_coords_to_m(
+                self.Pout,
+                coord,
+                self.x_range,
+                self.y_range
+            )
+            for coord in top_n_coords(scale(self.Pout), self.params.Q)
+            # for coord in top_n_coords(scale(self.Pout[::-1]), self.params.Q)
+        ])
         
         self.old_params = deepcopy(self.params)
         
@@ -79,15 +98,20 @@ class LocalizationPlot:
         
         self.image = ax.imshow(scale(self.Pout[::-1]), extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
         
-        self.fig.colorbar(self.image)
+        cbar = self.fig.colorbar(self.image)
+        cbar.set_label("Normalized amplitude [dB]")
         #self.image = ax.imshow(self.Pout[::-1]/np.max(self.Pout), extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
-        ax.scatter(self.mic_positions[:,0], self.mic_positions[:,1], marker="x", color='white', label="Mic locs")
-        ax.scatter(self.source_locs[:,0], self.source_locs[:,1], marker="v", color='white', label="Source loc")
+        ax.scatter(self.mic_positions[:,0], self.mic_positions[:,1], marker="o", color='red', label="Mic locs")
+        ax.scatter(self.source_locs[:,0], self.source_locs[:,1], marker="+", color='black', label="Source loc -------------------------------------------------------------", linewidths=linewidth)
+        self.likely_scatter = ax.scatter(self.likely_source_locs[:,0], self.likely_source_locs[:,1], marker="x", color='white', label="Source loc", linewidths=linewidth)
+        ax.set_xlabel("x [m]")
+        ax.set_ylabel("y [m]")
         ax.legend()
     def plot_update(self):
         self.localize()
         
         self.image.set_data(scale(self.Pout[::-1]))#/np.max(self.Pout))
+        self.likely_scatter.set_offsets(self.likely_source_locs)
         self.fig.canvas.draw_idle()
     
     def print(self):
