@@ -53,12 +53,21 @@ class Model_3D:
             mic_signals = []
             max_delay = max(delays)
             for delay, gain, signal in zip(delays, gains, signals):
-                mic_signals.append(gain * np.pad(signal, [round(delay*self.Fs), round(max_delay*self.Fs)-round(delay*self.Fs)]))
+                pad_left = int(round(delay * self.Fs))
+                pad_right = int(round((max_delay - delay)*self.Fs))
+                mic_signals.append(gain * np.pad(signal, (pad_left, pad_right), mode="constant", constant_values=0))
                 
             modelled_signals.append(np.array(mic_signals).sum(axis=0))
         
-        self.signals = modelled_signals
-        return modelled_signals
+        max_len = max(len(sig) for sig in modelled_signals)
+        
+        padded = [
+            np.pad(arr, (0, max_len-len(arr)), mode="constant", constant_values=0)
+            for arr in modelled_signals
+        ]
+        
+        self.signals = padded
+        return padded
     
     def save(self, sub_folder: str|Path):
         """

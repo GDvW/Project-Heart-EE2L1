@@ -20,11 +20,13 @@ def main():
                 Point(0.025, 0, 0), # 3
                 Point(-0.025, -0.05, 0), # 4
                 Point(0.025, -0.05, 0)]
-    source_loc = [Point(0,0.025,0.15), Point(0,-0.025,0.15)] 
+    # source_loc = [Point(0,0.025,0.15), Point(0,-0.025,0.15)] 
+    source_loc = [Point(0,0.025,0.15)] 
     
     model = Model_3D(config, source_loc, mic_locs)
     
-    h = model.generate([signal1, signal2])
+    # h = model.generate([signal1, signal2])
+    h = model.generate([signal1])
     
     if PLOT:
         for i, x in enumerate(h):
