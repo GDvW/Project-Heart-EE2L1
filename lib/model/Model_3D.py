@@ -37,7 +37,7 @@ class Model_3D:
     def generate(self, signals: list[np.ndarray[np.float64]] | np.ndarray[np.float64]):
         if isinstance(signals, np.ndarray):
             signals = [signals]
-        assert len(signals) == len(self.source_locs)
+        assert len(signals) == len(self.source_locs), f"The amount of signals given does not match the number of source locations (signals: {len(signals)}; source locations: {len(self.source_locs)})"
         modelled_signals = []
 
         for mic_loc in self.microphone_locs:
@@ -54,7 +54,7 @@ class Model_3D:
             max_delay = max(delays)
             for delay, gain, signal in zip(delays, gains, signals):
                 pad_left = int(round(delay * self.Fs))
-                pad_right = int(round((max_delay - delay)*self.Fs))
+                pad_right = int(round(max_delay*self.Fs)) - pad_left
                 mic_signals.append(gain * np.pad(signal, (pad_left, pad_right), mode="constant", constant_values=0))
                 
             modelled_signals.append(np.array(mic_signals).sum(axis=0))
@@ -81,5 +81,5 @@ class Model_3D:
             self.generate()
             
         for i, signal in enumerate(self.signals):
-            path = join(base_folder, f"generated_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_channel_{i}.wav")
+            path = join(base_folder, f"generated_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_channel_{i+1}.wav")
             write(path, self.Fs, signal)

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import queue
 
 from lib.config.ConfigParser import ConfigParser
+from lib.samples.Samples import *
 
 from lib.TUI.CLI import CLI
 from lib.TUI.CommandProcessor import CommandProcessor
@@ -15,7 +16,7 @@ class LocalizationTUI:
     @author: Gerrald
     @date: 10-12-2025
     """
-    def __init__(self, path: str, config: ConfigParser):
+    def __init__(self, sample: Sample):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -25,7 +26,7 @@ class LocalizationTUI:
         self.executing_event = threading.Event()
         self.cancelled_event = threading.Event()
         
-        self.plot = LocalizationPlot(path)
+        self.plot = LocalizationPlot(sample)
         self.commands: CommandProcessor = generateLocalizationCommands(self.plot)
         self.cli = CLI(self.cmd_queue, self.stop_event, self.executing_event, self.cancelled_event, self.commands.get_autocompletion_dict())
         
@@ -78,16 +79,15 @@ class LocalizationTUI:
         return
 
         
-def main(path):
+def main(sample: Sample):
     """
     @author: Gerrald
     @date: 21-01-2026
     """
-    config = ConfigParser()
-    tui = LocalizationTUI(path, config)
+    tui = LocalizationTUI(sample)
     tui.run()
         
 if __name__ ==  "__main__":
-    main("samples\\calibrated_MT")
+    main(SAMPLES["Phantom"][0])
     # main("samples\\calibrated_white_noise_single")
     # main("generated\\hearbeat model\\3d-model\\White Noise")

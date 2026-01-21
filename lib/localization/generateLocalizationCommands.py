@@ -9,6 +9,9 @@ def generateLocalizationCommands(plot: LocalizationPlot) -> CommandProcessor:
     cp = CommandProcessor()
     
     cp.register_command("print", plot.print, helpmsg="Print the set values")
+    cp.register_command("filename", plot.params.print_filename, helpmsg="Print the set values in a format that can be set as filename")
+    cp.register_command("save", plot.save, args=["filepath"], helpmsg="Save the figure to the specified location")
+    cp.register_command("save_path", plot.save_path, args=["path"], helpmsg="Save the figure to the specified location with the correct name")
     
     # Add refresh handlers for graph
     cp.register_action_after_symbolic(plot.plot_update)

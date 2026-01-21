@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 SIGNAL_LENGTH = 0.25 #seconds
 SAVE = True
 PLOT = False
+DOUBLE = False
 
 def main():
     config = ConfigParser()
@@ -21,12 +22,12 @@ def main():
                 Point(-0.025, -0.05, 0), # 4
                 Point(0.025, -0.05, 0)]
     # source_loc = [Point(0,0.025,0.15), Point(0,-0.025,0.15)] 
-    source_loc = [Point(0,0.04,0.15)] 
+    source_loc = [Point(0,0.025,0.15), Point(0,-0.025,0.15)] if DOUBLE else [Point(0,0.025,0.15)] 
     
     model = Model_3D(config, source_loc, mic_locs)
     
     # h = model.generate([signal1, signal2])
-    h = model.generate([signal1])
+    h = model.generate([signal1, signal2]) if DOUBLE else model.generate([signal1])
     
     if PLOT:
         for i, x in enumerate(h):
@@ -34,7 +35,7 @@ def main():
         plt.legend()
         plt.show()
     if SAVE:
-        model.save("White Noise")
+        model.save("White_Noise_Double" if DOUBLE else "White_Noise_Single")
 
     
 
