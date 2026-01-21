@@ -4,7 +4,6 @@ from scipy.signal.windows import gaussian
 from scipy.io import wavfile
 from pathlib import Path
 import matplotlib.pyplot as plt
-import soundfile as sf
 from loc import a_z
 from loc import mvdr_z
 from loc import music_z
@@ -17,11 +16,14 @@ from pathlib import Path
 if __name__ == "__main__":
     fs = 48000
     win = ('gaussian', 1e-2 * fs)
-    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 256 ,noverlap=0, scale_to='magnitude', phase_shift=None)
-    root = Path("generated\\hearbeat model\\3d-model\\White Noise")
+    win = ('gaussian', 256)
+    SFT = ShortTimeFFT.from_window(win, fs, nperseg = 256 ,noverlap=128, scale_to='magnitude', phase_shift=None)
     root = Path("samples\\meting_13_phantom_whiteNoise_singlechannel")
+    root = Path("generated\\hearbeat model\\3d-model\\White Noise")
+    root = Path("samples\\calibrated_white_noise_single")
+    root = Path("samples\\calibrated_MT")
     # for i, file in enumerate(root.glob("*29-36_*.wav")):
-    for i, file in enumerate(root.glob("*_[1-6].wav")):
+    for i, file in enumerate(root.glob("*_[0-6].wav")):
         rate, globals()[f"signal{i+1}"] = wavfile.read(file)
     
     #path2source = Path(r"C:\Users\kkouk\IP3\2 source, distance 7 meter, microphone stand at 0 degrees, speaker at 7 degrees left and right.wav")
@@ -66,6 +68,10 @@ if __name__ == "__main__":
     print(Sx_all.shape)
 
     f_bins = SFT.f
+    Q = 2
+    M = 6
+    v = 340
+    d = 0.10
 
     Delta_f = f_bins[1] - f_bins[0]
     print( Delta_f)
@@ -79,12 +85,10 @@ if __name__ == "__main__":
     #Now we got the X selected
 
     #define parameters
-    Q = 1
-    M = 6
-    v = 60
     f0 = central_freq
-    d = 0.10
-    Rx = (X @ X.conj().T) / X.shape[1]
+    Rx = np.dot(X, X.conj().T)
+    Rx /= np.trace(Rx)
+    # Rx = (X @ X.conj().T) / X.shape[1]
     #radius = 7.5
     #radius=np.sqrt(0.1*0.1+0.1*0.1)
     
@@ -92,15 +96,17 @@ if __name__ == "__main__":
     xRange = [-0.08, 0.12]
     yRange = [-0.08, 0.12]
     resolution = 0.001
-    zoff = 0.05
+    zoff = 0.075
     xyz_points = generate_scan_points(xRange, yRange, zoff, resolution)
     mic_positions = generate_mic_positions(d, M)
     print(f"mic positions: {mic_positions}")
 
     Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
+    #Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
     print(f"Pout: {Pout.shape}")
     plt.imshow(Pout[::-1]/np.max(Pout), extent=(min(xRange), max(xRange), min(yRange), max(yRange)), cmap= "plasma")   
     plt.scatter(mic_positions[:,0], mic_positions[:,1], marker="x", color='white', label="Mic locs")
-    plt.scatter(mic_positions[0,0], mic_positions[0,1], marker="v", color='white', label="Source loc")
+    source_locs = np.array([(0,0.025,0.15), (0,-0.025,0.15)] )
+    plt.scatter(source_locs[:,0], source_locs[:,1], marker="v", color='white', label="Source loc")
     plt.legend()
     plt.show()

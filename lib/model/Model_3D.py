@@ -37,14 +37,14 @@ class Model_3D:
     def generate(self, signals: list[np.ndarray[np.float64]] | np.ndarray[np.float64]):
         if isinstance(signals, np.ndarray):
             signals = [signals]
-            
+        assert len(signals) == len(self.source_locs)
         modelled_signals = []
 
         for mic_loc in self.microphone_locs:
-            new_mic_loc = np.tile(mic_loc,(len(self.source_locs),1)) # repeat the mic loc, to comply with the dimensions of np.linalg.norm
+            # new_mic_loc = np.tile(mic_loc,(len(self.source_locs),1)) # repeat the mic loc, to comply with the dimensions of np.linalg.norm Not needed  anymore
             
             # factor hundred to convert from cm to m
-            dists_to_valves = np.linalg.norm((self.source_locs-new_mic_loc)/100, axis=1)
+            dists_to_valves = np.linalg.norm(self.source_locs-mic_loc, axis=1)
             
             # calc delays and gains using distances to the valves
             delays = dists_to_valves/self.V_Body
