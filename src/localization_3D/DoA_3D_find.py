@@ -19,9 +19,9 @@ if __name__ == "__main__":
     win = ('gaussian', 256)
     SFT = ShortTimeFFT.from_window(win, fs, nperseg = 256 ,noverlap=128, scale_to='magnitude', phase_shift=None)
     root = Path("samples\\meting_13_phantom_whiteNoise_singlechannel")
-    root = Path("generated\\hearbeat model\\3d-model\\White Noise")
     root = Path("samples\\calibrated_white_noise_single")
     root = Path("samples\\calibrated_MT")
+    root = Path("generated\\hearbeat model\\3d-model\\White Noise")
     # for i, file in enumerate(root.glob("*29-36_*.wav")):
     for i, file in enumerate(root.glob("*_[0-6].wav")):
         rate, globals()[f"signal{i+1}"] = wavfile.read(file)
@@ -61,14 +61,14 @@ if __name__ == "__main__":
     Sx4 = SFT.stft(signal4)
     Sx5 = SFT.stft(signal5)
     Sx6 = SFT.stft(signal6)
-
+    
     Sx_all=np.stack((Sx1,Sx2,Sx3,Sx4,Sx5,Sx6))
     
     #print (Sx1.shape)
     print(Sx_all.shape)
 
     f_bins = SFT.f
-    Q = 2
+    Q = 4
     M = 6
     v = 340
     d = 0.10
@@ -86,9 +86,9 @@ if __name__ == "__main__":
 
     #define parameters
     f0 = central_freq
-    Rx = np.dot(X, X.conj().T)
-    Rx /= np.trace(Rx)
-    # Rx = (X @ X.conj().T) / X.shape[1]
+    #Rx = np.dot(X, X.conj().T)
+    #Rx /= np.trace(Rx)
+    Rx = (X @ X.conj().T) / X.shape[1]
     #radius = 7.5
     #radius=np.sqrt(0.1*0.1+0.1*0.1)
     
@@ -101,12 +101,12 @@ if __name__ == "__main__":
     mic_positions = generate_mic_positions(d, M)
     print(f"mic positions: {mic_positions}")
 
-    Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
-    #Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
+    # Pout = music_z(Rx, Q, M, xyz_points, v, f0, mic_positions)
+    Pout = mvdr_z(Rx, M, xyz_points, v, f0, mic_positions)
     print(f"Pout: {Pout.shape}")
     plt.imshow(Pout[::-1]/np.max(Pout), extent=(min(xRange), max(xRange), min(yRange), max(yRange)), cmap= "plasma")   
     plt.scatter(mic_positions[:,0], mic_positions[:,1], marker="x", color='white', label="Mic locs")
-    source_locs = np.array([(0,0.025,0.15), (0,-0.025,0.15)] )
+    source_locs = np.array([(0,0.025,0.15)] )
     plt.scatter(source_locs[:,0], source_locs[:,1], marker="v", color='white', label="Source loc")
     plt.legend()
     plt.show()

@@ -33,7 +33,7 @@ def music_z(Rx, Q, M, xyz_points, v, f0, mic_positions):
             to_append = np.matmul(a.conj().T, Un)
             to_append = np.matmul(to_append, Un.conj().T)
             to_append = np.matmul(to_append, a)
-            result[i, j] = 20*np.log10(np.abs(to_append))
+            result[i, j] = 20*np.log10(np.abs(1/to_append))
 
 
     return result
@@ -62,7 +62,7 @@ def generate_scan_points(xRange, yRange, zoff, resolution):
 def test_shit ():
     return 0
 
-def generate_mic_positions(d, M):
+def generate_mic_positions(d = 0, M = 0):
     #mic_positions = np.array( [ [d * step , 0, 0] for step in range (M) ])
     #middle_point = mic_positions[len(mic_positions) - 1]/2
     #result = np.array([(mic_positions[i] - middle_point) for i in range (len(mic_positions))])
