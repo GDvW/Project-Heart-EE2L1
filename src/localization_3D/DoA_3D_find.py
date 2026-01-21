@@ -106,7 +106,7 @@ if __name__ == "__main__":
     print(f"Pout: {Pout.shape}")
     plt.imshow(Pout[::-1]/np.max(Pout), extent=(min(xRange), max(xRange), min(yRange), max(yRange)), cmap= "plasma")   
     plt.scatter(mic_positions[:,0], mic_positions[:,1], marker="x", color='white', label="Mic locs")
-    source_locs = np.array([(0,0.025,0.15)] )
+    source_locs = np.array([(0.01,0.04,0)] )
     plt.scatter(source_locs[:,0], source_locs[:,1], marker="v", color='white', label="Source loc")
     plt.legend()
     plt.show()

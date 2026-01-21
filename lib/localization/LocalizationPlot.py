@@ -7,6 +7,12 @@ from lib.localization.LocalizationParams import LocalizationParams
 from lib.localization.Localization import *
 from src.localization_3D.loc import * 
 
+def scale(im):
+    im1 = im - np.min(im)
+    if np.max(im1) > 0:
+        im1 = im1/np.max(im1)
+    return im1
+
 class LocalizationPlot:
     def __init__(self, folder_path):
         self.root = Path(folder_path)
@@ -71,7 +77,9 @@ class LocalizationPlot:
         plt.ion()
         self.fig, ax = plt.subplots()
         
-        self.image = ax.imshow(self.Pout[::-1], extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
+        self.image = ax.imshow(scale(self.Pout[::-1]), extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
+        
+        self.fig.colorbar(self.image)
         #self.image = ax.imshow(self.Pout[::-1]/np.max(self.Pout), extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
         ax.scatter(self.mic_positions[:,0], self.mic_positions[:,1], marker="x", color='white', label="Mic locs")
         ax.scatter(self.source_locs[:,0], self.source_locs[:,1], marker="v", color='white', label="Source loc")
@@ -79,7 +87,7 @@ class LocalizationPlot:
     def plot_update(self):
         self.localize()
         
-        self.image.set_data(self.Pout[::-1])#/np.max(self.Pout))
+        self.image.set_data(scale(self.Pout[::-1]))#/np.max(self.Pout))
         self.fig.canvas.draw_idle()
     
     def print(self):
