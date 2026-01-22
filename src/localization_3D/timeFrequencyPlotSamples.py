@@ -40,10 +40,10 @@ def saveTimeFreqPlots(sample: Sample, path: str|Path):
         plt.clf()
         
 if __name__ == "__main__":
-    sample = SAMPLES["Phantom"][0]
-    # sample = SAMPLES["Generated"][1]
+    sample = SAMPLES_CALIBRATED["Phantom"][0]
+    # sample = SAMPLES_CALIBRATED["Generated"][1]
     # manager = plt.get_current_fig_manager()
     # manager.window.showMaximized()
-    for sampleseries in SAMPLES.values():
+    for sampleseries in SAMPLES_CALIBRATED.values():
         for sample in sampleseries:
             saveTimeFreqPlots(sample, "D:\\_temp\\EE2L1GraphsCanBeDeletedAfter01022026\\TimeFrequencyPlots")

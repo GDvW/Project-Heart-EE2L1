@@ -1,8 +1,9 @@
 from lib.localization.TUI import main as main_tui
-from lib.samples.Samples import SAMPLES
+from lib.samples.Samples import SAMPLES_CALIBRATED, SAMPLES_SELF_CALIBRATED
 
-# sample = SAMPLES["Phantom"][0]
-sample = SAMPLES["Generated"][0]
+# sample = SAMPLES_CALIBRATED["Phantom"][0]
+# sample = SAMPLES_CALIBRATED["Generated"][0]
+sample = SAMPLES_SELF_CALIBRATED["Phantom"][0]
 
 print(f"Using {sample.name}")
 

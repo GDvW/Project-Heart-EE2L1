@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import Literal, Tuple
 from pathlib import Path
 import numpy as np
+
+from lib.config.ConfigParser import ConfigParser
 # Library to work with samples
 @dataclass
 class Sample:
@@ -25,8 +27,10 @@ hole_locations = np.array([
     (0,-0.025,0.15),
     (0,0.025,0.15)
 ])
+
+config = ConfigParser()
     
-SAMPLES = {
+SAMPLES_CALIBRATED = {
     "Phantom": [
         Sample(
             "Calibrated_MT",
@@ -62,5 +66,21 @@ SAMPLES = {
             standard_mic_locations,
             hole_locations
         )
+    ]
+}
+
+SAMPLES_SELF_CALIBRATED = {
+    "Phantom":[
+        Sample(
+            "Silent_White",
+            Path(config.Recordings.SoundsPath).joinpath(config.Recordings.PhantomMap, "recordings_20251013-151542 (silent white)"),
+            0.015,
+            1,
+            standard_mic_locations,
+            np.array([hole_locations[1]])
+        )
+    ],
+    "Real":[
+        
     ]
 }

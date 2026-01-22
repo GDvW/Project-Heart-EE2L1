@@ -88,6 +88,6 @@ def main(sample: Sample):
     tui.run()
         
 if __name__ ==  "__main__":
-    main(SAMPLES["Phantom"][0])
+    main(SAMPLES_CALIBRATED["Phantom"][0])
     # main("samples\\calibrated_white_noise_single")
     # main("generated\\hearbeat model\\3d-model\\White Noise")
