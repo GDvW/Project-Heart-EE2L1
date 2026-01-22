@@ -30,7 +30,7 @@ def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: 
         t = np.linspace(0 + samples_offset/Fs, (len(x) + samples_offset)/Fs, len(x))
         time_ax.plot(t, x, label=time_label)
         time_ax.set_xlabel("Time [s]")
-        time_ax.set_ylabel("Amplitude")
+        time_ax.set_ylabel("Amplitude [rel]")
         time_ax.grid(grid)
         if time_title is not None:
             time_ax.set_title(time_title)
@@ -50,7 +50,7 @@ def timeFrequencyPlot(x: list|np.ndarray, Fs: int, time_ax: axes.Axes, freq_ax: 
         
         freq_ax.plot(f, todB(np.abs(X)), label=freq_label)
         freq_ax.set_xlabel("Frequency [Hz]")
-        freq_ax.set_ylabel("Amplitude(dB)")
+        freq_ax.set_ylabel("Amplitude [dB]")
         
         freq_ax.grid(grid)
     
