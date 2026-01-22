@@ -46,6 +46,8 @@ class LocalizationPlot:
         
         self.x_range = [-0.08, 0.08]
         self.y_range = [-0.12, 0.12]
+        # self.x_range = [-0.05, 0.05]
+        # self.y_range = [-0.075, 0.075]
         
         self.win = ('gaussian', 256)
         self.fig = None

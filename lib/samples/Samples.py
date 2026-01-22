@@ -49,7 +49,7 @@ SAMPLES = {
         Sample(
             "White_Noise_Single",
             Path("generated\\hearbeat model\\3d-model\\White_Noise_Single"),
-            0.15,
+            0.015,
             1, 
             standard_mic_locations,
             np.array([hole_locations[1]])
@@ -57,7 +57,7 @@ SAMPLES = {
         Sample(
             "White_Noise_Double",
             Path("generated\\hearbeat model\\3d-model\\White_Noise_Double"),
-            0.15,
+            0.015,
             2,
             standard_mic_locations,
             hole_locations
