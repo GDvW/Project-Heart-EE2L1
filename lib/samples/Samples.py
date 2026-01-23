@@ -168,7 +168,7 @@ GENERATED_MODEL_SAMPLES = {
     "S1": [
         Sample(
             "Generated_S1_sounds",
-            "generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S1",
+            Path("generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S1"),
             0.015,
             2,
             standard_mic_locations,
@@ -181,7 +181,7 @@ GENERATED_MODEL_SAMPLES = {
     "S2": [
         Sample(
             "Generated_S2_sounds",
-            "generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S2",
+            Path("generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S2"),
             0.015,
             2,
             standard_mic_locations,

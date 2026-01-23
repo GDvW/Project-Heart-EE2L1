@@ -47,11 +47,12 @@ if __name__ == "__main__":
     # manager = plt.get_current_fig_manager()
     # manager.window.showMaximized()
     skipping = True
-    for sampleseries in SAMPLES_CALIBRATED.values():
+    # for sampleseries in SAMPLES_CALIBRATED.values():
     # for sampleseries in SAMPLES_SELF_CALIBRATED.values():
+    for sampleseries in GENERATED_MODEL_SAMPLES.values():
         for sample in sampleseries:
-            if "generated\\hearbeat model\\3d-model\\White_Noise_Single" == str(sample.root):
-                skipping = False
-            if skipping:
-                continue
-            saveTimeFreqPlots(sample, "D:\\_temp\\EE2L1GraphsCanBeDeletedAfter01022026\\TimeFrequencyPlotsSample", just_a_sample=True)
+            # if "generated\\hearbeat model\\3d-model\\White_Noise_Single" == str(sample.root):
+            #     skipping = False
+            # if skipping:
+            #     continue
+            saveTimeFreqPlots(sample, "D:\\_temp\\EE2L1GraphsCanBeDeletedAfter01022026\\SimulationTimeFrequencyPlots", just_a_sample=True)

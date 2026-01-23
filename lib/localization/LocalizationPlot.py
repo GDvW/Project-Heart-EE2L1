@@ -37,21 +37,22 @@ class LocalizationPlot:
             v_sound = 340,
             d = 0.10,
             resolution = 0.001,
-            mode = "music"
+            mode = "music",
+            neighbourhood=50
         )
         
         self.source_locs = sample.source_locs
         
         self.old_params = deepcopy(self.params)
         
-        self.x_range = [-0.16, 0.16]
-        self.y_range = [-0.16, 0.16]
+        # self.x_range = [-0.16, 0.16]
+        # self.y_range = [-0.16, 0.16]
         # self.x_range = [-0.08, 0.08]
         # self.y_range = [-0.12, 0.12]
         # self.x_range = [-0.06, 0.06]
         # self.y_range = [-0.08, 0.10]
-        # self.x_range = [-0.05, 0.05]
-        # self.y_range = [-0.075, 0.075]
+        self.x_range = [-0.05, 0.05]
+        self.y_range = [-0.075, 0.075]
         
         self.win = ('gaussian', 256)
         self.fig = None
@@ -93,7 +94,7 @@ class LocalizationPlot:
                 self.x_range,
                 self.y_range
             )
-            for coord in top_n_coords(scale(self.Pout), self.params.Q)
+            for coord in top_n_coords(scale(self.Pout), self.params.Q, neighborhood=self.params.neighbourhood)
             # for coord in top_n_coords(scale(self.Pout[::-1]), self.params.Q)
         ])
         

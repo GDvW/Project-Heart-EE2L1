@@ -12,6 +12,7 @@ class LocalizationParams:
     d: float
     resolution: float
     mode: Literal["music", "mvdr"]
+    neighbourhood: int
     
     def is_scan_points_updated(self, old):
         return self.resolution != old.resolution or self.z != old.z
