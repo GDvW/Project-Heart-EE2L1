@@ -34,6 +34,8 @@ class Model_3D:
         self.V_Body = config.Multichannel.V_body
         self.sounds_path = config.Generation.SoundsPath
         
+        self.signals = None
+        
     def generate(self, signals: list[np.ndarray[np.float64]] | np.ndarray[np.float64]):
         if isinstance(signals, np.ndarray):
             signals = [signals]
@@ -48,7 +50,7 @@ class Model_3D:
             
             # calc delays and gains using distances to the valves
             delays = dists_to_valves/self.V_Body
-            gains = 1/dists_to_valves
+            gains = 0.1/dists_to_valves
             
             mic_signals = []
             max_delay = max(delays)

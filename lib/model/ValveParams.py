@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from lib.general.generalUtils import randomize
 
 class ValveParams:
@@ -95,6 +97,12 @@ class ValveParams:
             list[float]: The values.
         """
         return [self.delay,self.duration_total,self.duration_onset,self.a_onset,self.a_main,self.ampl_onset,self.ampl_main,self.freq_onset,self.freq_main]
+    def __repr__(self) -> str:
+        """
+        @author: Gerrald
+        @date: 14-01-2026
+        """
+        return "\n".join(self.toStr())
     def randomize(self, ratio: float) -> float:
         """
         @author: Gerrald
@@ -105,12 +113,32 @@ class ValveParams:
         Args:
             ratio (float): How much to randomize the parameters as ratio of the property.
         """
-        self.delay = randomize(self.delay, ratio)
-        self.duration_total = randomize(self.duration_total, ratio)
-        self.duration_onset = randomize(self.duration_onset, ratio)
+        self.delay = randomize(self.delay, ratio/100)
+        self.duration_total = randomize(self.duration_total, ratio/100)
+        self.duration_onset = randomize(self.duration_onset, ratio/100)
         self.a_onset = randomize(self.a_onset, ratio)
         self.a_main = randomize(self.a_main, ratio)
         self.ampl_onset = randomize(self.ampl_onset, ratio)
         self.ampl_main = randomize(self.ampl_main, ratio)
         self.freq_onset = randomize(self.freq_onset, ratio)
         self.freq_main = randomize(self.freq_main, ratio)
+    def store_meta(self, valves: list[ValveParams], mode: str):
+        """
+        @author: Gerrald
+        @date: 14/01/2026
+        
+        This compares another valve object with this valve and checks if this object is smaller/bigger, and stores it if it is the case
+        """
+        assert mode in ["min", "max"], "mode should be either 'min' or 'max'"
+        f = min if mode == "min" else max
+        for valve in valves:
+            if self.name == valve.name:
+                self.delay = f(self.delay, valve.delay)
+                self.duration_total = f(self.duration_total, valve.duration_total)
+                self.duration_onset = f(self.duration_onset, valve.duration_onset)
+                self.a_onset = f(self.a_onset, valve.a_onset)
+                self.a_main = f(self.a_main, valve.a_main)
+                self.ampl_onset = f(self.ampl_onset, valve.ampl_onset)
+                self.ampl_main = f(self.ampl_main, valve.ampl_main)
+                self.freq_onset = f(self.freq_onset, valve.freq_onset)
+                self.freq_main = f(self.freq_main, valve.freq_main)

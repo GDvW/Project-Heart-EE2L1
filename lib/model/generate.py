@@ -1,6 +1,7 @@
 from scipy.signal import TransferFunction, impulse, zpk2tf
 from typing import Tuple
 import numpy as np
+from copy import deepcopy
 
 from lib.model.ValveParams import ValveParams
 from lib.config.ConfigParser import ConfigParser
@@ -176,7 +177,7 @@ def advanced_model(Fs: int, BPM: int, lf: float, hf: float, order: int, size: in
                    randomize_enabled: bool = False, r_ratio: float = 0, bpm_ratio: float = 0, noise: float = 0, use_transfer: bool = False) -> Tuple[np.ndarray, np.ndarray]:
     """
     @author: Gerrald
-    @date: 10-12-2025
+    @date: 14-01-2026
     
     Assemble different valve sounds to produce n heart beats.
 
@@ -202,13 +203,20 @@ def advanced_model(Fs: int, BPM: int, lf: float, hf: float, order: int, size: in
         t_filtered, h_filtered = advanced_model_single_beat(Fs, BPM, lf, hf, order, size, valves, use_transfer=use_transfer)
         return repeat(n, h_filtered, t_filtered, Fs, int(60/BPM*Fs))
     else:
+        valve_data = {
+            "min": deepcopy(valves),
+            "max": deepcopy(valves)
+        }
         max_h_len = int(60/(BPM*(1-bpm_ratio))*Fs) * n
         h_full = np.random.rand(max_h_len) * noise * np.sign(np.random.rand(max_h_len) - 0.5)
         current_h_index = 0
         for i in range(n):
-            BPM_randomized = randomize(BPM, bpm_ratio)
+            BPM_randomized = BPM #randomize(BPM, bpm_ratio) Not randomize to prevent bugs
             [valve.randomize(r_ratio) for valve in valves]
-            
+            for valve in valve_data["min"]:
+                valve.store_meta(valves, "min")
+            for valve in valve_data["max"]:
+                valve.store_meta(valves, "max")
             this_h_len = int(60/BPM_randomized*Fs)
             
             t_filtered, h_filtered = advanced_model_single_beat(
@@ -223,6 +231,7 @@ def advanced_model(Fs: int, BPM: int, lf: float, hf: float, order: int, size: in
             h_full[current_h_index:current_h_index+len(h_filtered)] += h_filtered
             current_h_index += this_h_len
         t_full = np.linspace(0, len(h_full)/Fs, len(h_full))
+        print(valve_data)
         return t_full, h_full
         
 

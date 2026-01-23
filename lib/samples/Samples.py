@@ -163,3 +163,32 @@ SAMPLES_SELF_CALIBRATED = {
         ),
     ]
 }
+
+GENERATED_MODEL_SAMPLES = {
+    "S1": [
+        Sample(
+            "Generated_S1_sounds",
+            "generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S1",
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([
+                (-0.020,0.021,-0.15),
+                (0.005,-0.056,-0.15)
+            ])
+        )
+    ],
+    "S2": [
+        Sample(
+            "Generated_S2_sounds",
+            "generated\\segmentation\\3D model heartsimulation\\without zeros\\raw\\S2",
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([
+                (0.001,0.0025,-0.15),
+                (0.025,-0.030,-0.15)
+            ])
+        )
+    ]
+}

@@ -12,7 +12,7 @@ def apply_heart_model():
     
     model = Model(config, randomize_enabled=False, simulate_S2=True)
     model.import_csv(".\\src\\module_2\\model_params.csv")
-    model.set_n(100)
+    model.set_n(config.HeartSoundModel.NBeats)
     mic_locs = [
         Point(-0.025, 0.05, 0),  # 0
         Point( 0.025, 0.05, 0),  # 1
