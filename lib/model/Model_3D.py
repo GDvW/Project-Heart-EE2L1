@@ -34,31 +34,42 @@ class Model_3D:
         self.V_Body = config.Multichannel.V_body
         self.sounds_path = config.Generation.SoundsPath
         
+        self.signals = None
+        
     def generate(self, signals: list[np.ndarray[np.float64]] | np.ndarray[np.float64]):
         if isinstance(signals, np.ndarray):
             signals = [signals]
-            
+        assert len(signals) == len(self.source_locs), f"The amount of signals given does not match the number of source locations (signals: {len(signals)}; source locations: {len(self.source_locs)})"
         modelled_signals = []
 
         for mic_loc in self.microphone_locs:
-            new_mic_loc = np.tile(mic_loc,(len(self.source_locs),1)) # repeat the mic loc, to comply with the dimensions of np.linalg.norm
+            # new_mic_loc = np.tile(mic_loc,(len(self.source_locs),1)) # repeat the mic loc, to comply with the dimensions of np.linalg.norm Not needed  anymore
             
             # factor hundred to convert from cm to m
-            dists_to_valves = np.linalg.norm((self.source_locs-new_mic_loc)/100, axis=1)
+            dists_to_valves = np.linalg.norm(self.source_locs-mic_loc, axis=1)
             
             # calc delays and gains using distances to the valves
             delays = dists_to_valves/self.V_Body
-            gains = 1/dists_to_valves
+            gains = 0.1/dists_to_valves
             
             mic_signals = []
             max_delay = max(delays)
             for delay, gain, signal in zip(delays, gains, signals):
-                mic_signals.append(gain * np.pad(signal, [round(delay*self.Fs), round(max_delay*self.Fs)-round(delay*self.Fs)]))
+                pad_left = int(round(delay * self.Fs))
+                pad_right = int(round(max_delay*self.Fs)) - pad_left
+                mic_signals.append(gain * np.pad(signal, (pad_left, pad_right), mode="constant", constant_values=0))
                 
             modelled_signals.append(np.array(mic_signals).sum(axis=0))
         
-        self.signals = modelled_signals
-        return modelled_signals
+        max_len = max(len(sig) for sig in modelled_signals)
+        
+        padded = [
+            np.pad(arr, (0, max_len-len(arr)), mode="constant", constant_values=0)
+            for arr in modelled_signals
+        ]
+        
+        self.signals = padded
+        return padded
     
     def save(self, sub_folder: str|Path):
         """
@@ -72,5 +83,5 @@ class Model_3D:
             self.generate()
             
         for i, signal in enumerate(self.signals):
-            path = join(base_folder, f"generated_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_channel_{i}.wav")
+            path = join(base_folder, f"generated_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_channel_{i+1}.wav")
             write(path, self.Fs, signal)

@@ -1,0 +1,11 @@
+OriginalSound:
+shift
+-2.17
+Model:
+BPM,n
+66,10
+name,delay,duration_total,duration_onset,a_onset,a_main,ampl_onset,ampl_main,freq_onset,freq_main
+M,0.007,0.020,0.000,10,-0.05,0.1,1,50,50.0
+T,0.070,0.020,0.000,10,-20.0,0.0,0.5,150,150.0
+A,0.320,0.020,0.000,10,-20.0,0.1,0.5,50,50
+P,0.370,0.020,0.000,10,-40.0,0.1,0.4,30,30

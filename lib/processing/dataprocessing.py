@@ -194,7 +194,7 @@ def segment_only_with_len_filter_and_thus_deprecated_should_not_be_used(signal: 
         mask[start - comp:end - comp] = True
     return np.where(mask, signal, 0)
 
-def segment(signal: np.ndarray, domains: np.ndarray, comp: Callable[[int], int]) -> Tuple[np.ndarray, np.ndarray]:
+def segment(signal: np.ndarray, domains: np.ndarray, full_domains: np.ndarray, comp: Callable[[int], int]) -> Tuple[np.ndarray, np.ndarray]:
     """
     @author: Gerrald
     @date: 10-12-2025
@@ -211,7 +211,12 @@ def segment(signal: np.ndarray, domains: np.ndarray, comp: Callable[[int], int])
     """
     mask = np.zeros(len(signal), dtype=bool)
     concatenated = []
-    for start, end in domains:
-        mask[comp(start):comp(end)] = True
-        concatenated.extend(signal[comp(start):comp(end)])
+    if full_domains is not None:
+        for (start, end), (minstart, maxend) in zip(domains, full_domains):
+            mask[comp(start):comp(end)] = True
+            concatenated.extend(np.r_[np.zeros(comp(start)-comp(minstart)), signal[comp(start):comp(end)], np.zeros(comp(maxend)-comp(end))])
+    else:
+        for start, end in domains:
+            mask[comp(start):comp(end)] = True
+            concatenated.extend(signal[comp(start):comp(end)])
     return np.where(mask, signal, 0), np.array(concatenated) 

@@ -4,6 +4,7 @@ import matplotlib as mpl
 import sounddevice as sd
 from pathlib import Path
 from math import ceil
+import os
 
 from lib.config.ConfigParser import ConfigParser
 from lib.model.Model import Model
@@ -15,7 +16,8 @@ mpl.use('qtagg')
 mpl.rcParams["path.simplify"] = True
 mpl.rcParams["path.simplify_threshold"] = 1
 mpl.rcParams['figure.raise_window'] = False
-plt.ion()
+if os.getenv("USE_LARGE_FONT") == "1":
+    plt.rcParams.update({'font.size': 30})
 
 class Plot:
     """

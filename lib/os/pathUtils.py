@@ -18,7 +18,7 @@ def get_files_ext(ext:str, dir:str=".") -> list:
     """
     return [file for file in listdir(dir) if file.endswith(ext)] 
     
-def ensure_path_exists(file_path: Path|str, is_parent: bool = False) -> None:
+def ensure_path_exists(file_path: Path|str, is_parent: bool = False, subfolders: list[str]|None = None) -> None:
     """
     @author: Gerrald
     @date: 10-12-2025
@@ -34,3 +34,7 @@ def ensure_path_exists(file_path: Path|str, is_parent: bool = False) -> None:
     if not is_parent:
         file_path = file_path.resolve().parent
     file_path.mkdir(parents=True, exist_ok=True)
+    if subfolders is None: return
+    
+    for subfolder in subfolders:
+        file_path.joinpath(subfolder).mkdir(parents=True, exist_ok=True)

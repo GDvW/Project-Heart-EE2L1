@@ -123,7 +123,9 @@ class Processor:
         self.process()
     
         self.classify()
-
+        
+        self.get_segmentation_domains()
+        
         self.segment(verbose = self.verbose)
 
         if write_enabled:
@@ -232,10 +234,10 @@ class Processor:
                                                                 self.segmentation_solve_uncertain_length, self.Fs_target, 
                                                                 self.segmentation_min_height, self.segmentation_min_dist)
         else:
-            self.actual_segmentation_min_height = 0
+            self.actual_segmentation_min_height = self.segmentation_min_height
         
 
-    def segment(self, verbose: bool = True):
+    def get_segmentation_domains(self, verbose: bool = True):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -248,16 +250,18 @@ class Processor:
         
         self.ind_s1, self.ind_s2 = detect_peak_domains(self.s1_peaks, self.s2_peaks, self.see_normalized, self.segmentation_threshold, verbose=verbose)
             
+        return self.ind_s1, self.ind_s2
+    def segment(self, full_domains_s1 = None, full_domains_s2 = None, verbose: bool = True):
         # Calculate compensation for filters
         see_filter_comp = int(len(self.see_filter)/2)
         g_filter_comp = int(len(self.g)/2)
-        self.segmented_s1, self.segmented_s1_concat = segment(self.y_normalized, self.ind_s1, lambda index: (index - see_filter_comp))
-        self.segmented_s2, self.segmented_s2_concat = segment(self.y_normalized, self.ind_s2, lambda index: (index - see_filter_comp))
-        self.segmented_s1_raw, self.segmented_s1_raw_concat = segment(self.x, self.ind_s1, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
-        self.segmented_s2_raw, self.segmented_s2_raw_concat = segment(self.x, self.ind_s2, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
+        self.segmented_s1, self.segmented_s1_concat = segment(self.y_normalized, self.ind_s1, full_domains_s1, lambda index: (index - see_filter_comp))
+        self.segmented_s2, self.segmented_s2_concat = segment(self.y_normalized, self.ind_s2, full_domains_s2, lambda index: (index - see_filter_comp))
+        self.segmented_s1_raw, self.segmented_s1_raw_concat = segment(self.x, self.ind_s1, full_domains_s1, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
+        self.segmented_s2_raw, self.segmented_s2_raw_concat = segment(self.x, self.ind_s2, full_domains_s2, lambda index: (index - see_filter_comp) * self.M - g_filter_comp)
         
     def write(self):
-        # Path were it is saved "value from config/subfolder/(concat|segmented)/(raw|processed)/file"
+        # Path were it is saved "value from <config>/<subfolder>/(concat|segmented)/(raw|processed)/(S1|S2)/file"
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -269,27 +273,27 @@ class Processor:
             file_name = splitext(basename(self.file_path))[0]
             
             concat_file_path = join(basefolder, self.concat_path, "processed")
-            ensure_path_exists(concat_file_path, is_parent=True)
-            write(join(concat_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1_concat)
-            write(join(concat_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2_concat)
+            ensure_path_exists(concat_file_path, is_parent=True, subfolders=["S1", "S2"])
+            write(join(concat_file_path, "S1", f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1_concat)
+            write(join(concat_file_path, "S2", f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "processed")
-            ensure_path_exists(segment_file_path, is_parent=True)
-            write(join(segment_file_path, f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1)
-            write(join(segment_file_path, f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2)
+            ensure_path_exists(segment_file_path, is_parent=True, subfolders=["S1", "S2"])
+            write(join(segment_file_path, "S1", f"segmented-s1-processed-{file_name}.wav"), self.Fs_target, self.segmented_s1)
+            write(join(segment_file_path, "S2", f"segmented-s2-processed-{file_name}.wav"), self.Fs_target, self.segmented_s2)
         if self.write_result_raw:
             self.log("Writing raw files...")
             file_name = splitext(basename(self.file_path))[0]
 
             concat_file_path = join(basefolder, self.concat_path, "raw")
-            ensure_path_exists(concat_file_path, is_parent=True)
-            write(join(concat_file_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw_concat)
-            write(join(concat_file_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw_concat)
+            ensure_path_exists(concat_file_path, is_parent=True, subfolders=["S1", "S2"])
+            write(join(concat_file_path, "S1", f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw_concat)
+            write(join(concat_file_path, "S2", f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw_concat)
             
             segment_file_path = join(basefolder, self.segmented_path, "raw")
-            ensure_path_exists(segment_file_path, is_parent=True)
-            write(join(segment_file_path, f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw)
-            write(join(segment_file_path, f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw)
+            ensure_path_exists(segment_file_path, is_parent=True, subfolders=["S1", "S2"])
+            write(join(segment_file_path, "S1", f"segmented-s1-raw-{file_name}.wav"), self.Fs_original, self.segmented_s1_raw)
+            write(join(segment_file_path, "S2", f"segmented-s2-raw-{file_name}.wav"), self.Fs_original, self.segmented_s2_raw)
             
     def classify_peaks(self, x_peaks: np.ndarray, save_y_line: bool = True, save_peaks: bool = True):
         """

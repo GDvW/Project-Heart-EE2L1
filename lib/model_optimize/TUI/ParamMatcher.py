@@ -4,8 +4,8 @@ import queue
 
 from lib.config.ConfigParser import ConfigParser
 
-from lib.model_optimize.TUI.CLI import CLI
-from lib.model_optimize.TUI.CommandProcessor import CommandProcessor
+from lib.TUI.CLI import CLI
+from lib.TUI.CommandProcessor import CommandProcessor
 from lib.model_optimize.TUI.CommandUtils import generateStandardCommands
 from lib.model_optimize.TUI.Plot import Plot
 
