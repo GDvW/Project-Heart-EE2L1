@@ -192,3 +192,42 @@ GENERATED_MODEL_SAMPLES = {
         )
     ]
 }
+
+SEGMENTED_REAL_DATA = {
+    "S1": [
+        Sample(
+            "S1-27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84",
+            Path("generated\\segmentation\\RealPatients\\27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84\\with zeros\\raw\\S1"),
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([])
+        ),
+        Sample(
+            "S1-9489d50d-9398-4cfe-9c2f-0d0c9ee67536",
+            Path("generated\\segmentation\\RealPatients\\9489d50d-9398-4cfe-9c2f-0d0c9ee67536\\without zeros\\raw\\S1"),
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([])
+        )
+    ],
+    "S2": [
+        Sample(
+            "S2-27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84",
+            Path("generated\\segmentation\\RealPatients\\27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84\\without zeros\\raw\\S2"),
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([])
+        ),
+        Sample(
+            "S2-9489d50d-9398-4cfe-9c2f-0d0c9ee67536",
+            Path("generated\\segmentation\\RealPatients\\9489d50d-9398-4cfe-9c2f-0d0c9ee67536\\without zeros\\raw\\S2"),
+            0.015,
+            2,
+            standard_mic_locations,
+            np.array([])
+        )
+    ]
+}

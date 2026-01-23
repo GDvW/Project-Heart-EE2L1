@@ -12,7 +12,7 @@ def testingfunction(config):
     @author: Gerrald
     @date: 10-12-2025
     """
-    executor = Executor("samples\\piezo_4_realHeart", config, True)
+    executor = Executor("recordings\\calibrated\\real\\27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84", config, True)
     executor.execute(write_enabled=False)
     fig, ax = plt.subplots(3, 2, figsize=(16,16), sharex="all", sharey="all", constrained_layout=True)
     for file, values, plot in zip(executor.results.keys(), executor.results.values(), np.array(ax).flatten()):
