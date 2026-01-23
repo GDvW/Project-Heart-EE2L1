@@ -44,8 +44,12 @@ class LocalizationPlot:
         
         self.old_params = deepcopy(self.params)
         
-        self.x_range = [-0.08, 0.08]
-        self.y_range = [-0.12, 0.12]
+        self.x_range = [-0.16, 0.16]
+        self.y_range = [-0.16, 0.16]
+        # self.x_range = [-0.08, 0.08]
+        # self.y_range = [-0.12, 0.12]
+        # self.x_range = [-0.06, 0.06]
+        # self.y_range = [-0.08, 0.10]
         # self.x_range = [-0.05, 0.05]
         # self.y_range = [-0.075, 0.075]
         
@@ -108,7 +112,8 @@ class LocalizationPlot:
         cbar.set_label("Normalized amplitude [dB]")
         #self.image = ax.imshow(self.Pout[::-1]/np.max(self.Pout), extent=(min(self.x_range), max(self.x_range), min(self.y_range), max(self.y_range)), cmap= "plasma")
         ax.scatter(self.mic_positions[:,0], self.mic_positions[:,1], marker="o", color='red', label="Microphones")
-        ax.scatter(self.source_locs[:,0], self.source_locs[:,1], marker="+", color='black', label=f"True {sources}", linewidths=linewidth)
+        if len(self.source_locs) > 0:
+            ax.scatter(self.source_locs[:,0], self.source_locs[:,1], marker="+", color='black', label=f"True {sources}", linewidths=linewidth)
         self.likely_scatter = ax.scatter(self.likely_source_locs[:,0], self.likely_source_locs[:,1], marker="x", color='white', label=f"Estimated {sources}", linewidths=linewidth)
         ax.set_xlabel("x [m]")
         ax.set_ylabel("y [m]")
