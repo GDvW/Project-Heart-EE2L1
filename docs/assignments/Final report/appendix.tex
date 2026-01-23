@@ -227,139 +227,123 @@ This verifies that the number of non zero singular values is the same as the ran
 
 \subsection{Assignment 9.2}
 \label{assignment_9.2}
-All the simulated localizations are here, with white noise, heart beat, 1 or 2 sources.
-\subsubsection{S1 plots only}
+The plot for S1 sounds and white noise in a simulation setting are given below, both for the MUSIC and MVDR algorithm.
+\subsubsection{S1 sounds}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood100.png}
-    \caption{MUSIC depth 0.01m}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.05_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood50.png}
+    \caption{Power plot at a depth of 0.05m using the MUSIC algorithm with 2 simulated sources simulating the S1 peak.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood100.png}
-    \caption{MVDR depth 0.01m}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.12_Fs48000_Q2_M6_v_sound60.0_d0.1_resolution0.001_modemvdr_neighbourhood50.png}
+    \caption{Power plot at a depth of 0.12m using the MVDR algorithm with 2 simulated sources simulating the S1 peak.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.055_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood50.png}
-    \caption{MUSIC depth 0.055m}
-\end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.125_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood100.png}
-    \caption{MVDR depth 0.125m}
-\end{figure}
 
-\subsubsection{S2 only}
+\subsubsection{White noise sources}
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.03_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood2.png}
-    \caption{MUSIC depth 0.03m}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/Localization_results/White_Noise_Double---_bin0_z1e-07_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Power plot at a depth of $10^{-7}$m using the MUSIC algorithm with 2 simulated sources simulating white noise.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.15_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood2.png}
-    \caption{MUSIC 0.15m}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/Localization_results/White_Noise_Single---_bin0_z0.0001_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Power plot at a depth of $10^{-4}$m using the MUSIC algorithm with one simulated source simulating white noise.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.15_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood2.png}
-    \caption{MVDR depth 0.15m}
-\end{figure}
-
- In conclusion it seems there is something wrong with the simulation because the algorithms were working better with the actual phantom recordings.
  
 \subsection{Assigment phantom measurements}
 \label{phantom_rest}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_silent---_bin0_z0.005_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (m\_silent), $z=0.005$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_m_silent---_bin0_z1e-05_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (m\_silent), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_silent---_bin0_z0.005_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
-    \caption{Phantom measurement (m\_silent), $z=0.005$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_m_silent---_bin0_z1e-05_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Phantom measurement (m\_silent), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_m_t---_bin0_z1e-05_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (m\_t), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
     \label{fig:phantom_m_t_music_z0p005_q2}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_m_t---_bin0_z1e-05_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Phantom measurement (m\_t), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
     \label{fig:phantom_m_t_music_duplicate}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
-    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
-    \label{fig:phantom_m_t_mvdr_z0p005_q2}
-\end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_t---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_silent_t---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
     \caption{Phantom measurement (silent\_t), $z=0.01$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
     \label{fig:phantom_silent_t_mvdr_z0p01_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_t---_bin0_z0.027_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (silent\_t), $z=0.027$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_silent_t---_bin0_z1e-06_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (silent\_t), $z=10^{-6}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
     \label{fig:phantom_silent_t_music_z0p027_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_white---_bin0_z0.03_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
-    \caption{Phantom measurement (silent\_white), $z=0.03$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_silent_white---_bin0_z1e-05_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (silent\_white), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
     \label{fig:phantom_silent_white_mvdr_z0p03_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_white---_bin0_z0.0147_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (silent\_white), $z=0.0147$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_silent_white---_bin0_z1e-06_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Phantom measurement (silent\_white), $z=10^{-6}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
     \label{fig:phantom_silent_white_music_z0p0147_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_silent---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (white\_silent), $z=0.01$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_white_silent---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Phantom measurement (white\_silent), $z=0.01$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
     \label{fig:phantom_white_silent_music_z0p01_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_silent---_bin0_z0.008_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
-    \caption{Phantom measurement (white\_silent), $z=0.008$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_white_silent---_bin0_z1e-06_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (white\_silent), $z=10^{-6}$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
     \label{fig:phantom_white_silent_mvdr_z0p008_q1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_white---_bin0_z0.007_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
-    \caption{Phantom measurement (white\_white), $z=0.007$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_white_white---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Phantom measurement (white\_white), $z=0.01$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
     \label{fig:phantom_white_white_music_z0p007_q2}
 \end{figure}
 
-\subsection{Module 3 recordings}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/NEW/LocalizationOwnRecording/phantom_white_white---_bin0_z1e-05_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Phantom measurement (white\_white), $z=10^{-5}$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_white_white_music_z0p007_q2}
+\end{figure}
+
+\section{Module 3 recordings}
 \label{module_3_recordings}
 Generally whenever the angle is measured to be e.g $-15^\circ$ the actual angle is $15^\circ$. This is because the microphone array was rotated in place of the source. 
 
