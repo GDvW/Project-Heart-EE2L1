@@ -234,7 +234,7 @@ class Processor:
                                                                 self.segmentation_solve_uncertain_length, self.Fs_target, 
                                                                 self.segmentation_min_height, self.segmentation_min_dist)
         else:
-            self.actual_segmentation_min_height = 0
+            self.actual_segmentation_min_height = self.segmentation_min_height
         
 
     def get_segmentation_domains(self, verbose: bool = True):
