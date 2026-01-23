@@ -72,7 +72,7 @@ For each group, it then first checks if any of the peaks in the group have a "di
 
 Firstly, if this check is true, it is known that too many peaks are detected, so then another loop is entered, which, in each iteration, removes the peak with the smallest height in the group, and recomputes the classifications for the peaks using the "classify\_peaks" function. The loop terminates if all the uncertains in the group are resolved, or if all the peaks in the group are removed by the loop, meaning that no uncertain peaks were possible to be classified as an S1 or S2 peak. 
 
-Secondly it is possible that this check did not pass. Now, it is known that not enough peaks have been detected, which must have resulted in a peak with a "diff" value that is too high. This is because if a peak is removed (or not detected), the "diff" value of the peak before that increases by the "diff" value of the removed peak, which is apparent by the definition of the "diff" value. 
+Secondly, it is possible that this check did not pass. Now, it is known that not enough peaks have been detected, which must have resulted in a peak with a "diff" value that is too high. This is because if a peak is removed (or not detected), the "diff" value of the peak before that increases by the "diff" value of the removed peak, which is apparent by the definition of the "diff" value. 
 
 To try to solve this, a segment of the Shannon energy envelope is taken, which includes the peaks of the group and a padding of 2 seconds of samples on each side, defined by "SolveUncertainLength" in "config.ini" to be able to use those peaks to check whether the current uncertain peak is S1 or S2. Then, the "find\_peaks" function is used to detect all peaks in the segment, where the threshold requirement is omitted, and only the "min\_dist" argument is given, to not detect a very unrealistic number of peaks. The peaks that are detected in this way are compared to the peaks that were already in the group, and the difference is put in the variable "new\_peaks".
 
@@ -85,7 +85,7 @@ At the end, the "solve\_uncertains" function returns the new arrays for "s1\_pea
 \subsubsection{Segmentation}
 Lastly, using the indices of the peaks and a threshold, defined as "EnvelopeThreshold" in "config.ini", domains are generated where the whole peaks occur. This is done by first getting the segments of the energy envelope which have a Shannon energy higher than the threshold. After that only the segments that contain a classified peak are kept; the others are discarded. This is easily done by checking the thresholds
 
-As these segments contain indices for samples, they can be applied on either the raw input signal or the filtered and downsampled one. Multiple files are generated using these segments: files for the S1 peaks and the S2 peaks, and by applying those segment on the "raw" and "processed" signals. There are also two ways the segment indices can be applied: either the samples that are not in the segments are set to zero, or are omitted altogether, resulting in a shorter signal. This means that there will be 8 files generated.
+As these segments contain indices for samples, they can be applied on either the raw input signal, or the filtered and downsampled one. Multiple files are generated using these segments: files for the S1 peaks and the S2 peaks, and by applying those segment on the "raw" and "processed" signals. There are also two ways the segment indices can be applied: either the samples that are not in the segments are set to zero, or are omitted altogether, resulting in a shorter signal. This means that there will be 8 files generated.
 
 The class "Executor" (\ref{ap:Executor}) is able to loop through multiple files, and call the "Processor" class for each file. It also organizes the output files in folders for ease of use. This is our implementation for multi-channel segmentation.
 
@@ -231,7 +231,7 @@ e^{-j(M-1)(d/v)\sin(\theta)\Omega_0}
 Here, $\theta$ expresses the direction of arrival, $d$ the microphone spacing, $v$ the speed of the wave (sound in this case), and $\Omega_0$ the radial frequency.
 
 \paragraph{Beamforming principle}
-The delay and sum mabeamformer was used. What the beamformer does, according to \cite{IP3Man}, it synchronizes/aligns signals that come from a given angle $\theta$ and it doesn't alter signals from other directions (e.g. noise in this case). Then it sums them up, so the signals from a wanted angle add up in phase (constructively), while the unwanted signals add up destructively thus becoming less important.
+The delay and sum beamformer was used. What the beamformer does, according to \cite{IP3Man}, it synchronizes/aligns signals that come from a given angle $\theta$ and it doesn't alter signals from other directions (e.g. noise in this case). Then it sums them up, so the signals from a wanted angle add up in phase (constructively), while the unwanted signals add up destructively thus becoming less important.
 
 According to \cite{IP3Man}, for the given signal of unity power $\mathbf{x}$ and a given angle of arrival $\theta_0$, the output $y$ is
 \[
@@ -276,7 +276,7 @@ P_y(\theta) = \mathbf{a}^H(\theta) \mathbf{R}_x \mathbf{a}(\theta)
 .\]
 Here $\alpha$ is the steering vector and $R\_x$ is the auto covariance of the signal.
 Thus the $\theta$ where the power is maximized is our direction of arrival.
-
+mod
 \paragraph{Analysis of the functions used in beamforming}
 \label{beam_funcs}
 \begin{itemize}
