@@ -13,7 +13,7 @@ class Executor:
     @author: Gerrald
     @date: 10-12-2025
     """
-    def __init__(self, folder_path: str, config: ConfigParser, log: bool = False):
+    def __init__(self, folder_path: str, config: ConfigParser, output_subfolder: str, log: bool = False):
         """
         @author: Gerrald
         @date: 10-12-2025
@@ -28,6 +28,7 @@ class Executor:
             raise IOError(f"{folder_path} does not contain any wav files")
         
         self.folder_path = folder_path
+        self.output_subfolder = output_subfolder
         self.files = files
         self.config = config
         self.log_enabled = log
@@ -42,7 +43,7 @@ class Executor:
         
         for file in self.files:
             self.log(f"Processing {file.stem}")
-            processor = Processor(None, self.config, log=self.log_enabled)
+            processor = Processor(None, self.config, log=self.log_enabled, subfolder=self.output_subfolder)
             processor.open_file(file)
             try:    
                 processor.run(write_enabled=False)
@@ -112,7 +113,7 @@ class Executor:
         """
         print(f"Finished with the following results:")
         for file, r in self.results.items():
-            print(f"{file.stem}: s1: {r[0]};  s2: {r[1]}; u: {r[2]}; tot: {sum(r)}")
+            print(f"{file.stem}: s1: {r[0]};  s2: {r[1]}; u: {r[2]}; tot: {sum(r[:2])}")
     def log(self, msg):
         """
         @author: Gerrald
