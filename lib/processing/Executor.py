@@ -66,6 +66,7 @@ class Executor:
         
         if len(uncertain_zero) == 0 or len(pairs) > 1:
             print("ERROR: Non-program-solvable challenge, but UI not implemented yet.")
+            raise RuntimeError(f"ERROR: Non-program-solvable challenge, but UI not implemented yet. uncertain_zero: {len(uncertain_zero)}; pairs: {len(pairs)}")
             return
         
         # Get the domains of the segmentation based on one result of the fist segmentation
