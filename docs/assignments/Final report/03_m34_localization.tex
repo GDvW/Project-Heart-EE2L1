@@ -300,8 +300,9 @@ It is clear that MUSIC is more accurate than the other 2 algorithms previously d
 \chapter{3D direction finding and integration}
 \section{Introduction}
 The final goal of this project is to be able to localize the valves in the heart. This must be done in 3D instead of the 2D model that was discussed in the previous chapter. This means that the existing algorithms (MVDR and MUSIC) need to be adapted to work in 3D.
-To achieve this, in addition to the angle in horizontal plane, the elevation angle is also needed. Also, the far field assumption does not hold. The valves (sources) are close to the microphone array, so each microphone sees the source from a different angle.
+To achieve this, in addition to the angle in horizontal plane, the elevation angle is also needed. Also, the far field assumption does not hold. The valves (sources) are close to the microphone array, which leads to each microphone seeing the source from a significantly different angle.
 The microphone array consists of 6 microphones placed in a 3x2 matrix, where the distance between adjacent orthogonal microphones is 5cm.
+For the algorithms it is also essential that only signals are used which contain useful information, which is why the signals first have to be segmented into S1 peaks and S2 peaks before they are analyzed by the algorithms.
 
 \section{Design}
 
@@ -368,14 +369,14 @@ As explained in \ref{ways_of_testing}, there are 3 possible ways to validate the
     \item Phantom model recordings. 
     \item Recordings of a persons heart.
 \end{itemize}
-Simulation and phantom model can be used with the sources playing white noise or a heartbeat. The recordings of a persons heart only include heartbeat signals.
+Simulation and phantom model can be used with the sources playing white noise or a heartbeat. The recordings of a persons heart only include heartbeat signals. In case heartbeat signals were used, the S1 and S2 peaks were first segmented using the preprocessing system. In case white noise was used as a signal, this was not done, as it wouldn't have any effect and would be meaningless.
 
 \subsection{Frequency selection}
 As explained in \ref{beamformer_assumption_constraints}, there is a theoretical upper limit on the frequency of the signal that can be selected. In addition when the signal travels through human tissue or foam instead of air, it seems to be heavily attenuated for higher frequencies as it can be seen in the amplitude-frequency plot of a heart beat signal \ref{fig:amplitude_frequency_plot}. As a result the lowest frequency possible was always chosen for the rest of the analysis.
 
 \subsection{Simulation}
 Simulation allows to verify that the localization algorithm works properly as the location of the sources can be specified when generating the audio files that simulate the heart beat. Both MVDR and MUSIC were tested. The depth of the sources was set to 0.15m.
-Some representative samples are presented below, all of them exist on \ref{assignment_9.2}.
+The results using the S2 peak sounds are shown here, the results using S1 sounds and white noise have been given in \ref{assignment_9.2}.
 \begin{figure} [H]
     \centering
     \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.07_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
@@ -390,7 +391,7 @@ Some representative samples are presented below, all of them exist on \ref{assig
     \label{fig:mvdr_3D_2sources}
 \end{figure}
 
-In the plots it becomes clear that the MVDR algorithm localizes the sources more accurately. The MUSIC algorithm comes to a depth of 0.07m, which is smaller than the set depth. 
+In the plots it becomes clear that the MVDR algorithm localizes the sources more accurately. The MUSIC algorithm comes to a depth of 0.07m, which is smaller than the set depth. This could be due to the simulation method not aligning with the method that MUSIC uses to localize the sources.
 
 
 \subsection{Phantom Model}
@@ -409,25 +410,25 @@ The phantom model is a step closer to reality as there is an actual recording ma
     \caption{Power plot of the phantom model using 2 sources to simulate the S1 peak using the MVDR algorithm at a depth of 0.00001m.}  
     \label{fig: mvdr_3D_2sources_phantom}
 \end{figure}
-Although MUSIC is considered as a higher resolution algorithm, it turned out to have similar accuracy to the MVDR. Both have less that a centimeter of error.
+What can be observed is that the depth at which the most power is observed is extremely small. Nonetheless, both algorithms seem to localize the sources with less than a centimeter of error. Although MUSIC is considered as a higher resolution algorithm, it turned out to have similar accuracy to the MVDR. Both algorithms seem to estimate the sources with a comparable offset. This could mean that the true sources or the microphone array were not perfectly centered when conducting the measurements.
 
 \subsection{Human Recordings}
-Next, the algorithms were tested by trying to localize the valves or a persons heart. It is not known were the exact locations of the heart valves were, so this is meant as a demonstration. Also the propagation speed of the signal is difficult to be estimated in the tissue, but by varying it there was no significant difference in the results.
+Next, the algorithms were applied on the recordings of a persons heart. It is not known were the exact locations of the heart valves were, so this was meant as a demonstration. Also the propagation speed of the signal is difficult to be estimated in the tissue, but by varying it there was no significant difference in the results.
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/RealLocalizationResults/real_27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/S2-9489d50d-9398-4cfe-9c2f-0d0c9ee67536---_bin0_z0.001_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
     \caption{Power plot of a human recording at a depth of 0.01m using the MUSIC algorithm.}  
     \label{fig: music_3D_2sources_person}
 \end{figure}
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/RealLocalizationResults/real_27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/RealLocalizationResults/real_27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
     \caption{Power plot of a human recording at a depth of 0.01m using the MVDR algorithm.}  
     \label{fig: mvdr_3D_2sources_person}
 \end{figure}
-It can be inferred that both methods give similar results. The only difference is that MUSIC has sharper peaks (thus darker colors further away from the valves) while the MVDR gives a smeared out result, which is expected. It can also been seen that the estimated sources are in the top left of the plot. This is likely due to the microphone array not being placed right above the heart.
+It can be inferred that both methods give similar results. The only difference is that MUSIC has sharper peaks (thus darker colors further away from the valves) while the MVDR gives a more smeared out result, which is expected. It can also been seen that the estimated sources are in the top right of the plot. This is likely due to the microphone array not being placed right above the heart.
 
 
 \section{Conclusion}
@@ -436,8 +437,8 @@ In this chapter, the 2D localization setup was extended to a 3D model that also 
 This was done by using a steering vector that depends on the 3D source position instead of only the angle. 
 Both MVDR and MUSIC were tested with simulations, phantom recordings, and human recordings.
 
-The simulations show that the method can recover the correct source locations, and that MUSIC gives sharper peaks than MVDR. 
-With the phantom model, both methods still worked well even with real noise, and the estimated locations were close to the expected holes in the foam. 
+The simulations show that the method can recover the correct source locations, and that MUSIC gives sharper peaks than MVDR. However, MUSIC did not correctly estimate the location of the sources.
+With the phantom model, both methods performed to satisfaction, as the estimated locations were close to the expected holes in the foam. 
 For the human recordings, the exact valve locations are not known, but both methods gave similar and stable localization maps. 
-Changing the assumed propagation speed did not strongly change the results.
+Changing the assumed propagation speed did not strongly change the results in any of the test cases.
 Overall, the 3D adaptation works and is a useful step toward localizing heart valves.
