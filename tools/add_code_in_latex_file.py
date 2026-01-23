@@ -15,10 +15,8 @@ def get_command(path: Path):
             return "pythonfile"
         case ".ini":
             return "inifile"
-        case ".csv":
-            return "csvfile"
-        case ".txt":
-            return "txtfile"
+        case ".csv" | ".txt":
+            return "textfile"
         case _:
             return "undefined"
 def safe_label(s: str) -> str:
