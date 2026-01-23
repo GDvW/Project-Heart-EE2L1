@@ -1,52 +1,29 @@
 
-\chapter{ Block diagrams}
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_1/classification_flowchart.png}
-    \caption{Block diagram of the steps taken by the functions "classify\_peaks" and "analyze\_diff2".}  
-    \label{fig:classificationchart}
-\end{figure}
-
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_1/solve_uncertains.png}
-    \caption{Block diagram of the steps taken to increase the global threshold and the steps used by the function "solve\_uncertains".}  
-    \label{fig:solve_uncertains_chart}
-\end{figure}
-
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_2/multichannel_damping.png}
-    \caption{Modeled signal for each microphone.}  
-    \label{fig:multichannel_damping}
-\end{figure}
-
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_2/multichannel_delay.png}
-    \caption{Modeled signal for each microphone. Same data as Fig. \ref{fig:multichannel_damping}, but zoomed in.}  
-    \label{fig:multichannel_delay}
-\end{figure}
 
 
+
+
+
+
+
+\chapter{2D direction finding}
+\section{Beamforming pipeline}
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.3\textwidth]{docs/assignments/Midterm report/figures/module_3/Beamformer/beamforming_pipeline.png}
+    \includegraphics[width=0.25\textwidth]{docs/assignments/Midterm report/figures/module_3/Beamformer/beamforming_pipeline.png}
     \caption{Description of the beamformer pipeline.}  
     \label{fig:beamformer_pipeline}
 \end{figure}
 
-\chapter{Module 3 Calculations}
+\section{Central frequency calculation}
 
-
-Calculation for central frequency.
 Given the spacing $d = 0.1$ m and assuming the speed of sound $v = 343$ m/s:
 \begin{equation}
     f = \frac{v}{2d} = \frac{343}{2 \cdot 0.1} = \frac{343}{0.2} = 1715 \text{ Hz}
 \end{equation}
 \label{module_3_calculation_central_frequency}
 
-\chapter{Module 3 figures}
+\section{Figures}
 
 \begin{figure} [H]
     \centering
@@ -75,13 +52,6 @@ Given the spacing $d = 0.1$ m and assuming the speed of sound $v = 343$ m/s:
     \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_3/MVDR/MVDR 1 source/MVDR_60.png}
     \caption{MVDR at $60^\circ$.}  
     \label{fig:MVDR_60_degrees}
-\end{figure}
-
-\begin{figure} [H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/module_3/MVDR/MVDR 2 source/MVDR_7_-7.png}
-    \caption{MVDR at $60^\circ$.}  
-    \label{fig:MVDR_2_sources}
 \end{figure}
 
 \chapter{Module 4 figures}
@@ -117,7 +87,7 @@ Given the spacing $d = 0.1$ m and assuming the speed of sound $v = 343$ m/s:
 
 \section{Assignments module 3 and 4}
 \subsection{Assignment 6.2.3}
-
+The function is created, and tested via printing and checking the complex numbers it gives.
 \subsection{Assignment 6.2.6}
 \label{assigment_6.2.6}
 For direction of arrival at $0^\circ$, $M = 7$, $f = 500\text{Hz}$, 
@@ -199,6 +169,357 @@ For a different angle , e.g. $30^\circ$, the following plots were obtained, conf
     $\Delta = d/\lambda$ represents the sampling density in space.
     \begin{itemize}
         \item \textbf{Smaller $\Delta$:} Samples are very close. This reduces the phase difference between microphones, making the main lobe wider (worse resolution).
-        \item \textbf{Larger $\Delta$:} Samples are far apart. This improves resolution (sharper lobe), but if $\Delta > 0.5$, the sensors are too far apart to distinguish the wave cycle uniqueley (undersampling), causing spatial aliasing (false peaks).
+        \item \textbf{Larger $\Delta$:} Samples are far apart. This improves resolution (sharper lobe), but if $\Delta > 0.5$, the sensors are too far apart to distinguish the wave cycle uniquely (undersampling), causing spatial aliasing (false peaks).
     \end{itemize}
 \end{enumerate}
+
+
+\subsection{Assignment 6.4.1}
+\label{Assignment_6.4.1}
+The functions in the code appendix have been implemented and the following plots were created. There are 2 sources at $0^\circ$ and $15^\circ$.
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/matched_beamformer.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_beamformer}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/MVDR.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_MVDR}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/Assigment 6.4.1/MVDR beamformer.png}
+    \caption{}  
+    \label{fig:assignment_6.4.1_MVDR_beamformer}
+\end{figure}
+
+It is clear that given the angle $15^\circ$ the MVDR beamformer has a zero response/amplitude in the direction of the other source at $0^\circ$.
+
+
+\subsection{Assignment 6.6.2}
+The first part of this assignment was implemented a bit differently. First there was a central frequency that was chosen. Then this resulted in a signal \textbf{X} which would be M x N and computing the auto covariance could be done with np.cov(X). The implementation is visible in the code appendix
+
+
+\subsection {Assignment 7.1.4}
+The following plot was created. There are three sources at $10^\circ$, $90^\circ$ and $60^\circ$
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Assignments/assigment_7.1.4.png}
+    \caption{}  
+    \label{fig:assignment_7.1.4_plot}
+\end{figure}
+This verifies that the number of non zero singular values is the same as the rank of the matrix \textbf{X}. 
+
+\subsection{Assignment 7.2.1}
+\begin{itemize}
+\item Narrowband assumption: each source is treated as a single frequency so delays become simple phase shifts, while real signals are wideband.
+\item Far-field (plane-wave) assumption: the source is assumed to be far away, but in practice it can be in the near field.
+\item No reflections or multipath: only a direct path is assumed, while real environments contain echoes and reflections.
+\item Ideal microphones and geometry: microphones are assumed identical and perfectly positioned, which is not true in practice.
+\item Simple noise model: noise is assumed additive and uncorrelated, whereas real noise can be colored and correlated across microphones.
+\end{itemize}
+
+\subsection{Assignment 9.2}
+\label{assignment_9.2}
+All the simulated localizations are here, with white noise, heart beat, 1 or 2 sources.
+\subsubsection{S1 plots only}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood100.png}
+    \caption{MUSIC depth 0.01m}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood100.png}
+    \caption{MVDR depth 0.01m}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.055_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood50.png}
+    \caption{MUSIC depth 0.055m}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S1_sounds---_bin0_z0.125_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood100.png}
+    \caption{MVDR depth 0.125m}
+\end{figure}
+
+\subsubsection{S2 only}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.03_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood2.png}
+    \caption{MUSIC depth 0.03m}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.15_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood2.png}
+    \caption{MUSIC 0.15m}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/SimulationLocalizationPlots/Generated_S2_sounds---_bin0_z0.15_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood2.png}
+    \caption{MVDR depth 0.15m}
+\end{figure}
+
+ In conclusion it seems there is something wrong with the simulation because the algorithms were working better with the actual phantom recordings.
+ 
+\subsection{Assigment phantom measurements}
+\label{phantom_rest}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_silent---_bin0_z0.005_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (m\_silent), $z=0.005$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_silent---_bin0_z0.005_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \caption{Phantom measurement (m\_silent), $z=0.005$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_m_t_music_z0p005_q2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_m_t_music_duplicate}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_m_t---_bin0_z0.005_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \caption{Phantom measurement (m\_t), $z=0.005$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \label{fig:phantom_m_t_mvdr_z0p005_q2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_t---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \caption{Phantom measurement (silent\_t), $z=0.01$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \label{fig:phantom_silent_t_mvdr_z0p01_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_t---_bin0_z0.027_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (silent\_t), $z=0.027$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_silent_t_music_z0p027_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_white---_bin0_z0.03_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \caption{Phantom measurement (silent\_white), $z=0.03$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \label{fig:phantom_silent_white_mvdr_z0p03_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_silent_white---_bin0_z0.0147_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (silent\_white), $z=0.0147$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_silent_white_music_z0p0147_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_silent---_bin0_z0.01_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (white\_silent), $z=0.01$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_white_silent_music_z0p01_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_silent---_bin0_z0.008_Fs48000_Q1_M6_v_sound340_d0.1_resolution0.001_modemvdr.png}
+    \caption{Phantom measurement (white\_silent), $z=0.008$ m, $F_s=48$ kHz, $Q=1$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MVDR.}
+    \label{fig:phantom_white_silent_mvdr_z0p008_q1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{docs/assignments/Final report/figures/figures/Localization/LocalizationOwnRecording/phantom_white_white---_bin0_z0.007_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic.png}
+    \caption{Phantom measurement (white\_white), $z=0.007$ m, $F_s=48$ kHz, $Q=2$, $M=6$, $v=340$ m/s, $d=0.1$ m, resolution $0.001$, MUSIC.}
+    \label{fig:phantom_white_white_music_z0p007_q2}
+\end{figure}
+
+\subsection{Module 3 recordings}
+\label{module_3_recordings}
+Generally whenever the angle is measured to be e.g $-15^\circ$ the actual angle is $15^\circ$. This is because the microphone array was rotated in place of the source. 
+
+
+\paragraph{For beamforming}
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:beam1}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:beam3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:beam4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:beam5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:beam6}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/Beamforming/2 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:beam7}
+\end{figure}
+
+
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR1}
+\end{figure}
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR2}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MVDR/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MVDR6}
+\end{figure}
+
+\subsection{Module 4 recordings}
+\label{module_4_recordings}
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC1}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC2}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC3}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/1 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC4}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/0 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC5}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/20 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC6}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/40 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC7}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Midterm report/figures/MUSIC/2 source/60 degrees.jpg}
+    \caption{}  
+    \label{fig:MUSIC8}
+\end{figure}
+
+\subsection{3D localization images}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{docs/assignments/Final report/figures/figures/Localization/TimeFrequencyPlots/calibrated_MT.channel_1.png}
+    \caption{}  
+    \label{fig:amplitude_frequency_plot}
+\end{figure}
+
+
+
+
