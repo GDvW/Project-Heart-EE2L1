@@ -38,7 +38,7 @@ class LocalizationPlot:
             d = 0.10,
             resolution = 0.001,
             mode = "music",
-            neighbourhood=50
+            neighbourhood=3
         )
         
         self.source_locs = sample.source_locs
@@ -47,12 +47,12 @@ class LocalizationPlot:
         
         # self.x_range = [-0.16, 0.16]
         # self.y_range = [-0.16, 0.16]
-        # self.x_range = [-0.08, 0.08]
-        # self.y_range = [-0.12, 0.12]
+        self.x_range = [-0.08, 0.08]
+        self.y_range = [-0.12, 0.12]
         # self.x_range = [-0.06, 0.06]
         # self.y_range = [-0.08, 0.10]
-        self.x_range = [-0.05, 0.05]
-        self.y_range = [-0.075, 0.075]
+        # self.x_range = [-0.05, 0.05]
+        # self.y_range = [-0.075, 0.075]
         
         self.win = ('gaussian', 256)
         self.fig = None
