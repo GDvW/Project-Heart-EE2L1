@@ -40,10 +40,6 @@ if __name__ == "__main__":
     # rate, signal4 = wavfile.read(filepath4)
     # rate, signal5 = wavfile.read(filepath5)
     # rate, signal6 = wavfile.read(filepath6)
-
-    
-
-    print ("ayo")
     #print (sources.shape)
     #print(signal1.shape)
 
@@ -92,6 +88,16 @@ if __name__ == "__main__":
     #radius = 7.5
     #radius=np.sqrt(0.1*0.1+0.1*0.1)
     
+    # Code to check whether music works. This will give one high valued pixel, the rest zero
+    # #def a_z(s_position, mic_positions, M, v, f0)
+    # M = 6
+    # SNR = 10
+    # sigma_n = 10**(-SNR/20); # std of the noise (SNR in dB)
+    # A = a_z([0.05, 0.1, 0.15], generate_mic_positions(d, M), M, v, f0); # source direction vectors
+    # A_H = A.conj().T
+    # R = A @ A_H # assume equal powered sources
+    # Rn = np.eye(M,M)*sigma_n**2; # noise covariance
+    # Rx = R + Rn
 
     xRange = [-0.08, 0.12]
     yRange = [-0.08, 0.12]

@@ -1,21 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 def a_z(s_position, mic_positions, M, v, f0):
-
-    result = []
-    #print("start")
-    for microphone in mic_positions:
-        #print(f"mic_position inside a_z: {microphone}")
-        #print(f"s_position inside a_z: {s_position}")
+    result = np.zeros((M,1), dtype=complex)
+    for i, microphone in enumerate(mic_positions):
         rm = np.linalg.norm(s_position - microphone)
         tm = rm/v
-        result.append( ((1/rm) * np.exp(-1j * 2*np.pi*f0 * tm) ) )
-        #print(f"rm inside a_z: {rm}")
-   
-    result = np.array(result)
-    
+        result[i] = (1/rm) * np.exp(-1j * 2*np.pi*f0 * tm) 
+    result = result/np.linalg.norm(result)
     return result
-    
 
 
 def music_z(Rx, Q, M, xyz_points, v, f0, mic_positions):
@@ -28,7 +20,7 @@ def music_z(Rx, Q, M, xyz_points, v, f0, mic_positions):
     for i, row in enumerate(xyz_points):
         for j, cell in enumerate(row):
 
-            a = a_z(cell, mic_positions, M, v, f0)
+            a = a_z(cell, mic_positions, M, v, f0).reshape(M,1)
 
             to_append = np.matmul(a.conj().T, Un)
             to_append = np.matmul(to_append, Un.conj().T)
