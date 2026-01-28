@@ -89,7 +89,6 @@ As explained in \ref{beamf_p}, the bandwidth (B) needs to be smaller than $\frac
 The formula given from \cite{IP3Man} for the effective bandwidth of each bin is : \begin{equation}
     B = \frac{f_s}{\texttt{samples per bin}}
 \end{equation}
-\todo{Do not use samples, but talk based on time and frequency}
 More samples per bin mean lower bandwidth (B), safer narrow band assumption but lower resolution while less samples per bin mean higher bandwidth (B), worse narrow bandwidth assumption but increases resolution.
 By setting the samples per bin to 256 and the sampling frequency ($f_s$) to 48 kHz, the bandwidth (B) results in 187.5 Hz, which is way smaller than 686 Hz.
 
@@ -417,22 +416,21 @@ Next, the algorithms were applied on the recordings of a persons heart. It is no
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/S2-9489d50d-9398-4cfe-9c2f-0d0c9ee67536---_bin0_z0.001_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
-    \caption{Power plot of a human recording at a depth of 0.01m using the MUSIC algorithm.}  
+    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/RealLocalizationResults/S2-9489d50d-9398-4cfe-9c2f-0d0c9ee67536---_bin0_z0.001_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemusic_neighbourhood3.png}
+    \caption{Power plot of a human recording of S2 sounds at a depth of 0.001m using the MUSIC algorithm.}  
     \label{fig: music_3D_2sources_person}
 \end{figure}
 
 \begin{figure} [H]
     \centering
-    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/RealLocalizationResults/real_27cb1086-5d2c-4e5f-b29c-a8c6f9a40b84---_bin0_z0.01_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
-    \caption{Power plot of a human recording at a depth of 0.01m using the MVDR algorithm.}  
+    \includegraphics[width=0.6\textwidth]{docs/assignments/Final report/figures/figures/Localization/NEW/RealLocalizationResults/S2-9489d50d-9398-4cfe-9c2f-0d0c9ee67536---_bin0_z0.001_Fs48000_Q2_M6_v_sound340_d0.1_resolution0.001_modemvdr_neighbourhood3.png}
+    \caption{Power plot of a human recording of S2 sounds at a depth of 0.001m using the MVDR algorithm.}  
     \label{fig: mvdr_3D_2sources_person}
 \end{figure}
-It can be inferred that both methods give similar results. The only difference is that MUSIC has sharper peaks (thus darker colors further away from the valves) while the MVDR gives a more smeared out result, which is expected. It can also been seen that the estimated sources are in the top right of the plot. This is likely due to the microphone array not being placed right above the heart.
-
+It can be inferred that both methods give similar results. The only difference is that MUSIC has sharper peaks (thus darker colors further away from the valves) while the MVDR gives a more smeared out result, which is expected. It can also be observed that one source is estimated directly under microphone 4. This could be due to the fact that the recording of that microphone was notably greater in amplitude than the other recordings. A reason for this could be the placement of the microphone array, such that microphone 4 was able to detect the most sound.
 
 \section{Conclusion}
-\subsection{Conclusion}
+
 In this chapter, the 2D localization setup was extended to a 3D model that also works in the near field. 
 This was done by using a steering vector that depends on the 3D source position instead of only the angle. 
 Both MVDR and MUSIC were tested with simulations, phantom recordings, and human recordings.
